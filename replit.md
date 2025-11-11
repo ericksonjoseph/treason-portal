@@ -61,6 +61,23 @@ Build a trading platform named "Treason" that:
    - Shows individual label when only one item is selected
    - Date picker automatically closes after selecting a complete range
 3. **Performance Metrics Cards**: Display key stats like Total Trades, Win Rate, Total Profit, Average Trade
+4. **Detailed Reports Section**: Toggle between two visualization modes
+   - **Revenue Graph**: 
+     - Line chart showing revenue over time using Recharts
+     - X-axis displays dates (formatted as "MMM d")
+     - Y-axis shows revenue in dollars (formatted as $X,XXX)
+     - Interactive tooltips with detailed information
+     - Responsive design that adapts to container width
+   - **Revenue Calendar**: 
+     - iCal/Google Calendar-style interface with four view modes:
+       - **Month View**: Grid showing all days with revenue, trades, and traitor names in each cell
+       - **Week View**: 7-day detailed view with larger revenue displays and traitor badges
+       - **Day View**: Single day focus with prominent revenue, trade stats, and traitor list
+       - **Year View**: 12-month overview with total revenue and trades per month
+     - Navigation controls to move forward/backward through time
+     - Smart date formatting that adapts to each view type
+     - Highlighting for current day and inactive days outside current period
+     - Empty states for days with no trading activity
 
 ## Project Architecture
 
@@ -90,13 +107,21 @@ Build a trading platform named "Treason" that:
 - **TradeTimeline**: Scrollable list of executed trades
 
 #### Reports Page Components
-- **Reports**: Analytics and reporting page with global filters
+- **Reports**: Analytics and reporting page with global filters and detailed visualizations
 - **ReportsFilters**: Comprehensive filter panel with traitor, mode, ticker, and date range filters
 - **MultiSelect**: Reusable multi-select dropdown component used for traitors, modes, and tickers
 - **DateRangePicker**: Calendar component for selecting date ranges (with auto-close on complete selection)
+- **RevenueGraph**: Line chart component using Recharts library to display revenue trends over time
+- **RevenueCalendar**: Calendar visualization component with Day/Week/Month/Year views
+  - Month view: Full calendar grid with revenue data in cells
+  - Week view: 7-day horizontal layout with detailed stats
+  - Day view: Single day focus with large metrics
+  - Year view: 12-month overview with monthly totals
 
 ### Technical Stack
-- **Charts**: lightweight-charts v5.0.9 (TradingView's charting library)
+- **Charts**: 
+  - lightweight-charts v5.0.9 (TradingView's charting library for candlestick charts)
+  - Recharts (Line charts for revenue trends in Reports page)
 - **UI Components**: Shadcn UI with Radix primitives (Select, Popover, Calendar, etc.)
 - **Styling**: Tailwind CSS with custom color tokens
 - **Date Handling**: date-fns and react-day-picker

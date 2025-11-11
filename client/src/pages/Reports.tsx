@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { BarChart3, TrendingUp, DollarSign, Activity } from 'lucide-react';
 import ReportsFilters from '@/components/ReportsFilters';
+import RevenueGraph from '@/components/RevenueGraph';
+import RevenueCalendar from '@/components/RevenueCalendar';
 import { DateRange } from 'react-day-picker';
 import type { Traitor } from '@/types/traitor';
+
+type ReportView = 'graph' | 'calendar';
 
 export default function Reports() {
   const [selectedTraitors, setSelectedTraitors] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [reportView, setReportView] = useState<ReportView>('graph');
 
   const mockTraitors: Traitor[] = [
     { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
@@ -24,6 +30,31 @@ export default function Reports() {
     { value: 'backtest', label: 'Backtest' },
     { value: 'live', label: 'Live Trading' },
   ];
+
+  const mockRevenueData = useMemo(() => {
+    const data = [];
+    const startDate = new Date('2025-11-01');
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i);
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        revenue: Math.floor(Math.random() * 5000) + 1000,
+        trades: Math.floor(Math.random() * 50) + 10,
+      });
+    }
+    
+    return data;
+  }, []);
+
+  const mockCalendarData = useMemo(() => {
+    return mockRevenueData.map((d) => ({
+      ...d,
+      traitors: ['RSI + MACD', 'EMA Crossover'].slice(0, Math.floor(Math.random() * 2) + 1),
+    }));
+  }, [mockRevenueData]);
 
   const handleReset = () => {
     setSelectedTraitors([]);
@@ -103,19 +134,30 @@ export default function Reports() {
           </Card>
         </div>
 
-        <Card data-testid="card-reports-placeholder">
-          <CardHeader>
-            <CardTitle>Detailed Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center h-64 text-muted-foreground">
-              <div className="text-center space-y-2">
-                <BarChart3 className="h-12 w-12 mx-auto opacity-50" />
-                <p>Detailed reports and analytics will be displayed here</p>
-              </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Detailed Reports</h2>
+            <div className="flex gap-2">
+              <Button
+                variant={reportView === 'graph' ? 'default' : 'outline'}
+                onClick={() => setReportView('graph')}
+                data-testid="button-view-graph"
+              >
+                Revenue Graph
+              </Button>
+              <Button
+                variant={reportView === 'calendar' ? 'default' : 'outline'}
+                onClick={() => setReportView('calendar')}
+                data-testid="button-view-calendar"
+              >
+                Revenue Calendar
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {reportView === 'graph' && <RevenueGraph data={mockRevenueData} />}
+          {reportView === 'calendar' && <RevenueCalendar data={mockCalendarData} />}
+        </div>
       </div>
     </div>
   );
