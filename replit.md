@@ -13,6 +13,13 @@ Build a stock trading platform that:
 
 ## Recent Changes (November 11, 2025)
 
+### Navigation
+- **Main Sidebar Navigation**: Added collapsible sidebar with navigation menu
+  - Charts: Main trading dashboard with live/backtest charts
+  - Reports: Analytics and reporting page
+  - Sidebar can be toggled open/closed with hamburger menu
+  - Active page is highlighted in the navigation
+
 ### Color Scheme
 - **Down candles and sell indicators**: Changed from traditional red to a softer blue (#93b4d4 and #7BA3D0)
 - This applies to:
@@ -32,7 +39,10 @@ Build a stock trading platform that:
 ## Project Architecture
 
 ### Frontend Components
-- **TradingDashboard**: Main page component that orchestrates the entire UI
+- **App.tsx**: Root component with sidebar layout and routing
+- **AppSidebar**: Main navigation sidebar with Charts and Reports menu items
+- **TradingDashboard**: Charts page component that orchestrates the trading UI
+- **Reports**: Analytics and reporting page
 - **TradingHeader**: Top navigation with mode selector (Backtest/Live) and dark mode toggle
 - **TradingChart**: TradingView-style candlestick chart using lightweight-charts v5
 - **ControlPanel**: Right sidebar with controls for:

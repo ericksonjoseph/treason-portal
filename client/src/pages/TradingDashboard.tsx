@@ -63,7 +63,7 @@ export default function TradingDashboard() {
   ];
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <TradingHeader
         mode={mode}
         onModeChange={setMode}
