@@ -5,7 +5,7 @@ import ControlPanel from '@/components/ControlPanel';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState('rsi-macd');
+  const [selectedTraitor, setSelectedTraitor] = useState('rsi-macd');
   const [ticker, setTicker] = useState('AAPL');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isRunning, setIsRunning] = useState(false);
@@ -21,7 +21,7 @@ export default function TradingDashboard() {
     setIsDarkMode(!isDarkMode);
   };
 
-  const mockAlgorithms = [
+  const mockTraitors = [
     { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
     { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
     { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
@@ -69,7 +69,7 @@ export default function TradingDashboard() {
         onModeChange={setMode}
         connectionStatus={isRunning ? 'active' : 'inactive'}
         marketStatus="active"
-        algorithmStatus={isRunning ? 'active' : 'inactive'}
+        traitorStatus={isRunning ? 'active' : 'inactive'}
         isDarkMode={isDarkMode}
         onThemeToggle={handleThemeToggle}
       />
@@ -88,9 +88,9 @@ export default function TradingDashboard() {
         
         <div className="w-96 border-l bg-background overflow-y-auto">
           <ControlPanel
-            algorithms={mockAlgorithms}
-            selectedAlgorithm={selectedAlgorithm}
-            onAlgorithmChange={setSelectedAlgorithm}
+            traitors={mockTraitors}
+            selectedTraitor={selectedTraitor}
+            onTraitorChange={setSelectedTraitor}
             ticker={ticker}
             onTickerChange={setTicker}
             date={selectedDate}
@@ -99,16 +99,16 @@ export default function TradingDashboard() {
             isRunning={isRunning}
             onRunClick={() => {
               setIsRunning(true);
-              console.log('Algorithm started', {
+              console.log('Traitor started', {
                 mode,
                 ticker,
                 date: selectedDate?.toLocaleDateString(),
-                algorithm: selectedAlgorithm,
+                traitor: selectedTraitor,
               });
             }}
             onStopClick={() => {
               setIsRunning(false);
-              console.log('Algorithm stopped');
+              console.log('Traitor stopped');
             }}
             onSettingsClick={() => console.log('Settings clicked')}
             metrics={mockMetrics}

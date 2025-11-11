@@ -1,15 +1,19 @@
-# Stock Trading Platform
+# Treason - Trading Platform
 
 ## Overview
-A single-page algorithmic trading platform that visualizes backtesting results and live trading data with TradingView-style charts. The platform provides an intuitive interface for selecting algorithms, stocks, and dates to analyze trading performance.
+Treason is a single-page trading platform that visualizes backtesting results and live trading data with TradingView-style charts. The platform provides an intuitive interface for selecting traitors (trading algorithms), stocks, and dates to analyze trading performance.
 
 ## Project Goal
-Build a stock trading platform that:
+Build a trading platform named "Treason" that:
 - Displays TradingView-style charts with buy/sell signals
-- Allows users to select and run existing algorithms
+- Allows users to select and run existing traitors (trading algorithms)
 - Shows real-time updates during market hours
 - Communicates with a user-provided REST API (no backend development needed)
 - Supports both backtesting and live trading modes
+
+## Terminology
+- **Treason**: The name of the software/platform
+- **Traitors**: Trading algorithms (instead of "algorithms" or "algos")
 
 ## Recent Changes (November 11, 2025)
 

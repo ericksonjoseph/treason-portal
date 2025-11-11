@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AlgorithmSelector from '../AlgorithmSelector';
 
-const mockAlgorithms = [
+const mockTraitors = [
   { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
   { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
   { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
@@ -14,11 +14,11 @@ export default function AlgorithmSelectorExample() {
   return (
     <div className="w-80">
       <AlgorithmSelector
-        algorithms={mockAlgorithms}
+        algorithms={mockTraitors}
         value={selected}
         onValueChange={(val) => {
           setSelected(val);
-          console.log('Algorithm selected:', val);
+          console.log('Traitor selected:', val);
         }}
       />
     </div>

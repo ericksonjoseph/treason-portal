@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ControlPanel from '../ControlPanel';
 
-const mockAlgorithms = [
+const mockTraitors = [
   { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion' },
   { id: 'ema-crossover', name: 'EMA Crossover', description: 'Moving average' },
 ];
@@ -27,9 +27,9 @@ export default function ControlPanelExample() {
   return (
     <div className="h-screen w-96 bg-card">
       <ControlPanel
-        algorithms={mockAlgorithms}
-        selectedAlgorithm={selected}
-        onAlgorithmChange={setSelected}
+        traitors={mockTraitors}
+        selectedTraitor={selected}
+        onTraitorChange={setSelected}
         ticker={ticker}
         onTickerChange={setTicker}
         date={date}

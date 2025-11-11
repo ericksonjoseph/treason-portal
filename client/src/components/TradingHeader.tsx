@@ -8,7 +8,7 @@ interface TradingHeaderProps {
   onModeChange?: (mode: 'backtest' | 'live') => void;
   connectionStatus: 'active' | 'inactive' | 'connecting';
   marketStatus: 'active' | 'inactive';
-  algorithmStatus: 'active' | 'inactive';
+  traitorStatus: 'active' | 'inactive';
   isDarkMode?: boolean;
   onThemeToggle?: () => void;
 }
@@ -18,7 +18,7 @@ export default function TradingHeader({
   onModeChange,
   connectionStatus,
   marketStatus,
-  algorithmStatus,
+  traitorStatus,
   isDarkMode,
   onThemeToggle,
 }: TradingHeaderProps) {
@@ -28,7 +28,7 @@ export default function TradingHeader({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-semibold">AlgoTrader</h1>
+            <h1 className="text-xl font-semibold">Treason</h1>
           </div>
         </div>
 
@@ -46,7 +46,7 @@ export default function TradingHeader({
         <div className="flex items-center gap-3">
           <StatusIndicator type="connection" status={connectionStatus} />
           <StatusIndicator type="market" status={marketStatus} />
-          <StatusIndicator type="algorithm" status={algorithmStatus} />
+          <StatusIndicator type="traitor" status={traitorStatus} />
           <Button
             variant="ghost"
             size="icon"

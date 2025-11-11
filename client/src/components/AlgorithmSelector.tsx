@@ -6,14 +6,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-interface Algorithm {
+interface Traitor {
   id: string;
   name: string;
   description?: string;
 }
 
 interface AlgorithmSelectorProps {
-  algorithms: Algorithm[];
+  algorithms: Traitor[];
   value?: string;
   onValueChange?: (value: string) => void;
 }
@@ -25,16 +25,16 @@ export default function AlgorithmSelector({
 }: AlgorithmSelectorProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="w-full" data-testid="select-algorithm">
-        <SelectValue placeholder="Select an algorithm" />
+      <SelectTrigger className="w-full" data-testid="select-traitor">
+        <SelectValue placeholder="Select a traitor" />
       </SelectTrigger>
       <SelectContent>
-        {algorithms.map((algo) => (
-          <SelectItem key={algo.id} value={algo.id} data-testid={`option-algorithm-${algo.id}`}>
+        {algorithms.map((traitor) => (
+          <SelectItem key={traitor.id} value={traitor.id} data-testid={`option-traitor-${traitor.id}`}>
             <div>
-              <div className="font-medium">{algo.name}</div>
-              {algo.description && (
-                <div className="text-xs text-muted-foreground">{algo.description}</div>
+              <div className="font-medium">{traitor.name}</div>
+              {traitor.description && (
+                <div className="text-xs text-muted-foreground">{traitor.description}</div>
               )}
             </div>
           </SelectItem>

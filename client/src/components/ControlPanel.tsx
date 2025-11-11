@@ -7,7 +7,7 @@ import DatePicker from './DatePicker';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
 
-interface Algorithm {
+interface Traitor {
   id: string;
   name: string;
   description?: string;
@@ -31,9 +31,9 @@ interface Trade {
 }
 
 interface ControlPanelProps {
-  algorithms: Algorithm[];
-  selectedAlgorithm?: string;
-  onAlgorithmChange?: (id: string) => void;
+  traitors: Traitor[];
+  selectedTraitor?: string;
+  onTraitorChange?: (id: string) => void;
   ticker?: string;
   onTickerChange?: (ticker: string) => void;
   date?: Date;
@@ -49,9 +49,9 @@ interface ControlPanelProps {
 }
 
 export default function ControlPanel({
-  algorithms,
-  selectedAlgorithm,
-  onAlgorithmChange,
+  traitors,
+  selectedTraitor,
+  onTraitorChange,
   ticker,
   onTickerChange,
   date,
@@ -69,7 +69,7 @@ export default function ControlPanel({
     <div className="space-y-4 h-full overflow-y-auto p-4">
       <Card data-testid="card-controls">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Algorithm Control</CardTitle>
+          <CardTitle className="text-base font-semibold">Traitor Control</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -87,11 +87,11 @@ export default function ControlPanel({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Algorithm</label>
+            <label className="text-sm font-medium">Traitor</label>
             <AlgorithmSelector
-              algorithms={algorithms}
-              value={selectedAlgorithm}
-              onValueChange={onAlgorithmChange}
+              algorithms={traitors}
+              value={selectedTraitor}
+              onValueChange={onTraitorChange}
             />
           </div>
           <div className="flex gap-2">

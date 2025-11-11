@@ -31,7 +31,7 @@ export function AppSidebar() {
     <Sidebar data-testid="sidebar-main">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Trading Platform</SidebarGroupLabel>
+          <SidebarGroupLabel>Treason</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
