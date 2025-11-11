@@ -39,7 +39,7 @@ export default function TradeTimeline({ trades, onTradeClick }: TradeTimelinePro
                       className={
                         trade.action === 'buy'
                           ? 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
-                          : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                          : 'bg-[#93b4d4] hover:bg-[#7BA3D0] dark:bg-[#7BA3D0] dark:hover:bg-[#93b4d4] text-white'
                       }
                       data-testid={`badge-action-${trade.action}`}
                     >
@@ -55,7 +55,7 @@ export default function TradeTimeline({ trades, onTradeClick }: TradeTimelinePro
                   {trade.pnl !== undefined && (
                     <div
                       className={`text-sm font-mono font-semibold ${
-                        trade.pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'
+                        trade.pnl >= 0 ? 'text-green-600 dark:text-green-400' : 'text-[#7BA3D0] dark:text-[#93b4d4]'
                       }`}
                       data-testid={`text-pnl-${trade.id}`}
                     >

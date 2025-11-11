@@ -8,7 +8,7 @@ interface TickerSelectorProps {
 }
 
 export default function TickerSelector({
-  value,
+  value = '',
   onChange,
   placeholder = 'Enter ticker (e.g., AAPL)',
 }: TickerSelectorProps) {
