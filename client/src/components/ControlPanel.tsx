@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Play, Square, Settings } from 'lucide-react';
 import AlgorithmSelector from './AlgorithmSelector';
 import TickerSelector from './TickerSelector';
+import DatePicker from './DatePicker';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
 
@@ -35,6 +36,9 @@ interface ControlPanelProps {
   onAlgorithmChange?: (id: string) => void;
   ticker?: string;
   onTickerChange?: (ticker: string) => void;
+  date?: Date;
+  onDateChange?: (date: Date | undefined) => void;
+  mode?: 'backtest' | 'live';
   isRunning: boolean;
   onRunClick?: () => void;
   onStopClick?: () => void;
@@ -50,6 +54,9 @@ export default function ControlPanel({
   onAlgorithmChange,
   ticker,
   onTickerChange,
+  date,
+  onDateChange,
+  mode = 'backtest',
   isRunning,
   onRunClick,
   onStopClick,
@@ -68,6 +75,16 @@ export default function ControlPanel({
           <div className="space-y-2">
             <label className="text-sm font-medium">Stock Ticker</label>
             <TickerSelector value={ticker} onChange={onTickerChange} />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              {mode === 'backtest' ? 'Backtest Date' : 'Trading Date'}
+            </label>
+            <DatePicker
+              date={date}
+              onDateChange={onDateChange}
+              label={mode === 'backtest' ? 'Select backtest date' : 'Select trading date'}
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Algorithm</label>

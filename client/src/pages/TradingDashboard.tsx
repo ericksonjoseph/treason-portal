@@ -7,6 +7,7 @@ export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('rsi-macd');
   const [ticker, setTicker] = useState('AAPL');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isRunning, setIsRunning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -92,10 +93,18 @@ export default function TradingDashboard() {
             onAlgorithmChange={setSelectedAlgorithm}
             ticker={ticker}
             onTickerChange={setTicker}
+            date={selectedDate}
+            onDateChange={setSelectedDate}
+            mode={mode}
             isRunning={isRunning}
             onRunClick={() => {
               setIsRunning(true);
-              console.log('Algorithm started');
+              console.log('Algorithm started', {
+                mode,
+                ticker,
+                date: selectedDate?.toLocaleDateString(),
+                algorithm: selectedAlgorithm,
+              });
             }}
             onStopClick={() => {
               setIsRunning(false);
