@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
+import type { RunInstance } from '@/types/traitor';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
   const [selectedTraitor, setSelectedTraitor] = useState('rsi-macd');
   const [ticker, setTicker] = useState('AAPL');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
   const [isRunning, setIsRunning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -27,6 +29,60 @@ export default function TradingDashboard() {
     { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
     { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
   ];
+
+  const allRunInstances: RunInstance[] = [
+    { 
+      id: 'run-1', 
+      runNumber: 1, 
+      timestamp: '09:30 AM', 
+      status: 'completed',
+      traitorId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-2', 
+      runNumber: 2, 
+      timestamp: '11:45 AM', 
+      status: 'completed',
+      traitorId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-3', 
+      runNumber: 3, 
+      timestamp: '02:15 PM', 
+      status: 'running',
+      traitorId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-4', 
+      runNumber: 1, 
+      timestamp: '10:00 AM', 
+      status: 'completed',
+      traitorId: 'ema-crossover',
+      date: new Date().toDateString(),
+    },
+  ];
+
+  const filteredRunInstances = useMemo(() => 
+    allRunInstances.filter(
+      (instance) =>
+        instance.traitorId === selectedTraitor &&
+        instance.date === selectedDate?.toDateString()
+    ),
+    [selectedTraitor, selectedDate, allRunInstances]
+  );
+
+  useEffect(() => {
+    if (filteredRunInstances.length > 0 && !selectedRunInstance) {
+      setSelectedRunInstance(filteredRunInstances[0].id);
+    } else if (filteredRunInstances.length === 0) {
+      setSelectedRunInstance('');
+    } else if (!filteredRunInstances.find(i => i.id === selectedRunInstance)) {
+      setSelectedRunInstance(filteredRunInstances[0].id);
+    }
+  }, [filteredRunInstances, selectedRunInstance]);
 
   const mockMetrics = [
     { label: 'Total P/L', value: '12,450.80', prefix: '$', change: 8.5 },
@@ -91,6 +147,9 @@ export default function TradingDashboard() {
             traitors={mockTraitors}
             selectedTraitor={selectedTraitor}
             onTraitorChange={setSelectedTraitor}
+            runInstances={filteredRunInstances}
+            selectedRunInstance={selectedRunInstance}
+            onRunInstanceChange={setSelectedRunInstance}
             ticker={ticker}
             onTickerChange={setTicker}
             date={selectedDate}
@@ -104,6 +163,7 @@ export default function TradingDashboard() {
                 ticker,
                 date: selectedDate?.toLocaleDateString(),
                 traitor: selectedTraitor,
+                runInstance: selectedRunInstance,
               });
             }}
             onStopClick={() => {

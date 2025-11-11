@@ -4,14 +4,10 @@ import { Play, Square, Settings } from 'lucide-react';
 import AlgorithmSelector from './AlgorithmSelector';
 import TickerSelector from './TickerSelector';
 import DatePicker from './DatePicker';
+import RunInstanceSelector from './RunInstanceSelector';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
-
-interface Traitor {
-  id: string;
-  name: string;
-  description?: string;
-}
+import type { Traitor, RunInstance } from '@/types/traitor';
 
 interface Metric {
   label: string;
@@ -34,6 +30,9 @@ interface ControlPanelProps {
   traitors: Traitor[];
   selectedTraitor?: string;
   onTraitorChange?: (id: string) => void;
+  runInstances?: RunInstance[];
+  selectedRunInstance?: string;
+  onRunInstanceChange?: (id: string) => void;
   ticker?: string;
   onTickerChange?: (ticker: string) => void;
   date?: Date;
@@ -52,6 +51,9 @@ export default function ControlPanel({
   traitors,
   selectedTraitor,
   onTraitorChange,
+  runInstances = [],
+  selectedRunInstance,
+  onRunInstanceChange,
   ticker,
   onTickerChange,
   date,
@@ -94,6 +96,16 @@ export default function ControlPanel({
               onValueChange={onTraitorChange}
             />
           </div>
+          {runInstances.length > 0 && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Run Instance</label>
+              <RunInstanceSelector
+                instances={runInstances}
+                value={selectedRunInstance}
+                onValueChange={onRunInstanceChange}
+              />
+            </div>
+          )}
           <div className="flex gap-2">
             {!isRunning ? (
               <Button onClick={onRunClick} className="flex-1" data-testid="button-run">

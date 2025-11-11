@@ -5,12 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface Traitor {
-  id: string;
-  name: string;
-  description?: string;
-}
+import type { Traitor } from '@/types/traitor';
 
 interface AlgorithmSelectorProps {
   algorithms: Traitor[];
