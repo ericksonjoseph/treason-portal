@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Square, Settings } from 'lucide-react';
 import AlgorithmSelector from './AlgorithmSelector';
+import TickerSelector from './TickerSelector';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
 
@@ -32,6 +33,8 @@ interface ControlPanelProps {
   algorithms: Algorithm[];
   selectedAlgorithm?: string;
   onAlgorithmChange?: (id: string) => void;
+  ticker?: string;
+  onTickerChange?: (ticker: string) => void;
   isRunning: boolean;
   onRunClick?: () => void;
   onStopClick?: () => void;
@@ -45,6 +48,8 @@ export default function ControlPanel({
   algorithms,
   selectedAlgorithm,
   onAlgorithmChange,
+  ticker,
+  onTickerChange,
   isRunning,
   onRunClick,
   onStopClick,
@@ -60,11 +65,18 @@ export default function ControlPanel({
           <CardTitle className="text-base font-semibold">Algorithm Control</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <AlgorithmSelector
-            algorithms={algorithms}
-            value={selectedAlgorithm}
-            onValueChange={onAlgorithmChange}
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Stock Ticker</label>
+            <TickerSelector value={ticker} onChange={onTickerChange} />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Algorithm</label>
+            <AlgorithmSelector
+              algorithms={algorithms}
+              value={selectedAlgorithm}
+              onValueChange={onAlgorithmChange}
+            />
+          </div>
           <div className="flex gap-2">
             {!isRunning ? (
               <Button onClick={onRunClick} className="flex-1" data-testid="button-run">

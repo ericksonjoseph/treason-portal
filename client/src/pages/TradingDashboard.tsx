@@ -6,6 +6,7 @@ import ControlPanel from '@/components/ControlPanel';
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('rsi-macd');
+  const [ticker, setTicker] = useState('AAPL');
   const [isRunning, setIsRunning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -75,7 +76,12 @@ export default function TradingDashboard() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 p-4">
           <div className="h-full bg-card rounded-lg border p-4">
-            <TradingChart data={mockChartData} trades={isRunning ? mockChartTrades : []} />
+            <div className="mb-2">
+              <h2 className="text-lg font-semibold font-mono">{ticker}</h2>
+            </div>
+            <div className="h-[calc(100%-2.5rem)]">
+              <TradingChart data={mockChartData} trades={isRunning ? mockChartTrades : []} />
+            </div>
           </div>
         </div>
         
@@ -84,6 +90,8 @@ export default function TradingDashboard() {
             algorithms={mockAlgorithms}
             selectedAlgorithm={selectedAlgorithm}
             onAlgorithmChange={setSelectedAlgorithm}
+            ticker={ticker}
+            onTickerChange={setTicker}
             isRunning={isRunning}
             onRunClick={() => {
               setIsRunning(true);

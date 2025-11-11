@@ -20,6 +20,7 @@ const mockTrades = [
 
 export default function ControlPanelExample() {
   const [selected, setSelected] = useState('rsi-macd');
+  const [ticker, setTicker] = useState('AAPL');
   const [isRunning, setIsRunning] = useState(false);
 
   return (
@@ -28,6 +29,8 @@ export default function ControlPanelExample() {
         algorithms={mockAlgorithms}
         selectedAlgorithm={selected}
         onAlgorithmChange={setSelected}
+        ticker={ticker}
+        onTickerChange={setTicker}
         isRunning={isRunning}
         onRunClick={() => {
           setIsRunning(true);

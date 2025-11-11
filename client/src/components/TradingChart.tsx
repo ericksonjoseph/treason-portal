@@ -43,10 +43,10 @@ export default function TradingChart({ data, trades = [] }: TradingChartProps) {
 
     const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#10b981',
-      downColor: '#ef4444',
+      downColor: '#3b82f6',
       borderVisible: false,
       wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
+      wickDownColor: '#3b82f6',
     });
 
     candlestickSeriesRef.current = candlestickSeries;
@@ -56,7 +56,7 @@ export default function TradingChart({ data, trades = [] }: TradingChartProps) {
       const markers = trades.map(trade => ({
         time: trade.time as any,
         position: trade.type === 'buy' ? ('belowBar' as const) : ('aboveBar' as const),
-        color: trade.type === 'buy' ? '#10b981' : '#ef4444',
+        color: trade.type === 'buy' ? '#10b981' : '#3b82f6',
         shape: trade.type === 'buy' ? ('arrowUp' as const) : ('arrowDown' as const),
         text: trade.type === 'buy' ? 'B' : 'S',
       }));
