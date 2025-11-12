@@ -1,7 +1,16 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+let logoutHandler: (() => void) | null = null;
+
+export function setLogoutHandler(handler: () => void) {
+  logoutHandler = handler;
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    if (res.status === 401 && logoutHandler) {
+      logoutHandler();
+    }
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }

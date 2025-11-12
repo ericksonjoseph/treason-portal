@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { queryClient, setLogoutHandler } from '@/lib/queryClient';
 
 interface User {
   username: string;
@@ -15,15 +16,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function isValidUser(data: unknown): data is User {
+  if (!data || typeof data !== 'object') return false;
+  const obj = data as Record<string, unknown>;
+  return (
+    typeof obj.username === 'string' &&
+    typeof obj.token === 'string' &&
+    obj.username.length > 0 &&
+    obj.token.length > 0
+  );
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('treason_user');
+    queryClient.clear();
+  };
+
   useEffect(() => {
+    setLogoutHandler(logout);
+
     const storedUser = localStorage.getItem('treason_user');
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        if (isValidUser(parsed)) {
+          setUser(parsed);
+        } else {
+          localStorage.removeItem('treason_user');
+        }
       } catch (e) {
         localStorage.removeItem('treason_user');
       }
@@ -51,11 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setUser(userData);
     localStorage.setItem('treason_user', JSON.stringify(userData));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('treason_user');
   };
 
   return (
