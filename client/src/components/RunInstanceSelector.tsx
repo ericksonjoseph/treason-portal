@@ -5,13 +5,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Clock } from 'lucide-react';
+import { Clock, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { RunInstance } from '@/types/traitor';
 
 interface RunInstanceSelectorProps {
   instances: RunInstance[];
   value?: string;
   onValueChange?: (value: string) => void;
+  onDelete?: (instanceId: string) => void;
   disabled?: boolean;
 }
 
@@ -19,8 +21,14 @@ export default function RunInstanceSelector({
   instances,
   value,
   onValueChange,
+  onDelete,
   disabled = false,
 }: RunInstanceSelectorProps) {
+  const handleDelete = (e: React.MouseEvent, instanceId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete?.(instanceId);
+  };
   if (instances.length === 0) {
     return null;
   }
@@ -49,21 +57,34 @@ export default function RunInstanceSelector({
             value={instance.id}
             data-testid={`option-run-${instance.id}`}
           >
-            <div className="flex items-center gap-2">
-              <span className="font-medium">Run #{instance.runNumber}</span>
-              <span className="text-xs text-muted-foreground">{instance.timestamp}</span>
-              {instance.status && (
-                <span 
-                  className={`text-xs px-1.5 py-0.5 rounded ${
-                    instance.status === 'completed' 
-                      ? 'bg-green-500/10 text-green-600 dark:text-green-400'
-                      : instance.status === 'running'
-                      ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                      : 'bg-red-500/10 text-red-600 dark:text-red-400'
-                  }`}
+            <div className="flex items-center gap-2 justify-between w-full">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Run #{instance.runNumber}</span>
+                <span className="text-xs text-muted-foreground">{instance.timestamp}</span>
+                {instance.status && (
+                  <span 
+                    className={`text-xs px-1.5 py-0.5 rounded ${
+                      instance.status === 'completed' 
+                        ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                        : instance.status === 'running'
+                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                        : 'bg-red-500/10 text-red-600 dark:text-red-400'
+                    }`}
+                  >
+                    {instance.status}
+                  </span>
+                )}
+              </div>
+              {onDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 ml-2 hover-elevate"
+                  onClick={(e) => handleDelete(e, instance.id)}
+                  data-testid={`button-delete-run-${instance.id}`}
                 >
-                  {instance.status}
-                </span>
+                  <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                </Button>
               )}
             </div>
           </SelectItem>

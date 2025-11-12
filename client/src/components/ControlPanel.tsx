@@ -33,6 +33,7 @@ interface ControlPanelProps {
   runInstances?: RunInstance[];
   selectedRunInstance?: string;
   onRunInstanceChange?: (id: string) => void;
+  onDeleteRun?: (instanceId: string) => void;
   ticker?: string;
   onTickerChange?: (ticker: string) => void;
   date?: Date;
@@ -54,6 +55,7 @@ export default function ControlPanel({
   runInstances = [],
   selectedRunInstance,
   onRunInstanceChange,
+  onDeleteRun,
   ticker,
   onTickerChange,
   date,
@@ -103,6 +105,7 @@ export default function ControlPanel({
                 instances={runInstances}
                 value={selectedRunInstance}
                 onValueChange={onRunInstanceChange}
+                onDelete={onDeleteRun}
               />
             </div>
           )}

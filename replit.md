@@ -79,6 +79,8 @@ Build a trading platform named "Treason" that:
 4. **Run Instance Selector**: When a traitor has run multiple times on the same day:
    - Shows a dropdown with all run instances when multiple runs exist
    - Displays run number, timestamp, and status (completed/running/failed)
+   - Trash icon on each row allows deleting individual run instances
+   - Confirmation dialog before deletion
    - Shows informational message for single runs with clock icon
    - Automatically hidden when no runs exist for selected traitor/date
    - Smart selection management that updates when traitor or date changes

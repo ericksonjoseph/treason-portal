@@ -3,6 +3,17 @@ import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
 import type { RunInstance } from '@/types/traitor';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
@@ -12,6 +23,9 @@ export default function TradingDashboard() {
   const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
   const [isRunning, setIsRunning] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [runToDelete, setRunToDelete] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -30,7 +44,7 @@ export default function TradingDashboard() {
     { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
   ];
 
-  const allRunInstances: RunInstance[] = [
+  const [allRunInstances, setAllRunInstances] = useState<RunInstance[]>([
     { 
       id: 'run-1', 
       runNumber: 1, 
@@ -63,7 +77,7 @@ export default function TradingDashboard() {
       traitorId: 'ema-crossover',
       date: new Date().toDateString(),
     },
-  ];
+  ]);
 
   const filteredRunInstances = useMemo(() => 
     allRunInstances.filter(
@@ -83,6 +97,23 @@ export default function TradingDashboard() {
       setSelectedRunInstance(filteredRunInstances[0].id);
     }
   }, [filteredRunInstances, selectedRunInstance]);
+
+  const handleDeleteRun = (instanceId: string) => {
+    setRunToDelete(instanceId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (runToDelete) {
+      setAllRunInstances(allRunInstances.filter(r => r.id !== runToDelete));
+      toast({
+        title: 'Run deleted',
+        description: 'Successfully deleted the run instance',
+      });
+    }
+    setDeleteDialogOpen(false);
+    setRunToDelete(null);
+  };
 
   const mockMetrics = [
     { label: 'Total P/L', value: '12,450.80', prefix: '$', change: 8.5 },
@@ -150,6 +181,7 @@ export default function TradingDashboard() {
             runInstances={filteredRunInstances}
             selectedRunInstance={selectedRunInstance}
             onRunInstanceChange={setSelectedRunInstance}
+            onDeleteRun={handleDeleteRun}
             ticker={ticker}
             onTickerChange={setTicker}
             date={selectedDate}
@@ -176,6 +208,27 @@ export default function TradingDashboard() {
             onTradeClick={(trade) => console.log('Trade clicked:', trade)}
           />
         </div>
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent data-testid="dialog-delete-confirm">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Run Instance</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this run instance? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="bg-destructive text-destructive-foreground hover-elevate"
+                data-testid="button-confirm-delete"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
