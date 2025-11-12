@@ -8,11 +8,13 @@ import { AppSidebar } from "@/components/AppSidebar";
 import TradingDashboard from "@/pages/TradingDashboard";
 import RevenueGraphPage from "@/pages/RevenueGraphPage";
 import RevenueCalendarPage from "@/pages/RevenueCalendarPage";
+import RunHistoryPage from "@/pages/RunHistoryPage";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={TradingDashboard} />
+      <Route path="/run-history" component={RunHistoryPage} />
       <Route path="/reports/revenue-graph" component={RevenueGraphPage} />
       <Route path="/reports/revenue-calendar" component={RevenueCalendarPage} />
     </Switch>

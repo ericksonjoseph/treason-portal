@@ -1,4 +1,4 @@
-import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar } from 'lucide-react';
+import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
@@ -36,6 +36,15 @@ export function AppSidebar() {
                   <Link href="/" data-testid="link-charts">
                     <BarChart3 />
                     <span>Charts</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location === '/run-history'}>
+                  <Link href="/run-history" data-testid="link-run-history">
+                    <History />
+                    <span>Run History</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
