@@ -3,28 +3,14 @@ import { ReportsLayout } from '@/components/ReportsLayout';
 import ReportsFilters from '@/components/ReportsFilters';
 import RevenueCalendar from '@/components/RevenueCalendar';
 import { DateRange } from 'react-day-picker';
-import type { Traitor } from '@/types/traitor';
 import { generateRevenueData, generateCalendarData } from '@/utils/mockRevenueData';
+import { MOCK_TRAITORS, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
 
 export default function RevenueCalendarPage() {
   const [selectedTraitors, setSelectedTraitors] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-
-  const mockTraitors: Traitor[] = [
-    { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
-    { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
-    { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
-    { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
-  ];
-
-  const mockTickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'AMD'];
-
-  const modes = [
-    { value: 'backtest', label: 'Backtest' },
-    { value: 'live', label: 'Live Trading' },
-  ];
 
   const mockRevenueData = useMemo(() => generateRevenueData(30), []);
   const mockCalendarData = useMemo(() => generateCalendarData(mockRevenueData), [mockRevenueData]);
@@ -42,13 +28,13 @@ export default function RevenueCalendarPage() {
       description="View daily revenue performance in calendar format"
     >
       <ReportsFilters
-        traitors={mockTraitors}
+        traitors={MOCK_TRAITORS}
         selectedTraitors={selectedTraitors}
         onTraitorsChange={setSelectedTraitors}
-        tickers={mockTickers}
+        tickers={MOCK_TICKERS}
         selectedTickers={selectedTickers}
         onTickersChange={setSelectedTickers}
-        modes={modes}
+        modes={TRADING_MODES}
         selectedModes={selectedModes}
         onModesChange={setSelectedModes}
         dateRange={dateRange}

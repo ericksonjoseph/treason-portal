@@ -40,7 +40,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              <Collapsible defaultOpen className="group/collapsible">
+              <Collapsible defaultOpen={true} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton 
@@ -49,10 +49,10 @@ export function AppSidebar() {
                     >
                       <FileText />
                       <span>Reports</span>
-                      <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                      <ChevronDown className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
+                  <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton 
