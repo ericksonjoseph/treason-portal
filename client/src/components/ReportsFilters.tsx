@@ -16,6 +16,9 @@ interface ReportsFiltersProps {
   modes: Array<{ value: string; label: string }>;
   selectedModes: string[];
   onModesChange: (selected: string[]) => void;
+  statuses?: Array<{ value: string; label: string }>;
+  selectedStatuses?: string[];
+  onStatusesChange?: (selected: string[]) => void;
   dateRange?: DateRange;
   onDateRangeChange: (range: DateRange | undefined) => void;
   onReset: () => void;
@@ -31,12 +34,16 @@ export default function ReportsFilters({
   modes,
   selectedModes,
   onModesChange,
+  statuses,
+  selectedStatuses = [],
+  onStatusesChange,
   dateRange,
   onDateRangeChange,
   onReset,
 }: ReportsFiltersProps) {
   const traitorOptions = traitors.map((t) => ({ value: t.id, label: t.name }));
   const tickerOptions = tickers.map((t) => ({ value: t, label: t }));
+  const hasStatusFilter = statuses && onStatusesChange;
 
   return (
     <Card data-testid="card-filters">
@@ -52,7 +59,7 @@ export default function ReportsFilters({
           Reset
         </Button>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <CardContent className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasStatusFilter ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
         <div className="space-y-2">
           <label className="text-sm font-medium">Traitor</label>
           <MultiSelect
@@ -88,6 +95,20 @@ export default function ReportsFilters({
             testId="filter-tickers"
           />
         </div>
+
+        {hasStatusFilter && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Status</label>
+            <MultiSelect
+              options={statuses}
+              selected={selectedStatuses}
+              onChange={onStatusesChange}
+              placeholder="Select status"
+              allLabel="All Statuses"
+              testId="filter-statuses"
+            />
+          </div>
+        )}
 
         <div className="space-y-2">
           <label className="text-sm font-medium">Date Range</label>

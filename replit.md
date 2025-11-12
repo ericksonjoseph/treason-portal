@@ -54,8 +54,9 @@ Build a trading platform named "Treason" that:
      - Total Trades
      - Win Rate percentage
      - Profit/Loss with color coding
-2. **Global Filters**: Same comprehensive filtering system as Reports pages
-   - Filter by traitors, modes, tickers, and date ranges
+2. **Global Filters**: Comprehensive filtering system with:
+   - Filter by traitors, modes, tickers, status, and date ranges
+   - Status filter: Completed, Running, Failed
    - Reset button to clear all filters
 3. **Selection & Deletion**:
    - Checkbox selection for individual runs

@@ -33,6 +33,7 @@ export default function RunHistoryPage() {
   const [selectedTraitors, setSelectedTraitors] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedRuns, setSelectedRuns] = useState<Set<string>>(new Set());
   const [runs, setRuns] = useState(() => generateMockRuns(50));
@@ -40,10 +41,17 @@ export default function RunHistoryPage() {
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const statuses = [
+    { value: 'completed', label: 'Completed' },
+    { value: 'running', label: 'Running' },
+    { value: 'failed', label: 'Failed' },
+  ];
+
   const handleReset = () => {
     setSelectedTraitors([]);
     setSelectedModes([]);
     setSelectedTickers([]);
+    setSelectedStatuses([]);
     setDateRange(undefined);
   };
 
@@ -58,6 +66,9 @@ export default function RunHistoryPage() {
       if (selectedTickers.length > 0 && !selectedTickers.includes(run.ticker)) {
         return false;
       }
+      if (selectedStatuses.length > 0 && !selectedStatuses.includes(run.status)) {
+        return false;
+      }
       if (dateRange?.from) {
         const runDate = new Date(run.date);
         if (runDate < dateRange.from) return false;
@@ -65,7 +76,7 @@ export default function RunHistoryPage() {
       }
       return true;
     });
-  }, [runs, selectedTraitors, selectedModes, selectedTickers, dateRange]);
+  }, [runs, selectedTraitors, selectedModes, selectedTickers, selectedStatuses, dateRange]);
 
   const toggleSelectAll = () => {
     if (selectedRuns.size === filteredRuns.length) {
@@ -150,6 +161,9 @@ export default function RunHistoryPage() {
         modes={TRADING_MODES}
         selectedModes={selectedModes}
         onModesChange={setSelectedModes}
+        statuses={statuses}
+        selectedStatuses={selectedStatuses}
+        onStatusesChange={setSelectedStatuses}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
         onReset={handleReset}
