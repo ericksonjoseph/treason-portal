@@ -84,6 +84,14 @@ Build a trading platform named "Treason" that:
    - Shows informational message for single runs with clock icon
    - Automatically hidden when no runs exist for selected traitor/date
    - Smart selection management that updates when traitor or date changes
+5. **Traitor Settings Widget**: Click gear button to toggle between control and settings views
+   - **Traitor Control** (default view): Run/Stop controls, ticker, date, traitor selector
+   - **Traitor Settings** (settings view): Configure run-specific parameters
+     - Enum settings: Dropdown selectors for categorical options (e.g., risk tolerance: low/medium/high)
+     - Numeric settings: Sliders for numerical ranges (e.g., sizing: 0-100)
+     - Settings include: risk tolerance, sizing, stop loss, take profit, aggressiveness
+     - Back button at bottom right to return to control view
+     - Settings data structure from backend with field, type, value, options, and default
 
 #### Reports Pages (Analytics)
 **Two separate report pages accessible via collapsible Reports menu:**
@@ -153,7 +161,7 @@ Build a trading platform named "Treason" that:
 #### Core Layout
 - **App.tsx**: Root component with sidebar layout and routing
 - **AppSidebar**: Main navigation sidebar with Charts, Run History, and collapsible Reports menu (Revenue Graph, Revenue Calendar sub-items)
-- **ReportsLayout**: Shared layout wrapper for report pages with title, description, actions slot, and KPI cards slot
+- **ReportsLayout**: Shared layout wrapper for report pages with title, description, filters slot, actions slot, and KPI cards slot
 
 #### Run History Page Components
 - **RunHistoryPage**: Run management page with table, filters, and delete operations
@@ -164,14 +172,22 @@ Build a trading platform named "Treason" that:
 - **TradingDashboard**: Main charts page that orchestrates the trading UI
 - **TradingHeader**: Top navigation with mode selector (Backtest/Live) and dark mode toggle
 - **TradingChart**: TradingView-style candlestick chart using lightweight-charts v5
-- **ControlPanel**: Right sidebar with controls for:
-  - Stock ticker selector
-  - Date picker
-  - Traitor selector
-  - Run instance selector (when multiple runs exist)
-  - Run/Stop/Settings buttons
-  - Performance metrics
-  - Trade timeline
+- **ControlPanel**: Right sidebar with two view modes:
+  - **Control View** (default):
+    - Stock ticker selector
+    - Date picker
+    - Traitor selector
+    - Run instance selector (when multiple runs exist)
+    - Run/Stop/Settings buttons
+    - Performance metrics cards
+    - Trade timeline
+  - **Settings View** (accessed via gear button):
+    - Displays TraitorSettings component
+    - Back button to return to control view
+- **TraitorSettings**: Settings configuration widget for run-specific parameters
+  - Enum fields with dropdown selectors
+  - Numeric fields with sliders and range displays
+  - Back button to return to control view
 - **AlgorithmSelector**: Dropdown to choose trading traitors
 - **TickerSelector**: Input field for stock ticker symbols
 - **DatePicker**: Calendar component for single date selection
@@ -220,7 +236,10 @@ Build a trading platform named "Treason" that:
 - **State Management**: React hooks (useState, useEffect, useMemo)
 - **Routing**: Wouter
 - **Data Fetching**: TanStack Query v5
-- **Type Definitions**: Centralized in `client/src/types/traitor.ts` (Traitor, RunInstance interfaces)
+- **Type Definitions**: 
+  - `client/src/types/traitor.ts`: Traitor and RunInstance interfaces
+  - `client/src/types/settings.ts`: TraitorSetting interface and SettingType union (enum, numeric)
+  - `client/src/types/run.ts`: Run interface for run history data
 
 ### Storage
 - Currently using in-memory storage (MemStorage)

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Square, Settings } from 'lucide-react';
@@ -7,7 +8,9 @@ import DatePicker from './DatePicker';
 import RunInstanceSelector from './RunInstanceSelector';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
+import TraitorSettings from './TraitorSettings';
 import type { Traitor, RunInstance } from '@/types/traitor';
+import type { TraitorSetting } from '@/types/settings';
 
 interface Metric {
   label: string;
@@ -43,6 +46,8 @@ interface ControlPanelProps {
   onRunClick?: () => void;
   onStopClick?: () => void;
   onSettingsClick?: () => void;
+  settings?: TraitorSetting[];
+  onSettingChange?: (field: string, value: string | number) => void;
   metrics: Metric[];
   trades: Trade[];
   onTradeClick?: (trade: Trade) => void;
@@ -65,10 +70,33 @@ export default function ControlPanel({
   onRunClick,
   onStopClick,
   onSettingsClick,
+  settings = [],
+  onSettingChange,
   metrics,
   trades,
   onTradeClick,
 }: ControlPanelProps) {
+  const [showSettings, setShowSettings] = useState(false);
+
+  const handleSettingsClick = () => {
+    setShowSettings(true);
+    onSettingsClick?.();
+  };
+
+  const handleBackClick = () => {
+    setShowSettings(false);
+  };
+
+  if (showSettings) {
+    return (
+      <TraitorSettings
+        settings={settings}
+        onSettingChange={onSettingChange}
+        onBack={handleBackClick}
+      />
+    );
+  }
+
   return (
     <div className="space-y-4 h-full overflow-y-auto p-4">
       <Card data-testid="card-controls">
@@ -121,7 +149,7 @@ export default function ControlPanel({
                 Stop
               </Button>
             )}
-            <Button onClick={onSettingsClick} variant="outline" size="icon" data-testid="button-settings">
+            <Button onClick={handleSettingsClick} variant="outline" size="icon" data-testid="button-settings">
               <Settings className="w-4 h-4" />
             </Button>
           </div>

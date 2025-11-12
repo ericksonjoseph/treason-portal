@@ -3,6 +3,7 @@ import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
 import type { RunInstance } from '@/types/traitor';
+import type { TraitorSetting } from '@/types/settings';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +27,44 @@ export default function TradingDashboard() {
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  const [traitorSettings, setTraitorSettings] = useState<TraitorSetting[]>([
+    {
+      field: 'risk tolerance',
+      type: 'enum',
+      value: 'low',
+      options: ['low', 'medium', 'high'],
+      default: 'medium',
+    },
+    {
+      field: 'sizing',
+      type: 'numeric',
+      value: 10,
+      options: [0, 100],
+      default: 10,
+    },
+    {
+      field: 'stop loss',
+      type: 'numeric',
+      value: 5,
+      options: [0, 20],
+      default: 5,
+    },
+    {
+      field: 'take profit',
+      type: 'numeric',
+      value: 15,
+      options: [0, 50],
+      default: 15,
+    },
+    {
+      field: 'aggressiveness',
+      type: 'enum',
+      value: 'moderate',
+      options: ['conservative', 'moderate', 'aggressive'],
+      default: 'moderate',
+    },
+  ]);
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -113,6 +152,14 @@ export default function TradingDashboard() {
     }
     setDeleteDialogOpen(false);
     setRunToDelete(null);
+  };
+
+  const handleSettingChange = (field: string, value: string | number) => {
+    setTraitorSettings((prev) =>
+      prev.map((setting) =>
+        setting.field === field ? { ...setting, value } : setting
+      )
+    );
   };
 
   const mockMetrics = [
@@ -203,6 +250,8 @@ export default function TradingDashboard() {
               console.log('Traitor stopped');
             }}
             onSettingsClick={() => console.log('Settings clicked')}
+            settings={traitorSettings}
+            onSettingChange={handleSettingChange}
             metrics={mockMetrics}
             trades={mockTrades}
             onTradeClick={(trade) => console.log('Trade clicked:', trade)}
