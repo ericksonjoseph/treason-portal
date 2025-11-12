@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History, Moon, Sun } from 'lucide-react';
+import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History, Moon, Sun, User, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
   SidebarContent,
@@ -20,10 +21,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 
 export function AppSidebar() {
   const [location] = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -33,6 +36,10 @@ export function AppSidebar() {
   const handleThemeToggle = () => {
     document.documentElement.classList.toggle('dark');
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   const isReportsActive = location.startsWith('/reports');
@@ -109,6 +116,23 @@ export function AppSidebar() {
       
       <SidebarFooter>
         <SidebarMenu>
+          {user && (
+            <>
+              <SidebarMenuItem>
+                <SidebarMenuButton data-testid="button-user-info">
+                  <User />
+                  <span className="truncate">{user.username}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout} data-testid="button-logout">
+                  <LogOut />
+                  <span>Logout</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <Separator className="my-2" />
+            </>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton onClick={handleThemeToggle} data-testid="button-theme-toggle">
               {isDarkMode ? <Sun /> : <Moon />}

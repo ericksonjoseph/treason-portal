@@ -12,9 +12,23 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
+  
+  const storedUser = localStorage.getItem('treason_user');
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      if (user.token) {
+        headers['Authorization'] = `Bearer ${user.token}`;
+      }
+    } catch (e) {
+      console.error('Error parsing stored user:', e);
+    }
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -29,8 +43,23 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    const headers: HeadersInit = {};
+    
+    const storedUser = localStorage.getItem('treason_user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user.token) {
+          headers['Authorization'] = `Bearer ${user.token}`;
+        }
+      } catch (e) {
+        console.error('Error parsing stored user:', e);
+      }
+    }
+
     const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
