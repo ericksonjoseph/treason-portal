@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History, Moon, Sun, User, LogOut } from 'lucide-react';
+import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History, Moon, Sun, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -22,10 +22,20 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 export function AppSidebar() {
   const [location] = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -40,6 +50,16 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     logout();
+    setIsUserDialogOpen(false);
+  };
+
+  const getUserInitials = (username: string) => {
+    return username
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   const isReportsActive = location.startsWith('/reports');
@@ -117,21 +137,49 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           {user && (
-            <>
-              <SidebarMenuItem>
-                <SidebarMenuButton data-testid="button-user-info">
-                  <User />
-                  <span className="truncate">{user.username}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleLogout} data-testid="button-logout">
-                  <LogOut />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <Separator className="my-2" />
-            </>
+            <SidebarMenuItem>
+              <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+                <DialogTrigger asChild>
+                  <div>
+                    <SidebarMenuButton className="hover-elevate w-full" data-testid="button-user-profile">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                        {getUserInitials(user.username)}
+                      </div>
+                      <span className="truncate">{user.username}</span>
+                    </SidebarMenuButton>
+                  </div>
+                </DialogTrigger>
+                <DialogContent data-testid="dialog-user-profile">
+                  <DialogHeader>
+                    <DialogTitle>User Profile</DialogTitle>
+                    <DialogDescription>
+                      Your account information
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-4 py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground text-xl font-medium">
+                        {getUserInitials(user.username)}
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium" data-testid="text-username">{user.username}</p>
+                        <p className="text-xs text-muted-foreground">Trader</p>
+                      </div>
+                    </div>
+                    <Separator />
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleLogout} 
+                      className="w-full"
+                      data-testid="button-logout"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </SidebarMenuItem>
           )}
           <SidebarMenuItem>
             <SidebarMenuButton onClick={handleThemeToggle} data-testid="button-theme-toggle">
