@@ -20,9 +20,9 @@ Build a trading platform named "Treason" that:
 ### Authentication System
 - **Login Page**: Users must authenticate before accessing the platform
   - Login page at `/login` with username/password form
-  - Backend API handles authentication at `/api/auth/login` endpoint
-  - Returns UUID token stored in localStorage
-  - Token included as `Authorization: Bearer {token}` header in all API requests
+  - **Currently using mock login** - accepts any username/password
+  - Generates UUID token client-side (will be replaced with backend `/api/auth/login` endpoint later)
+  - Token stored in localStorage and included as `Authorization: Bearer {token}` header in all API requests
 - **Security Features**: 
   - Automatic logout on 401 responses (expired/invalid tokens)
   - Query cache cleared on logout to prevent cross-user data leakage

@@ -57,21 +57,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Login failed');
-    }
-
-    const data = await response.json();
+    // Mock login - accepts any username/password
+    // TODO: Replace with real API call when backend is ready
+    // const response = await fetch('/api/auth/login', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ username, password }),
+    // });
+    
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    
     const userData: User = {
       username,
-      token: data.token,
+      token: crypto.randomUUID(), // Generate mock UUID token
     };
 
     setUser(userData);
