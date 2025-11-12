@@ -106,6 +106,9 @@ export default function RunHistoryPage() {
       setSelectedRuns(new Set());
     } else if (runToDelete) {
       setRuns(runs.filter(r => r.id !== runToDelete));
+      const newSelected = new Set(selectedRuns);
+      newSelected.delete(runToDelete);
+      setSelectedRuns(newSelected);
       toast({
         title: 'Run deleted',
         description: 'Successfully deleted the run',

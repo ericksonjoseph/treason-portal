@@ -20,6 +20,7 @@ Build a trading platform named "Treason" that:
 ### Navigation
 - **Main Sidebar Navigation**: Collapsible sidebar with navigation menu
   - Charts: Main trading dashboard with live/backtest charts (`/`)
+  - Run History: Manage all traitor execution runs (`/run-history`)
   - Reports: Collapsible menu with two sub-pages
     - Revenue Graph: Line chart analytics (`/reports/revenue-graph`)
     - Revenue Calendar: Calendar view analytics (`/reports/revenue-calendar`)
@@ -36,6 +37,36 @@ Build a trading platform named "Treason" that:
   - Negative P&L values
 
 ### Features Implemented
+
+#### Run History Page
+1. **Table View**: Comprehensive table displaying all traitor execution runs with:
+   - Date and timestamp of execution
+   - Traitor name used
+   - Stock ticker traded
+   - Mode (Backtest/Live Trading)
+   - Status badge (Completed/Running/Failed)
+   - Run-specific settings:
+     - Aggressiveness (1-10)
+     - Risk Tolerance (1-10)
+     - Stop Loss percentage
+     - Take Profit percentage
+   - Results (for completed runs):
+     - Total Trades
+     - Win Rate percentage
+     - Profit/Loss with color coding
+2. **Global Filters**: Same comprehensive filtering system as Reports pages
+   - Filter by traitors, modes, tickers, and date ranges
+   - Reset button to clear all filters
+3. **Selection & Deletion**:
+   - Checkbox selection for individual runs
+   - Select all checkbox for bulk operations
+   - Delete individual runs with confirmation dialog
+   - Bulk delete selected runs with confirmation dialog
+   - Toast notifications for successful deletions
+4. **Color Coding**:
+   - Positive profit shown in green
+   - Negative profit shown in soft blue (#93b4d4)
+   - Status badges color-coded by state
 
 #### Charts Page (Dashboard)
 1. **Dark Mode Toggle**: Moon/sun icon in the header to switch between light and dark themes
@@ -118,8 +149,13 @@ Build a trading platform named "Treason" that:
 
 #### Core Layout
 - **App.tsx**: Root component with sidebar layout and routing
-- **AppSidebar**: Main navigation sidebar with Charts and collapsible Reports menu (Revenue Graph, Revenue Calendar sub-items)
+- **AppSidebar**: Main navigation sidebar with Charts, Run History, and collapsible Reports menu (Revenue Graph, Revenue Calendar sub-items)
 - **ReportsLayout**: Shared layout wrapper for report pages with title, description, actions slot, and KPI cards slot
+
+#### Run History Page Components
+- **RunHistoryPage**: Run management page with table, filters, and delete operations
+- **Run type**: TypeScript interface defining run structure (traitor, ticker, mode, date, settings, results)
+- **mockRunData.ts**: Utility to generate 50 mock runs with randomized data
 
 #### Charts Page Components
 - **TradingDashboard**: Main charts page that orchestrates the trading UI
