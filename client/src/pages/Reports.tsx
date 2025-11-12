@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChart3, TrendingUp, DollarSign, Activity } from 'lucide-react';
 import ReportsFilters from '@/components/ReportsFilters';
-import RevenueGraph from '@/components/RevenueGraph';
+import RevenueOverviewChart from '@/components/RevenueOverviewChart';
+import TraitorDetailChart from '@/components/TraitorDetailChart';
 import RevenueCalendar from '@/components/RevenueCalendar';
 import { DateRange } from 'react-day-picker';
 import type { Traitor } from '@/types/traitor';
+import type { DailyRevenueData } from '@/types/revenue';
 
 type ReportView = 'graph' | 'calendar';
 
@@ -31,18 +33,56 @@ export default function Reports() {
     { value: 'live', label: 'Live Trading' },
   ];
 
-  const mockRevenueData = useMemo(() => {
-    const data = [];
+  const mockRevenueGraphData = useMemo(() => {
+    const data: DailyRevenueData[] = [];
     const startDate = new Date('2025-11-01');
+    const allSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'AMD'];
+    const traitorConfigs = [
+      { id: 'rsi-macd', name: 'RSI + MACD', revenueRatio: 0.4 },
+      { id: 'ema-crossover', name: 'EMA Crossover', revenueRatio: 0.35 },
+      { id: 'bollinger', name: 'Bollinger Bands', revenueRatio: 0.25 },
+    ];
     
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
       date.setDate(date.getDate() + i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const totalRevenue = Math.floor(Math.random() * 5000) + 1000;
+      
+      const traitors = traitorConfigs.map((config) => {
+        const traitorRevenue = totalRevenue * config.revenueRatio;
+        const numSymbols = Math.floor(Math.random() * 4) + 2;
+        const selectedSymbols = allSymbols.slice(0, numSymbols);
+        
+        const symbolRuns = selectedSymbols.flatMap((symbol) => {
+          const numRuns = Math.floor(Math.random() * 2) + 1;
+          return Array.from({ length: numRuns }, (_, runIndex) => {
+            const runId = `${dateStr.replace(/-/g, '')}-${runIndex + 1}`;
+            return { symbol, runId, revenue: 0 };
+          });
+        });
+        
+        const weights = symbolRuns.map(() => Math.random() + 0.5);
+        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+        
+        symbolRuns.forEach((sr, idx) => {
+          const normalizedWeight = weights[idx] / totalWeight;
+          sr.revenue = traitorRevenue * normalizedWeight;
+        });
+        
+        return {
+          traitorId: config.id,
+          traitorName: config.name,
+          revenue: traitorRevenue,
+          symbolRuns,
+        };
+      });
       
       data.push({
-        date: date.toISOString().split('T')[0],
-        revenue: Math.floor(Math.random() * 5000) + 1000,
-        trades: Math.floor(Math.random() * 50) + 10,
+        date: dateStr,
+        totalRevenue,
+        traitors,
       });
     }
     
@@ -50,50 +90,39 @@ export default function Reports() {
   }, []);
 
   const mockCalendarData = useMemo(() => {
-    const allSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'AMD'];
-    
-    return mockRevenueData.map((d) => {
-      const numSymbols = Math.floor(Math.random() * 5) + 3;
-      const selectedSymbols = allSymbols.slice(0, numSymbols);
+    return mockRevenueGraphData.map((d) => {
+      const allSymbolsForDay = new Set<string>();
+      d.traitors.forEach((t) => {
+        t.symbolRuns.forEach((sr) => allSymbolsForDay.add(sr.symbol));
+      });
       
-      const numTraitors = Math.floor(Math.random() * 3) + 1;
-      const traitorOptions = [
-        { name: 'RSI + MACD', revenueRatio: 0.4 },
-        { name: 'EMA Crossover', revenueRatio: 0.35 },
-        { name: 'Bollinger Bands', revenueRatio: 0.25 },
-      ];
-      
-      const selectedTraitors = traitorOptions.slice(0, numTraitors);
-      const traitors = selectedTraitors.map((t) => {
-        const traitorRevenue = d.revenue * t.revenueRatio;
-        const symbolsForTraitor = selectedSymbols.slice(0, Math.floor(Math.random() * numSymbols) + 1);
-        
-        const weights = symbolsForTraitor.map(() => Math.random() + 0.5);
-        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-        
-        const symbols = symbolsForTraitor.map((symbol, idx) => {
-          const normalizedWeight = weights[idx] / totalWeight;
-          return {
-            symbol,
-            revenue: traitorRevenue * normalizedWeight,
-          };
+      const traitors = d.traitors.map((t) => {
+        const symbolsMap = new Map<string, number>();
+        t.symbolRuns.forEach((sr) => {
+          const current = symbolsMap.get(sr.symbol) || 0;
+          symbolsMap.set(sr.symbol, current + sr.revenue);
         });
         
+        const symbols = Array.from(symbolsMap.entries()).map(([symbol, revenue]) => ({
+          symbol,
+          revenue,
+        }));
+        
         return {
-          name: t.name,
-          revenue: traitorRevenue,
+          name: t.traitorName,
+          revenue: t.revenue,
           symbols,
         };
       });
       
       return {
         date: d.date,
-        revenue: d.revenue,
-        symbols: numSymbols,
+        revenue: d.totalRevenue,
+        symbols: allSymbolsForDay.size,
         traitors,
       };
     });
-  }, [mockRevenueData]);
+  }, [mockRevenueGraphData]);
 
   const handleReset = () => {
     setSelectedTraitors([]);
@@ -182,7 +211,7 @@ export default function Reports() {
                 onClick={() => setReportView('graph')}
                 data-testid="button-view-graph"
               >
-                Revenue Graph
+                Revenue Graphs
               </Button>
               <Button
                 variant={reportView === 'calendar' ? 'default' : 'outline'}
@@ -194,7 +223,24 @@ export default function Reports() {
             </div>
           </div>
 
-          {reportView === 'graph' && <RevenueGraph data={mockRevenueData} />}
+          {reportView === 'graph' && (
+            <div className="space-y-6">
+              <RevenueOverviewChart data={mockRevenueGraphData} />
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Individual Traitor Performance</h3>
+                <div className="space-y-6">
+                  {mockTraitors.map((traitor) => (
+                    <TraitorDetailChart
+                      key={traitor.id}
+                      traitorName={traitor.name}
+                      data={mockRevenueGraphData}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
           {reportView === 'calendar' && <RevenueCalendar data={mockCalendarData} />}
         </div>
       </div>
