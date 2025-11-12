@@ -71,27 +71,30 @@ export default function RevenueGraphPage() {
     </div>
   );
 
+  const filters = (
+    <ReportsFilters
+      traitors={MOCK_TRAITORS}
+      selectedTraitors={selectedTraitors}
+      onTraitorsChange={setSelectedTraitors}
+      tickers={MOCK_TICKERS}
+      selectedTickers={selectedTickers}
+      onTickersChange={setSelectedTickers}
+      modes={TRADING_MODES}
+      selectedModes={selectedModes}
+      onModesChange={setSelectedModes}
+      dateRange={dateRange}
+      onDateRangeChange={setDateRange}
+      onReset={handleReset}
+    />
+  );
+
   return (
     <ReportsLayout
       title="Revenue Graph"
       description="View revenue trends and performance over time"
+      filters={filters}
       kpiCards={kpiCards}
     >
-      <ReportsFilters
-        traitors={MOCK_TRAITORS}
-        selectedTraitors={selectedTraitors}
-        onTraitorsChange={setSelectedTraitors}
-        tickers={MOCK_TICKERS}
-        selectedTickers={selectedTickers}
-        onTickersChange={setSelectedTickers}
-        modes={TRADING_MODES}
-        selectedModes={selectedModes}
-        onModesChange={setSelectedModes}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        onReset={handleReset}
-      />
-
       <RevenueGraph data={mockRevenueData} />
     </ReportsLayout>
   );

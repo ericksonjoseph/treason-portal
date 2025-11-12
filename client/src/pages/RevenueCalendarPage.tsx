@@ -22,26 +22,29 @@ export default function RevenueCalendarPage() {
     setDateRange(undefined);
   };
 
+  const filters = (
+    <ReportsFilters
+      traitors={MOCK_TRAITORS}
+      selectedTraitors={selectedTraitors}
+      onTraitorsChange={setSelectedTraitors}
+      tickers={MOCK_TICKERS}
+      selectedTickers={selectedTickers}
+      onTickersChange={setSelectedTickers}
+      modes={TRADING_MODES}
+      selectedModes={selectedModes}
+      onModesChange={setSelectedModes}
+      dateRange={dateRange}
+      onDateRangeChange={setDateRange}
+      onReset={handleReset}
+    />
+  );
+
   return (
     <ReportsLayout
       title="Revenue Calendar"
       description="View daily revenue performance in calendar format"
+      filters={filters}
     >
-      <ReportsFilters
-        traitors={MOCK_TRAITORS}
-        selectedTraitors={selectedTraitors}
-        onTraitorsChange={setSelectedTraitors}
-        tickers={MOCK_TICKERS}
-        selectedTickers={selectedTickers}
-        onTickersChange={setSelectedTickers}
-        modes={TRADING_MODES}
-        selectedModes={selectedModes}
-        onModesChange={setSelectedModes}
-        dateRange={dateRange}
-        onDateRangeChange={setDateRange}
-        onReset={handleReset}
-      />
-
       <RevenueCalendar data={mockCalendarData} />
     </ReportsLayout>
   );

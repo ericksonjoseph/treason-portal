@@ -4,6 +4,7 @@ interface ReportsLayoutProps {
   title: string;
   description: string;
   actions?: ReactNode;
+  filters?: ReactNode;
   kpiCards?: ReactNode;
   children: ReactNode;
 }
@@ -12,6 +13,7 @@ export function ReportsLayout({
   title,
   description,
   actions,
+  filters,
   kpiCards,
   children,
 }: ReportsLayoutProps) {
@@ -27,6 +29,8 @@ export function ReportsLayout({
           </div>
           {actions && <div className="flex gap-2">{actions}</div>}
         </div>
+
+        {filters && <div>{filters}</div>}
 
         {kpiCards && <div>{kpiCards}</div>}
 

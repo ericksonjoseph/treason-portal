@@ -89,18 +89,18 @@ Build a trading platform named "Treason" that:
 **Two separate report pages accessible via collapsible Reports menu:**
 
 **Revenue Graph Page** (`/reports/revenue-graph`):
-1. **Performance Metrics Cards**: Display key stats like Total Trades, Win Rate, Total Profit, Average Trade
-2. **Global Filters**: Comprehensive filtering system with:
+1. **Global Filters** (positioned at top above KPI cards): Comprehensive filtering system with:
    - **Traitor Filter**: Multi-select dropdown to choose one, multiple, or all traitors
    - **Mode Filter**: Select Backtest, Live Trading, or both
    - **Stock Ticker Filter**: Multi-select dropdown to choose one, multiple, or all tickers
    - **Date Range Picker**: Calendar component to select single dates or date ranges
    - **Reset Button**: One-click reset of all filters to default state
-3. **Filter Behavior**:
+2. **Filter Behavior**:
    - Shows "All [Type]" when everything is selected
    - Shows "N selected" when multiple items are chosen
    - Shows individual label when only one item is selected
    - Date picker automatically closes after selecting a complete range
+3. **Performance Metrics Cards**: Display key stats like Total Trades, Win Rate, Total Profit, Average Trade
 4. **Revenue Graph Visualization**:
    - Line chart showing revenue over time using Recharts
    - X-axis displays dates (formatted as "MMM d")
