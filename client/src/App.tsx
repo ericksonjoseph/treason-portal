@@ -6,13 +6,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import TradingDashboard from "@/pages/TradingDashboard";
-import Reports from "@/pages/Reports";
+import RevenueGraphPage from "@/pages/RevenueGraphPage";
+import RevenueCalendarPage from "@/pages/RevenueCalendarPage";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={TradingDashboard} />
-      <Route path="/reports" component={Reports} />
+      <Route path="/reports/revenue-graph" component={RevenueGraphPage} />
+      <Route path="/reports/revenue-calendar" component={RevenueCalendarPage} />
     </Switch>
   );
 }
