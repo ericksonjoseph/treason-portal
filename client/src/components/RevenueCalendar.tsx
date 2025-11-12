@@ -16,9 +16,15 @@ import {
   addWeeks,
 } from 'date-fns';
 
+interface SymbolRevenue {
+  symbol: string;
+  revenue: number;
+}
+
 interface TraitorRevenue {
   name: string;
   revenue: number;
+  symbols: SymbolRevenue[];
 }
 
 interface CalendarDataPoint {
@@ -89,35 +95,20 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-36 border p-3 ${
+            className={`min-h-24 border p-3 ${
               !isCurrentMonth ? 'bg-muted/30 text-muted-foreground' : 'bg-card'
             } ${isToday ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/20' : ''}`}
             data-testid={`calendar-day-${format(cloneDay, 'yyyy-MM-dd')}`}
           >
             <div className="font-semibold text-sm mb-2">{formattedDate}</div>
             {dayData && isCurrentMonth && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div className="text-sm font-bold text-primary">
                   ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
                 </div>
-                {dayData.traitors.length > 0 && (
-                  <div className="space-y-1">
-                    {dayData.traitors.filter(t => t && t.revenue !== undefined).slice(0, 2).map((traitor) => (
-                      <div
-                        key={traitor.name}
-                        className="text-xs bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20"
-                      >
-                        <div className="font-medium truncate">{traitor.name}</div>
-                        <div className="font-semibold">
-                          ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -238,18 +229,33 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
             {dayData.traitors.length > 0 && (
               <div>
                 <h4 className="font-semibold text-lg mb-4">Traitor Performance</h4>
-                <div className="grid gap-3">
+                <div className="grid gap-4">
                   {dayData.traitors.filter(t => t && t.revenue !== undefined).map((traitor) => (
                     <div 
                       key={traitor.name} 
-                      className="bg-primary/10 border border-primary/20 px-4 py-3 rounded-md"
+                      className="bg-primary/10 border border-primary/20 px-4 py-4 rounded-md"
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-primary">{traitor.name}</span>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-medium text-primary text-base">{traitor.name}</span>
                         <span className="font-bold text-primary text-lg">
                           ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
+                      {traitor.symbols && traitor.symbols.length > 0 && (
+                        <div className="space-y-2 pl-4 border-l-2 border-primary/30">
+                          {traitor.symbols.map((symbolData) => (
+                            <div 
+                              key={symbolData.symbol}
+                              className="flex items-center justify-between text-sm"
+                            >
+                              <span className="font-medium text-muted-foreground">{symbolData.symbol}</span>
+                              <span className="font-semibold text-primary">
+                                ${symbolData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

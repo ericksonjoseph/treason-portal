@@ -50,7 +50,12 @@ export default function Reports() {
   }, []);
 
   const mockCalendarData = useMemo(() => {
+    const allSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'AMD'];
+    
     return mockRevenueData.map((d) => {
+      const numSymbols = Math.floor(Math.random() * 5) + 3;
+      const selectedSymbols = allSymbols.slice(0, numSymbols);
+      
       const numTraitors = Math.floor(Math.random() * 3) + 1;
       const traitorOptions = [
         { name: 'RSI + MACD', revenueRatio: 0.4 },
@@ -59,15 +64,32 @@ export default function Reports() {
       ];
       
       const selectedTraitors = traitorOptions.slice(0, numTraitors);
-      const traitors = selectedTraitors.map((t) => ({
-        name: t.name,
-        revenue: d.revenue * t.revenueRatio,
-      }));
+      const traitors = selectedTraitors.map((t) => {
+        const traitorRevenue = d.revenue * t.revenueRatio;
+        const symbolsForTraitor = selectedSymbols.slice(0, Math.floor(Math.random() * numSymbols) + 1);
+        
+        const weights = symbolsForTraitor.map(() => Math.random() + 0.5);
+        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+        
+        const symbols = symbolsForTraitor.map((symbol, idx) => {
+          const normalizedWeight = weights[idx] / totalWeight;
+          return {
+            symbol,
+            revenue: traitorRevenue * normalizedWeight,
+          };
+        });
+        
+        return {
+          name: t.name,
+          revenue: traitorRevenue,
+          symbols,
+        };
+      });
       
       return {
         date: d.date,
         revenue: d.revenue,
-        symbols: Math.floor(Math.random() * 8) + 3,
+        symbols: numSymbols,
         traitors,
       };
     });

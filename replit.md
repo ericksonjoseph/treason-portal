@@ -70,21 +70,25 @@ Build a trading platform named "Treason" that:
      - Responsive design that adapts to container width
    - **Revenue Calendar**: 
      - Enhanced iCal/Google Calendar-style interface with four view modes:
-       - **Month View**: Large grid (min-h-36 cells) with bg-card backgrounds
+       - **Month View**: Clean, compact grid (min-h-24 cells)
          - Revenue displayed with 2 decimals ($X,XXX.XX)
          - Stock symbol counts (not trade counts)
-         - Up to 2 traitor badges showing individual name + revenue
-         - Primary color theme with bg-primary/10 badges and borders
+         - No traitor badges for cleaner overview
+         - bg-card backgrounds with primary accents
        - **Week View**: Spacious 7-day layout (min-h-64 cells)
          - Large revenue text (text-2xl) with 2 decimal precision
          - Stock symbol counts
-         - Traitor cards with individual revenue per traitor
+         - Traitor cards showing individual traitor revenue
          - Enhanced bg-card backgrounds with primary accents
        - **Day View**: Maximum detail single-day view (p-8 padding)
          - Huge revenue display (text-5xl) with 2 decimals
          - Stats cards showing "Stock Symbols" and "Active Traitors"
-         - "Traitor Performance" section with individual revenues
-         - Split layout: traitor name left, revenue right
+         - "Traitor Performance" section with symbol-level breakdown:
+           - Each traitor shows total revenue at top
+           - Individual stock symbols listed below with per-symbol revenue
+           - Indented symbol list with left border for hierarchy
+           - Format: Traitor total, then each symbol (AAPL, GOOGL, etc.) with revenue
+           - Symbol revenues properly sum to traitor total
        - **Year View**: 12-month grid with larger boxes (p-5)
          - Monthly total revenue with 2 decimals
          - "X active days" instead of trade counts
@@ -94,6 +98,7 @@ Build a trading platform named "Treason" that:
        - Consistent use of primary color theme throughout
        - Better spacing and typography hierarchy
        - All revenues formatted to 2 decimal places
+       - Symbol breakdown uses indented layout with border-l-2
      - Navigation controls to move forward/backward through time
      - Smart date formatting that adapts to each view type
      - Empty states for days with no trading activity
@@ -132,14 +137,18 @@ Build a trading platform named "Treason" that:
 - **DateRangePicker**: Calendar component for selecting date ranges (with auto-close on complete selection)
 - **RevenueGraph**: Line chart component using Recharts library to display revenue trends over time
 - **RevenueCalendar**: Enhanced calendar visualization component with Day/Week/Month/Year views
-  - Month view: Large cells (min-h-36) with traitor badges showing individual revenues
-  - Week view: Spacious layout (min-h-64) with detailed traitor cards
+  - Month view: Clean cells (min-h-24) showing only revenue and symbol counts (no traitor info)
+  - Week view: Spacious layout (min-h-64) with traitor cards showing totals
   - Day view: Maximum detail with "Traitor Performance" breakdown
+    - Each traitor shows total revenue
+    - Individual stock symbols listed below with per-symbol revenue
+    - Symbol revenues properly sum to parent traitor total
+    - Indented layout with left border for visual hierarchy
   - Year view: 12-month overview with active days count
-  - Individual traitor revenues displayed in format: "Name" / "$X,XXX.XX"
   - Stock symbol counts instead of trade counts
   - Enhanced color scheme using bg-primary/10 accents and borders
   - All monetary values formatted to 2 decimal places
+  - Three-level revenue tracking: Total → Traitor → Symbol
 
 ### Technical Stack
 - **Charts**: 
