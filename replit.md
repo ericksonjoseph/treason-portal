@@ -15,7 +15,22 @@ Build a trading platform named "Treason" that:
 - **Treason**: The name of the software/platform
 - **Traitors**: Trading algorithms (instead of "algorithms" or "algos")
 
-## Recent Changes (November 11, 2025)
+## Recent Changes (November 12, 2025)
+
+### Authentication System
+- **Login Page**: Users must authenticate before accessing the platform
+  - Login page at `/login` with username/password form
+  - Backend API handles authentication at `/api/auth/login` endpoint
+  - Returns UUID token stored in localStorage
+  - Token included as `Authorization: Bearer {token}` header in all API requests
+- **Security Features**: 
+  - Automatic logout on 401 responses (expired/invalid tokens)
+  - Query cache cleared on logout to prevent cross-user data leakage
+  - Token validation when loading from localStorage
+  - Protected routes redirect to login if not authenticated
+- **User Display**: 
+  - Logged-in username shown in sidebar footer with logout button
+  - Logout button clears session and redirects to login page
 
 ### Navigation
 - **Main Sidebar Navigation**: Collapsible sidebar with navigation menu
