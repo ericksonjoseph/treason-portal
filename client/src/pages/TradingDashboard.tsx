@@ -23,7 +23,6 @@ export default function TradingDashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
   const [isRunning, setIsRunning] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -65,16 +64,6 @@ export default function TradingDashboard() {
       default: 'moderate',
     },
   ]);
-
-  useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark');
-    setIsDarkMode(isDark);
-  }, []);
-
-  const handleThemeToggle = () => {
-    document.documentElement.classList.toggle('dark');
-    setIsDarkMode(!isDarkMode);
-  };
 
   const mockTraitors = [
     { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
@@ -204,8 +193,6 @@ export default function TradingDashboard() {
         connectionStatus={isRunning ? 'active' : 'inactive'}
         marketStatus="active"
         traitorStatus={isRunning ? 'active' : 'inactive'}
-        isDarkMode={isDarkMode}
-        onThemeToggle={handleThemeToggle}
       />
       
       <div className="flex flex-1 overflow-hidden">

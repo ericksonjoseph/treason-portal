@@ -1,8 +1,10 @@
-import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { BarChart3, FileText, ChevronDown, TrendingUp, Calendar, History, Moon, Sun } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -21,6 +23,17 @@ import {
 
 export function AppSidebar() {
   const [location] = useLocation();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
+  }, []);
+
+  const handleThemeToggle = () => {
+    document.documentElement.classList.toggle('dark');
+    setIsDarkMode(!isDarkMode);
+  };
 
   const isReportsActive = location.startsWith('/reports');
 
@@ -93,6 +106,17 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleThemeToggle} data-testid="button-theme-toggle">
+              {isDarkMode ? <Sun /> : <Moon />}
+              <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

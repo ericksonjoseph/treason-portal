@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { Moon, Sun, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import StatusIndicator from './StatusIndicator';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -9,8 +8,6 @@ interface TradingHeaderProps {
   connectionStatus: 'active' | 'inactive' | 'connecting';
   marketStatus: 'active' | 'inactive';
   traitorStatus: 'active' | 'inactive';
-  isDarkMode?: boolean;
-  onThemeToggle?: () => void;
 }
 
 export default function TradingHeader({
@@ -19,8 +16,6 @@ export default function TradingHeader({
   connectionStatus,
   marketStatus,
   traitorStatus,
-  isDarkMode,
-  onThemeToggle,
 }: TradingHeaderProps) {
   return (
     <header className="border-b bg-card px-6 py-3">
@@ -47,14 +42,6 @@ export default function TradingHeader({
           <StatusIndicator type="connection" status={connectionStatus} />
           <StatusIndicator type="market" status={marketStatus} />
           <StatusIndicator type="traitor" status={traitorStatus} />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onThemeToggle}
-            data-testid="button-theme-toggle"
-          >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </Button>
         </div>
       </div>
     </header>

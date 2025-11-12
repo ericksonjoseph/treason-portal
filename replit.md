@@ -24,6 +24,7 @@ Build a trading platform named "Treason" that:
   - Reports: Collapsible menu with two sub-pages
     - Revenue Graph: Line chart analytics (`/reports/revenue-graph`)
     - Revenue Calendar: Calendar view analytics (`/reports/revenue-calendar`)
+  - Dark Mode Toggle: Moon/sun icon at bottom of sidebar to switch between light and dark themes (accessible from any page)
   - Sidebar can be toggled open/closed with hamburger menu
   - Reports menu can be expanded/collapsed with chevron indicator
   - Active page and sub-page are highlighted in the navigation
@@ -70,13 +71,12 @@ Build a trading platform named "Treason" that:
    - Status badges color-coded by state
 
 #### Charts Page (Dashboard)
-1. **Dark Mode Toggle**: Moon/sun icon in the header to switch between light and dark themes
-2. **Stock Ticker Selector**: Search input to select which stock to trade/backtest (e.g., AAPL, TSLA, MSFT)
-3. **Date Picker**: Calendar component to select dates for:
+1. **Stock Ticker Selector**: Search input to select which stock to trade/backtest (e.g., AAPL, TSLA, MSFT)
+2. **Date Picker**: Calendar component to select dates for:
    - Backtesting historical data
    - Viewing past live trading results
    - The label changes based on mode: "Backtest Date" or "Trading Date"
-4. **Run Instance Selector**: When a traitor has run multiple times on the same day:
+3. **Run Instance Selector**: When a traitor has run multiple times on the same day:
    - Shows a dropdown with all run instances when multiple runs exist
    - Displays run number, timestamp, and status (completed/running/failed)
    - Trash icon on each row allows deleting individual run instances
@@ -84,7 +84,7 @@ Build a trading platform named "Treason" that:
    - Shows informational message for single runs with clock icon
    - Automatically hidden when no runs exist for selected traitor/date
    - Smart selection management that updates when traitor or date changes
-5. **Traitor Settings Widget**: Click gear button to toggle between control and settings views
+4. **Traitor Settings Widget**: Click gear button to toggle between control and settings views
    - **Traitor Control** (default view): Run/Stop controls, ticker, date, traitor selector
    - **Traitor Settings** (settings view): Configure run-specific parameters
      - Enum settings: Dropdown selectors for categorical options (e.g., risk tolerance: low/medium/high)
