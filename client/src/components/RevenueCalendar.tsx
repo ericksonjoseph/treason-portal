@@ -16,11 +16,16 @@ import {
   addWeeks,
 } from 'date-fns';
 
+interface TraitorRevenue {
+  name: string;
+  revenue: number;
+}
+
 interface CalendarDataPoint {
   date: string;
   revenue: number;
-  trades: number;
-  traitors: string[];
+  symbols: number;
+  traitors: TraitorRevenue[];
 }
 
 interface RevenueCalendarProps {
@@ -84,23 +89,33 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-24 border p-2 ${
-              !isCurrentMonth ? 'bg-muted/30 text-muted-foreground' : ''
-            } ${isToday ? 'bg-primary/5 border-primary' : ''}`}
+            className={`min-h-36 border p-3 ${
+              !isCurrentMonth ? 'bg-muted/30 text-muted-foreground' : 'bg-card'
+            } ${isToday ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/20' : ''}`}
             data-testid={`calendar-day-${format(cloneDay, 'yyyy-MM-dd')}`}
           >
-            <div className="font-medium text-sm mb-1">{formattedDate}</div>
+            <div className="font-semibold text-sm mb-2">{formattedDate}</div>
             {dayData && isCurrentMonth && (
-              <div className="space-y-1">
-                <div className="text-xs font-semibold text-primary">
-                  ${dayData.revenue.toLocaleString()}
+              <div className="space-y-2">
+                <div className="text-sm font-bold text-primary">
+                  ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {dayData.trades} trades
+                  {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
                 </div>
                 {dayData.traitors.length > 0 && (
-                  <div className="text-xs text-muted-foreground truncate">
-                    {dayData.traitors.slice(0, 2).join(', ')}
+                  <div className="space-y-1">
+                    {dayData.traitors.filter(t => t && t.revenue !== undefined).slice(0, 2).map((traitor) => (
+                      <div
+                        key={traitor.name}
+                        className="text-xs bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20"
+                      >
+                        <div className="font-medium truncate">{traitor.name}</div>
+                        <div className="font-semibold">
+                          ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -146,30 +161,33 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       days.push(
         <div
           key={day.toString()}
-          className={`flex-1 border p-4 min-h-48 ${
-            isToday ? 'bg-primary/5 border-primary' : ''
+          className={`flex-1 border p-4 min-h-64 bg-card ${
+            isToday ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/20' : ''
           }`}
           data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
         >
-          <div className="font-semibold mb-2">
+          <div className="font-bold text-base mb-3">
             {format(day, 'EEE d')}
           </div>
           {dayData && (
-            <div className="space-y-2">
-              <div className="text-lg font-bold text-primary">
-                ${dayData.revenue.toLocaleString()}
+            <div className="space-y-3">
+              <div className="text-2xl font-bold text-primary">
+                ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="text-sm text-muted-foreground">
-                {dayData.trades} trades
+                {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
               </div>
               {dayData.traitors.length > 0 && (
-                <div className="space-y-1">
-                  {dayData.traitors.map((traitor) => (
+                <div className="space-y-2">
+                  {dayData.traitors.filter(t => t && t.revenue !== undefined).map((traitor) => (
                     <div
-                      key={traitor}
-                      className="text-xs bg-muted px-2 py-1 rounded"
+                      key={traitor.name}
+                      className="text-sm bg-primary/10 text-primary px-3 py-2 rounded-md border border-primary/20"
                     >
-                      {traitor}
+                      <div className="font-medium mb-1">{traitor.name}</div>
+                      <div className="font-bold">
+                        ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -187,41 +205,51 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
     const dayData = getDataForDate(currentDate);
 
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-8 space-y-6">
         <div className="text-center">
-          <h3 className="text-2xl font-bold">{format(currentDate, 'EEEE, MMMM d, yyyy')}</h3>
+          <h3 className="text-3xl font-bold">{format(currentDate, 'EEEE, MMMM d, yyyy')}</h3>
         </div>
         {dayData ? (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">
-                ${dayData.revenue.toLocaleString()}
+              <div className="text-5xl font-bold text-primary mb-2">
+                ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className="text-lg text-muted-foreground">
+              <div className="text-xl text-muted-foreground">
                 Total Revenue
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="text-3xl font-bold">{dayData.trades}</div>
-                  <div className="text-sm text-muted-foreground mt-1">Total Trades</div>
+            <div className="grid grid-cols-2 gap-6">
+              <Card className="bg-card">
+                <CardContent className="pt-8 text-center">
+                  <div className="text-4xl font-bold">{dayData.symbols}</div>
+                  <div className="text-base text-muted-foreground mt-2">
+                    Stock {dayData.symbols === 1 ? 'Symbol' : 'Symbols'}
+                  </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="text-3xl font-bold">{dayData.traitors.length}</div>
-                  <div className="text-sm text-muted-foreground mt-1">Active Traitors</div>
+              <Card className="bg-card">
+                <CardContent className="pt-8 text-center">
+                  <div className="text-4xl font-bold">{dayData.traitors.length}</div>
+                  <div className="text-base text-muted-foreground mt-2">Active Traitors</div>
                 </CardContent>
               </Card>
             </div>
             {dayData.traitors.length > 0 && (
               <div>
-                <h4 className="font-semibold mb-2">Active Traitors</h4>
-                <div className="grid gap-2">
-                  {dayData.traitors.map((traitor) => (
-                    <div key={traitor} className="bg-muted px-3 py-2 rounded">
-                      {traitor}
+                <h4 className="font-semibold text-lg mb-4">Traitor Performance</h4>
+                <div className="grid gap-3">
+                  {dayData.traitors.filter(t => t && t.revenue !== undefined).map((traitor) => (
+                    <div 
+                      key={traitor.name} 
+                      className="bg-primary/10 border border-primary/20 px-4 py-3 rounded-md"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-primary">{traitor.name}</span>
+                        <span className="font-bold text-primary text-lg">
+                          ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -229,7 +257,7 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
             )}
           </div>
         ) : (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-16 text-muted-foreground">
             No trading activity on this day
           </div>
         )}
@@ -247,32 +275,34 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       const monthEnd = endOfMonth(monthStart);
       
       let monthRevenue = 0;
-      let monthTrades = 0;
+      let monthSymbolsSet = new Set<string>();
       let day = monthStart;
       
       while (day <= monthEnd) {
         const dayData = getDataForDate(day);
         if (dayData) {
           monthRevenue += dayData.revenue;
-          monthTrades += dayData.trades;
+          monthSymbolsSet.add(`${format(day, 'yyyy-MM-dd')}-${dayData.symbols}`);
         }
         day = addDays(day, 1);
       }
 
+      const monthSymbols = monthSymbolsSet.size;
+
       months.push(
         <div
           key={monthDate.toString()}
-          className="border p-4 rounded-md hover-elevate"
+          className="border p-5 rounded-md hover-elevate bg-card"
           data-testid={`calendar-month-${format(monthDate, 'yyyy-MM')}`}
         >
-          <div className="font-semibold mb-2">{format(monthDate, 'MMMM')}</div>
+          <div className="font-bold text-base mb-3">{format(monthDate, 'MMMM')}</div>
           {monthRevenue > 0 ? (
-            <div className="space-y-1">
-              <div className="text-lg font-bold text-primary">
-                ${monthRevenue.toLocaleString()}
+            <div className="space-y-2">
+              <div className="text-xl font-bold text-primary">
+                ${monthRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className="text-xs text-muted-foreground">
-                {monthTrades} trades
+              <div className="text-sm text-muted-foreground">
+                {monthSymbols} active {monthSymbols === 1 ? 'day' : 'days'}
               </div>
             </div>
           ) : (

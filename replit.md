@@ -65,18 +65,37 @@ Build a trading platform named "Treason" that:
    - **Revenue Graph**: 
      - Line chart showing revenue over time using Recharts
      - X-axis displays dates (formatted as "MMM d")
-     - Y-axis shows revenue in dollars (formatted as $X,XXX)
+     - Y-axis shows revenue in dollars (formatted as $X,XXX.XX with 2 decimals)
      - Interactive tooltips with detailed information
      - Responsive design that adapts to container width
    - **Revenue Calendar**: 
-     - iCal/Google Calendar-style interface with four view modes:
-       - **Month View**: Grid showing all days with revenue, trades, and traitor names in each cell
-       - **Week View**: 7-day detailed view with larger revenue displays and traitor badges
-       - **Day View**: Single day focus with prominent revenue, trade stats, and traitor list
-       - **Year View**: 12-month overview with total revenue and trades per month
+     - Enhanced iCal/Google Calendar-style interface with four view modes:
+       - **Month View**: Large grid (min-h-36 cells) with bg-card backgrounds
+         - Revenue displayed with 2 decimals ($X,XXX.XX)
+         - Stock symbol counts (not trade counts)
+         - Up to 2 traitor badges showing individual name + revenue
+         - Primary color theme with bg-primary/10 badges and borders
+       - **Week View**: Spacious 7-day layout (min-h-64 cells)
+         - Large revenue text (text-2xl) with 2 decimal precision
+         - Stock symbol counts
+         - Traitor cards with individual revenue per traitor
+         - Enhanced bg-card backgrounds with primary accents
+       - **Day View**: Maximum detail single-day view (p-8 padding)
+         - Huge revenue display (text-5xl) with 2 decimals
+         - Stats cards showing "Stock Symbols" and "Active Traitors"
+         - "Traitor Performance" section with individual revenues
+         - Split layout: traitor name left, revenue right
+       - **Year View**: 12-month grid with larger boxes (p-5)
+         - Monthly total revenue with 2 decimals
+         - "X active days" instead of trade counts
+         - bg-card backgrounds with hover effects
+     - Enhanced visual design:
+       - Today highlighted with bg-primary/10 background and ring effect
+       - Consistent use of primary color theme throughout
+       - Better spacing and typography hierarchy
+       - All revenues formatted to 2 decimal places
      - Navigation controls to move forward/backward through time
      - Smart date formatting that adapts to each view type
-     - Highlighting for current day and inactive days outside current period
      - Empty states for days with no trading activity
 
 ## Project Architecture
@@ -112,11 +131,15 @@ Build a trading platform named "Treason" that:
 - **MultiSelect**: Reusable multi-select dropdown component used for traitors, modes, and tickers
 - **DateRangePicker**: Calendar component for selecting date ranges (with auto-close on complete selection)
 - **RevenueGraph**: Line chart component using Recharts library to display revenue trends over time
-- **RevenueCalendar**: Calendar visualization component with Day/Week/Month/Year views
-  - Month view: Full calendar grid with revenue data in cells
-  - Week view: 7-day horizontal layout with detailed stats
-  - Day view: Single day focus with large metrics
-  - Year view: 12-month overview with monthly totals
+- **RevenueCalendar**: Enhanced calendar visualization component with Day/Week/Month/Year views
+  - Month view: Large cells (min-h-36) with traitor badges showing individual revenues
+  - Week view: Spacious layout (min-h-64) with detailed traitor cards
+  - Day view: Maximum detail with "Traitor Performance" breakdown
+  - Year view: 12-month overview with active days count
+  - Individual traitor revenues displayed in format: "Name" / "$X,XXX.XX"
+  - Stock symbol counts instead of trade counts
+  - Enhanced color scheme using bg-primary/10 accents and borders
+  - All monetary values formatted to 2 decimal places
 
 ### Technical Stack
 - **Charts**: 

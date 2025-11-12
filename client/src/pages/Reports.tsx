@@ -50,10 +50,27 @@ export default function Reports() {
   }, []);
 
   const mockCalendarData = useMemo(() => {
-    return mockRevenueData.map((d) => ({
-      ...d,
-      traitors: ['RSI + MACD', 'EMA Crossover'].slice(0, Math.floor(Math.random() * 2) + 1),
-    }));
+    return mockRevenueData.map((d) => {
+      const numTraitors = Math.floor(Math.random() * 3) + 1;
+      const traitorOptions = [
+        { name: 'RSI + MACD', revenueRatio: 0.4 },
+        { name: 'EMA Crossover', revenueRatio: 0.35 },
+        { name: 'Bollinger Bands', revenueRatio: 0.25 },
+      ];
+      
+      const selectedTraitors = traitorOptions.slice(0, numTraitors);
+      const traitors = selectedTraitors.map((t) => ({
+        name: t.name,
+        revenue: d.revenue * t.revenueRatio,
+      }));
+      
+      return {
+        date: d.date,
+        revenue: d.revenue,
+        symbols: Math.floor(Math.random() * 8) + 3,
+        traitors,
+      };
+    });
   }, [mockRevenueData]);
 
   const handleReset = () => {
