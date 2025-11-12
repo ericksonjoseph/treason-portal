@@ -20,10 +20,9 @@ export default function Reports() {
   const [reportView, setReportView] = useState<ReportView>('graph');
 
   const mockTraitors: Traitor[] = [
-    { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
+    { id: 'rsi-macd', name: 'RSI + MACD', description: 'Mean reversion with momentum' },
     { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
     { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
-    { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
   ];
 
   const mockTickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'AMD'];
@@ -229,6 +228,9 @@ export default function Reports() {
               
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Individual Traitor Performance</h3>
+                <p className="text-sm text-muted-foreground">
+                  Detailed breakdown of revenue by symbol and run for each traitor
+                </p>
                 <div className="space-y-6">
                   {mockTraitors.map((traitor) => (
                     <TraitorDetailChart
