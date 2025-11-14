@@ -13,7 +13,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 
 ### UI/UX Decisions
 - **Color Scheme**: Down candles and sell indicators use a softer blue (#93b4d4 and #7BA3D0) instead of traditional red. This applies to candlesticks, sell signal markers, SELL badges, and negative P&L values.
-- **Theming**: Supports dark mode, accessible via a toggle in the sidebar.
+- **Theming**: Supports dark mode, accessible via an icon-only toggle button in the top right corner (always visible on all pages).
 - **Navigation**: Collapsible sidebar with main navigation (Charts, Run History, Reports). Reports include sub-pages for Revenue Graph and Revenue Calendar. Active pages are highlighted.
 - **Dashboard Aesthetic**: Inspired by TradingView and Bloomberg Terminal for a professional financial dashboard feel.
 - **Typography**: Professional typography with monospace fonts for financial data.

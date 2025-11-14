@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import TradingDashboard from "@/pages/TradingDashboard";
 import RevenueGraphPage from "@/pages/RevenueGraphPage";
@@ -69,9 +70,14 @@ function AppLayout() {
 
   if (!isAuthenticated || location === '/login') {
     return (
-      <main className="flex-1 overflow-hidden">
-        <Router />
-      </main>
+      <>
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
+        <main className="flex-1 overflow-hidden">
+          <Router />
+        </main>
+      </>
     );
   }
 
@@ -80,8 +86,9 @@ function AppLayout() {
       <div className="flex h-screen w-full">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="flex items-center gap-2 p-2 border-b" data-testid="header-main">
+          <header className="flex items-center justify-between gap-2 p-2 border-b" data-testid="header-main">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <ThemeToggle />
           </header>
           <main className="flex-1 overflow-hidden">
             <Router />
