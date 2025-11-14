@@ -78,6 +78,17 @@ export default function ControlPanel({
 }: ControlPanelProps) {
   const [showSettings, setShowSettings] = useState(false);
 
+  const isToday = (selectedDate: Date | undefined): boolean => {
+    if (!selectedDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(selectedDate);
+    compareDate.setHours(0, 0, 0, 0);
+    return compareDate.getTime() === today.getTime();
+  };
+
+  const isRunButtonDisabled = mode === 'live' && !isToday(date);
+
   const handleSettingsClick = () => {
     setShowSettings(true);
     onSettingsClick?.();
@@ -139,7 +150,12 @@ export default function ControlPanel({
           )}
           <div className="flex gap-2">
             {!isRunning ? (
-              <Button onClick={onRunClick} className="flex-1" data-testid="button-run">
+              <Button 
+                onClick={onRunClick} 
+                className="flex-1" 
+                data-testid="button-run"
+                disabled={isRunButtonDisabled}
+              >
                 <Play className="w-4 h-4 mr-2" />
                 Run
               </Button>
@@ -153,6 +169,11 @@ export default function ControlPanel({
               <Settings className="w-4 h-4" />
             </Button>
           </div>
+          {isRunButtonDisabled && (
+            <p className="text-xs text-muted-foreground" data-testid="text-run-disabled-message">
+              Live trading is only available for the current date
+            </p>
+          )}
         </CardContent>
       </Card>
 

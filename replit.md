@@ -35,6 +35,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **Charts Page (Dashboard)**:
     - **Stock Ticker Selector**: Input for selecting stock symbols (e.g., AAPL, TSLA).
     - **Date Picker**: For selecting historical backtesting dates or past live trading dates.
+    - **Run Button Behavior**: In Live Trading mode, the Run button is only enabled when viewing the current date. When viewing any historical date in Live Trading mode, the button is disabled with an explanatory message. In Backtest mode, the Run button is always enabled regardless of the selected date.
     - **Run Instance Selector**: A dropdown to choose between multiple runs of a traitor on the same day, with options to delete individual instances.
     - **Traitor Settings Widget**: A toggleable view for configuring run-specific parameters like risk tolerance, sizing, stop loss, take profit, and aggressiveness via dropdowns and sliders.
 - **Reports Pages (Analytics)**:
