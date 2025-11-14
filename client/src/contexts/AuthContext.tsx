@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { queryClient, setLogoutHandler } from '@/lib/queryClient';
+import { backendClient } from '@/lib/backendClient';
 
 interface User {
   username: string;
@@ -57,21 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (username: string, password: string) => {
-    // Mock login - accepts any username/password
-    // TODO: Replace with real API call when backend is ready
-    // const response = await fetch('/api/auth/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ username, password }),
-    // });
-    
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-    
-    const userData: User = {
-      username,
-      token: crypto.randomUUID(), // Generate mock UUID token
-    };
-
+    const userData = await backendClient.login(username, password);
     setUser(userData);
     localStorage.setItem('treason_user', JSON.stringify(userData));
   };
