@@ -1,12 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, DollarSign, Activity } from 'lucide-react';
 import { ReportsLayout } from '@/components/ReportsLayout';
 import ReportsFilters from '@/components/ReportsFilters';
 import RevenueGraph from '@/components/RevenueGraph';
 import { DateRange } from 'react-day-picker';
-import { generateRevenueData } from '@/utils/mockRevenueData';
-import { MOCK_STRATEGIES, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
+import { backendClient } from '@/lib/backendClient';
+import type { Strategy } from '@/types/strategy';
+import type { RevenueDataPoint } from '@/types/revenue';
 
 export default function RevenueGraphPage() {
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
@@ -14,7 +15,35 @@ export default function RevenueGraphPage() {
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
-  const mockRevenueData = useMemo(() => generateRevenueData(30), []);
+  // Data from backend
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [tickers, setTickers] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const modes = backendClient.getTradingModes();
+
+  // Fetch data on mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setIsLoading(true);
+        const [revenueDataResult, strategiesData, tickersData] = await Promise.all([
+          backendClient.getRevenueData(30),
+          backendClient.getStrategies(),
+          backendClient.getTickers(),
+        ]);
+        setRevenueData(revenueDataResult);
+        setStrategies(strategiesData);
+        setTickers(tickersData);
+      } catch (error) {
+        console.error('Failed to load revenue data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const handleReset = () => {
     setSelectedStrategies([]);
@@ -73,13 +102,13 @@ export default function RevenueGraphPage() {
 
   const filters = (
     <ReportsFilters
-      strategies={MOCK_STRATEGIES}
+      strategies={strategies}
       selectedStrategies={selectedStrategies}
       onStrategiesChange={setSelectedStrategies}
-      tickers={MOCK_TICKERS}
+      tickers={tickers}
       selectedTickers={selectedTickers}
       onTickersChange={setSelectedTickers}
-      modes={TRADING_MODES}
+      modes={modes}
       selectedModes={selectedModes}
       onModesChange={setSelectedModes}
       dateRange={dateRange}
@@ -95,7 +124,7 @@ export default function RevenueGraphPage() {
       filters={filters}
       kpiCards={kpiCards}
     >
-      <RevenueGraph data={mockRevenueData} />
+      <RevenueGraph data={revenueData} />
     </ReportsLayout>
   );
 }
