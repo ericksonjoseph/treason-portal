@@ -20,6 +20,12 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 
 ### Technical Implementations
 - **Authentication**: Features a mock login system that accepts any credentials, generates a client-side UUID token stored in localStorage, and includes it as a Bearer token in API requests. Includes security features like automatic logout on 401, query cache clearing on logout, and protected routes. User profile is displayed in sidebar footer with circular avatar showing user initials; clicking opens a modal with user details and logout button.
+- **Backend Client Architecture**: All mock data and future API calls are centralized in `client/src/lib/backendClient.ts`. This provides a clean abstraction layer that can easily be swapped to call a real REST API. The backend client exports:
+    - Type definitions (RevenueDataPoint, CalendarDataPoint, etc.) as single source of truth
+    - Mock data generators for strategies, runs, chart data, trades, metrics, and revenue
+    - API wrapper methods with simulated network delays for realistic behavior
+    - All pages (TradingDashboard, RunHistoryPage, RevenueGraphPage, RevenueCalendarPage) fetch data through backendClient instead of inline mock data
+    - Includes proper loading states and error handling with user-visible toasts
 - **Charts**:
     - **TradingView-style charts**: Implemented using `lightweight-charts v5` for candlestick charts.
     - **Analytics charts**: Line charts for revenue trends use the `Recharts` library.

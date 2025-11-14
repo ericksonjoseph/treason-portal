@@ -5,15 +5,16 @@ import { ReportsLayout } from '@/components/ReportsLayout';
 import ReportsFilters from '@/components/ReportsFilters';
 import RevenueGraph from '@/components/RevenueGraph';
 import { DateRange } from 'react-day-picker';
-import { backendClient } from '@/lib/backendClient';
+import { backendClient, type RevenueDataPoint } from '@/lib/backendClient';
 import type { Strategy } from '@/types/strategy';
-import type { RevenueDataPoint } from '@/types/revenue';
+import { useToast } from '@/hooks/use-toast';
 
 export default function RevenueGraphPage() {
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const { toast } = useToast();
 
   // Data from backend
   const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
@@ -38,12 +39,17 @@ export default function RevenueGraphPage() {
         setTickers(tickersData);
       } catch (error) {
         console.error('Failed to load revenue data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load revenue data',
+          variant: 'destructive',
+        });
       } finally {
         setIsLoading(false);
       }
     }
     loadData();
-  }, []);
+  }, [toast]);
 
   const handleReset = () => {
     setSelectedStrategies([]);
@@ -124,7 +130,13 @@ export default function RevenueGraphPage() {
       filters={filters}
       kpiCards={kpiCards}
     >
-      <RevenueGraph data={revenueData} />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-96" data-testid="loading-revenue-graph">
+          <p className="text-muted-foreground">Loading revenue data...</p>
+        </div>
+      ) : (
+        <RevenueGraph data={revenueData} />
+      )}
     </ReportsLayout>
   );
 }

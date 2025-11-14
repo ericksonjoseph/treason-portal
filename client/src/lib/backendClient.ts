@@ -3,6 +3,34 @@ import type { Run } from '@/types/run';
 import type { StrategySetting } from '@/types/settings';
 
 // ============================================================================
+// EXPORTED TYPES - Single source of truth for revenue/calendar data types
+// ============================================================================
+
+export interface RevenueDataPoint {
+  date: string;
+  revenue: number;
+  trades: number;
+}
+
+export interface SymbolRevenue {
+  symbol: string;
+  revenue: number;
+}
+
+export interface StrategyRevenue {
+  name: string;
+  revenue: number;
+  symbols: SymbolRevenue[];
+}
+
+export interface CalendarDataPoint {
+  date: string;
+  revenue: number;
+  symbols: number;
+  strategies: StrategyRevenue[];
+}
+
+// ============================================================================
 // MOCK DATA - Centralized location for all mock data
 // ============================================================================
 
@@ -78,30 +106,6 @@ function generateMockRuns(count: number = 50): Run[] {
   }
   
   return runs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-}
-
-interface RevenueDataPoint {
-  date: string;
-  revenue: number;
-  trades: number;
-}
-
-interface SymbolRevenue {
-  symbol: string;
-  revenue: number;
-}
-
-interface StrategyRevenue {
-  name: string;
-  revenue: number;
-  symbols: SymbolRevenue[];
-}
-
-interface CalendarDataPoint {
-  date: string;
-  revenue: number;
-  symbols: number;
-  strategies: StrategyRevenue[];
 }
 
 function generateRevenueData(days: number = 30): RevenueDataPoint[] {
