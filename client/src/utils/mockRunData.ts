@@ -1,5 +1,5 @@
 import { Run } from '@/types/run';
-import { MOCK_TRAITORS, MOCK_TICKERS } from './reportConstants';
+import { MOCK_STRATEGIES, MOCK_TICKERS } from './reportConstants';
 
 export function generateMockRuns(count: number = 50): Run[] {
   const runs: Run[] = [];
@@ -15,7 +15,7 @@ export function generateMockRuns(count: number = 50): Run[] {
     const timestamp = new Date(date);
     timestamp.setHours(hour, minute, 0, 0);
     
-    const traitor = MOCK_TRAITORS[Math.floor(Math.random() * MOCK_TRAITORS.length)];
+    const strategy = MOCK_STRATEGIES[Math.floor(Math.random() * MOCK_STRATEGIES.length)];
     const ticker = MOCK_TICKERS[Math.floor(Math.random() * MOCK_TICKERS.length)];
     const mode = Math.random() > 0.5 ? 'backtest' : 'live';
     const statuses: Run['status'][] = ['completed', 'running', 'failed'];
@@ -27,8 +27,8 @@ export function generateMockRuns(count: number = 50): Run[] {
     
     runs.push({
       id: `run-${i + 1}`,
-      traitorId: traitor.id,
-      traitorName: traitor.name,
+      strategyId: strategy.id,
+      strategyName: strategy.name,
       ticker,
       mode,
       date: date.toISOString().split('T')[0],

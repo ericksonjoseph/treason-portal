@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/select';
 import { Clock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { RunInstance } from '@/types/traitor';
+import type { RunInstance } from '@/types/strategy';
 
 interface RunInstanceSelectorProps {
   instances: RunInstance[];

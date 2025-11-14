@@ -1,7 +1,7 @@
 export interface Run {
   id: string;
-  traitorId: string;
-  traitorName: string;
+  strategyId: string;
+  strategyName: string;
   ticker: string;
   mode: 'backtest' | 'live';
   date: string;

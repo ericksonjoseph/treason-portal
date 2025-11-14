@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
-import type { RunInstance } from '@/types/traitor';
-import type { TraitorSetting } from '@/types/settings';
+import type { RunInstance } from '@/types/strategy';
+import type { StrategySetting } from '@/types/settings';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
-  const [selectedTraitor, setSelectedTraitor] = useState('rsi-macd');
+  const [selectedStrategy, setSelectedStrategy] = useState('rsi-macd');
   const [ticker, setTicker] = useState('AAPL');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
@@ -27,7 +27,7 @@ export default function TradingDashboard() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const [traitorSettings, setTraitorSettings] = useState<TraitorSetting[]>([
+  const [strategySettings, setStrategySettings] = useState<StrategySetting[]>([
     {
       field: 'risk tolerance',
       type: 'enum',
@@ -65,7 +65,7 @@ export default function TradingDashboard() {
     },
   ]);
 
-  const mockTraitors = [
+  const mockStrategies = [
     { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
     { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
     { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
@@ -78,7 +78,7 @@ export default function TradingDashboard() {
       runNumber: 1, 
       timestamp: '09:30 AM', 
       status: 'completed',
-      traitorId: 'rsi-macd',
+      strategyId: 'rsi-macd',
       date: new Date().toDateString(),
     },
     { 
@@ -86,7 +86,7 @@ export default function TradingDashboard() {
       runNumber: 2, 
       timestamp: '11:45 AM', 
       status: 'completed',
-      traitorId: 'rsi-macd',
+      strategyId: 'rsi-macd',
       date: new Date().toDateString(),
     },
     { 
@@ -94,7 +94,7 @@ export default function TradingDashboard() {
       runNumber: 3, 
       timestamp: '02:15 PM', 
       status: 'running',
-      traitorId: 'rsi-macd',
+      strategyId: 'rsi-macd',
       date: new Date().toDateString(),
     },
     { 
@@ -102,7 +102,7 @@ export default function TradingDashboard() {
       runNumber: 1, 
       timestamp: '10:00 AM', 
       status: 'completed',
-      traitorId: 'ema-crossover',
+      strategyId: 'ema-crossover',
       date: new Date().toDateString(),
     },
   ]);
@@ -110,10 +110,10 @@ export default function TradingDashboard() {
   const filteredRunInstances = useMemo(() => 
     allRunInstances.filter(
       (instance) =>
-        instance.traitorId === selectedTraitor &&
+        instance.strategyId === selectedStrategy &&
         instance.date === selectedDate?.toDateString()
     ),
-    [selectedTraitor, selectedDate, allRunInstances]
+    [selectedStrategy, selectedDate, allRunInstances]
   );
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function TradingDashboard() {
   };
 
   const handleSettingChange = (field: string, value: string | number) => {
-    setTraitorSettings((prev) =>
+    setStrategySettings((prev) =>
       prev.map((setting) =>
         setting.field === field ? { ...setting, value } : setting
       )
@@ -192,7 +192,7 @@ export default function TradingDashboard() {
         onModeChange={setMode}
         connectionStatus={isRunning ? 'active' : 'inactive'}
         marketStatus="active"
-        traitorStatus={isRunning ? 'active' : 'inactive'}
+        strategyStatus={isRunning ? 'active' : 'inactive'}
       />
       
       <div className="flex flex-1 overflow-hidden">
@@ -209,9 +209,9 @@ export default function TradingDashboard() {
         
         <div className="w-96 border-l bg-background overflow-y-auto">
           <ControlPanel
-            traitors={mockTraitors}
-            selectedTraitor={selectedTraitor}
-            onTraitorChange={setSelectedTraitor}
+            strategies={mockStrategies}
+            selectedStrategy={selectedStrategy}
+            onStrategyChange={setSelectedStrategy}
             runInstances={filteredRunInstances}
             selectedRunInstance={selectedRunInstance}
             onRunInstanceChange={setSelectedRunInstance}
@@ -224,20 +224,20 @@ export default function TradingDashboard() {
             isRunning={isRunning}
             onRunClick={() => {
               setIsRunning(true);
-              console.log('Traitor started', {
+              console.log('Strategy started', {
                 mode,
                 ticker,
                 date: selectedDate?.toLocaleDateString(),
-                traitor: selectedTraitor,
+                strategy: selectedStrategy,
                 runInstance: selectedRunInstance,
               });
             }}
             onStopClick={() => {
               setIsRunning(false);
-              console.log('Traitor stopped');
+              console.log('Strategy stopped');
             }}
             onSettingsClick={() => console.log('Settings clicked')}
-            settings={traitorSettings}
+            settings={strategySettings}
             onSettingChange={handleSettingChange}
             metrics={mockMetrics}
             trades={mockTrades}

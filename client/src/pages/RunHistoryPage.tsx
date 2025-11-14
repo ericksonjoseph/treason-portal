@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import ReportsFilters from '@/components/ReportsFilters';
 import { DateRange } from 'react-day-picker';
-import { MOCK_TRAITORS, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
+import { MOCK_STRATEGIES, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
 import { generateMockRuns } from '@/utils/mockRunData';
 import { Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function RunHistoryPage() {
-  const [selectedTraitors, setSelectedTraitors] = useState<string[]>([]);
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
@@ -48,7 +48,7 @@ export default function RunHistoryPage() {
   ];
 
   const handleReset = () => {
-    setSelectedTraitors([]);
+    setSelectedStrategies([]);
     setSelectedModes([]);
     setSelectedTickers([]);
     setSelectedStatuses([]);
@@ -57,7 +57,7 @@ export default function RunHistoryPage() {
 
   const filteredRuns = useMemo(() => {
     return runs.filter(run => {
-      if (selectedTraitors.length > 0 && !selectedTraitors.includes(run.traitorId)) {
+      if (selectedStrategies.length > 0 && !selectedStrategies.includes(run.strategyId)) {
         return false;
       }
       if (selectedModes.length > 0 && !selectedModes.includes(run.mode)) {
@@ -76,7 +76,7 @@ export default function RunHistoryPage() {
       }
       return true;
     });
-  }, [runs, selectedTraitors, selectedModes, selectedTickers, selectedStatuses, dateRange]);
+  }, [runs, selectedStrategies, selectedModes, selectedTickers, selectedStatuses, dateRange]);
 
   const toggleSelectAll = () => {
     if (selectedRuns.size === filteredRuns.length) {
@@ -147,14 +147,14 @@ export default function RunHistoryPage() {
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold" data-testid="text-page-title">Run History</h1>
         <p className="text-muted-foreground" data-testid="text-page-description">
-          View and manage all traitor execution runs
+          View and manage all strategy execution runs
         </p>
       </div>
 
       <ReportsFilters
-        traitors={MOCK_TRAITORS}
-        selectedTraitors={selectedTraitors}
-        onTraitorsChange={setSelectedTraitors}
+        strategies={MOCK_STRATEGIES}
+        selectedStrategies={selectedStrategies}
+        onStrategiesChange={setSelectedStrategies}
         tickers={MOCK_TICKERS}
         selectedTickers={selectedTickers}
         onTickersChange={setSelectedTickers}
@@ -199,7 +199,7 @@ export default function RunHistoryPage() {
                     />
                   </TableHead>
                   <TableHead data-testid="header-date">Date</TableHead>
-                  <TableHead data-testid="header-traitor">Traitor</TableHead>
+                  <TableHead data-testid="header-strategy">Strategy</TableHead>
                   <TableHead data-testid="header-ticker">Ticker</TableHead>
                   <TableHead data-testid="header-mode">Mode</TableHead>
                   <TableHead data-testid="header-status">Status</TableHead>
@@ -233,7 +233,7 @@ export default function RunHistoryPage() {
                       <TableCell data-testid={`text-date-${run.id}`}>
                         {format(new Date(run.timestamp), 'MMM d, yyyy HH:mm')}
                       </TableCell>
-                      <TableCell data-testid={`text-traitor-${run.id}`}>{run.traitorName}</TableCell>
+                      <TableCell data-testid={`text-strategy-${run.id}`}>{run.strategyName}</TableCell>
                       <TableCell data-testid={`text-ticker-${run.id}`}>{run.ticker}</TableCell>
                       <TableCell data-testid={`text-mode-${run.id}`}>
                         <Badge variant="outline">{run.mode}</Badge>

@@ -21,7 +21,7 @@ interface SymbolRevenue {
   revenue: number;
 }
 
-interface TraitorRevenue {
+interface StrategyRevenue {
   name: string;
   revenue: number;
   symbols: SymbolRevenue[];
@@ -31,7 +31,7 @@ interface CalendarDataPoint {
   date: string;
   revenue: number;
   symbols: number;
-  traitors: TraitorRevenue[];
+  strategies: StrategyRevenue[];
 }
 
 interface RevenueCalendarProps {
@@ -168,16 +168,16 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
               <div className="text-sm text-muted-foreground">
                 {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
               </div>
-              {dayData.traitors.length > 0 && (
+              {dayData.strategies.length > 0 && (
                 <div className="space-y-2">
-                  {dayData.traitors.filter(t => t && t.revenue !== undefined).map((traitor) => (
+                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => (
                     <div
-                      key={traitor.name}
+                      key={strategy.name}
                       className="text-sm bg-primary/10 text-primary px-3 py-2 rounded-md border border-primary/20"
                     >
-                      <div className="font-medium mb-1">{traitor.name}</div>
+                      <div className="font-medium mb-1">{strategy.name}</div>
                       <div className="font-bold">
-                        ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                     </div>
                   ))}
@@ -221,29 +221,29 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
               </Card>
               <Card className="bg-card">
                 <CardContent className="pt-8 text-center">
-                  <div className="text-4xl font-bold">{dayData.traitors.length}</div>
-                  <div className="text-base text-muted-foreground mt-2">Active Traitors</div>
+                  <div className="text-4xl font-bold">{dayData.strategies.length}</div>
+                  <div className="text-base text-muted-foreground mt-2">Active Strategies</div>
                 </CardContent>
               </Card>
             </div>
-            {dayData.traitors.length > 0 && (
+            {dayData.strategies.length > 0 && (
               <div>
-                <h4 className="font-semibold text-lg mb-4">Traitor Performance</h4>
+                <h4 className="font-semibold text-lg mb-4">Strategy Performance</h4>
                 <div className="grid gap-4">
-                  {dayData.traitors.filter(t => t && t.revenue !== undefined).map((traitor) => (
+                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => (
                     <div 
-                      key={traitor.name} 
+                      key={strategy.name} 
                       className="bg-primary/10 border border-primary/20 px-4 py-4 rounded-md"
                     >
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-medium text-primary text-base">{traitor.name}</span>
+                        <span className="font-medium text-primary text-base">{strategy.name}</span>
                         <span className="font-bold text-primary text-lg">
-                          ${traitor.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
-                      {traitor.symbols && traitor.symbols.length > 0 && (
+                      {strategy.symbols && strategy.symbols.length > 0 && (
                         <div className="space-y-2 pl-4 border-l-2 border-primary/30">
-                          {traitor.symbols.map((symbolData) => (
+                          {strategy.symbols.map((symbolData) => (
                             <div 
                               key={symbolData.symbol}
                               className="flex items-center justify-between text-sm"

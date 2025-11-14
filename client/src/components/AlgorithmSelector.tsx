@@ -5,10 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { Traitor } from '@/types/traitor';
+import type { Strategy } from '@/types/strategy';
 
 interface AlgorithmSelectorProps {
-  algorithms: Traitor[];
+  algorithms: Strategy[];
   value?: string;
   onValueChange?: (value: string) => void;
 }
@@ -20,16 +20,16 @@ export default function AlgorithmSelector({
 }: AlgorithmSelectorProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="w-full" data-testid="select-traitor">
-        <SelectValue placeholder="Select a traitor" />
+      <SelectTrigger className="w-full" data-testid="select-strategy">
+        <SelectValue placeholder="Select a strategy" />
       </SelectTrigger>
       <SelectContent>
-        {algorithms.map((traitor) => (
-          <SelectItem key={traitor.id} value={traitor.id} data-testid={`option-traitor-${traitor.id}`}>
+        {algorithms.map((strategy) => (
+          <SelectItem key={strategy.id} value={strategy.id} data-testid={`option-strategy-${strategy.id}`}>
             <div>
-              <div className="font-medium">{traitor.name}</div>
-              {traitor.description && (
-                <div className="text-xs text-muted-foreground">{traitor.description}</div>
+              <div className="font-medium">{strategy.name}</div>
+              {strategy.description && (
+                <div className="text-xs text-muted-foreground">{strategy.description}</div>
               )}
             </div>
           </SelectItem>

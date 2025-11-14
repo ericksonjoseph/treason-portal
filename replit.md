@@ -1,7 +1,7 @@
 # Treason - Trading Platform
 
 ## Overview
-Treason is a single-page trading platform designed for visualizing backtesting results and live trading data using TradingView-style charts. Its primary purpose is to provide an intuitive interface for users to select trading algorithms (referred to as "traitors"), stocks, and dates to analyze trading performance comprehensively. The platform aims to offer real-time updates during market hours, communicate with a user-provided REST API for data, and support both backtesting and live trading modes.
+Treason is a single-page trading platform designed for visualizing backtesting results and live trading data using TradingView-style charts. Its primary purpose is to provide an intuitive interface for users to select trading algorithms (referred to as "strategies"), stocks, and dates to analyze trading performance comprehensively. The platform aims to offer real-time updates during market hours, communicate with a user-provided REST API for data, and support both backtesting and live trading modes.
 
 ## User Preferences
 - Blue for down/sell indicators (softer shade for better visibility)
@@ -31,21 +31,21 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **Data Fetching**: `TanStack Query v5` is used for efficient data fetching and caching.
 
 ### Feature Specifications
-- **Run History Page**: Displays a table of all traitor execution runs with details (date, traitor, stock, mode, status, settings, results like P&L, Win Rate). Includes global filters (traitors, modes, tickers, status, date ranges), selection for bulk deletion, and color-coded results.
+- **Run History Page**: Displays a table of all strategy execution runs with details (date, strategy, stock, mode, status, settings, results like P&L, Win Rate). Includes global filters (strategies, modes, tickers, status, date ranges), selection for bulk deletion, and color-coded results.
 - **Charts Page (Dashboard)**:
     - **Stock Ticker Selector**: Input for selecting stock symbols (e.g., AAPL, TSLA).
     - **Date Picker**: For selecting historical backtesting dates or past live trading dates.
     - **Run Button Behavior**: In Live Trading mode, the Run button is only enabled when viewing the current date. When viewing any historical date in Live Trading mode, the button is disabled with an explanatory message. In Backtest mode, the Run button is always enabled regardless of the selected date.
-    - **Run Instance Selector**: A dropdown to choose between multiple runs of a traitor on the same day, with options to delete individual instances.
-    - **Traitor Settings Widget**: A toggleable view for configuring run-specific parameters like risk tolerance, sizing, stop loss, take profit, and aggressiveness via dropdowns and sliders.
+    - **Run Instance Selector**: A dropdown to choose between multiple runs of a strategy on the same day, with options to delete individual instances.
+    - **Strategy Settings Widget**: A toggleable view for configuring run-specific parameters like risk tolerance, sizing, stop loss, take profit, and aggressiveness via dropdowns and sliders.
 - **Reports Pages (Analytics)**:
-    - **Shared Features**: Both reports pages include comprehensive global filters (traitor, mode, ticker, date range) and a shared `ReportsLayout` for consistent structure.
+    - **Shared Features**: Both reports pages include comprehensive global filters (strategy, mode, ticker, date range) and a shared `ReportsLayout` for consistent structure.
     - **Revenue Graph Page**: Displays key performance metrics (Total Trades, Win Rate, Total Profit) and a line chart of revenue over time using Recharts, with interactive tooltips.
-    - **Revenue Calendar Page**: Provides an iCal/Google Calendar-style interface with four view modes (Month, Week, Day, Year). Each view offers varying levels of detail, from monthly totals to a detailed daily breakdown showing traitor and symbol-level revenue, with enhanced visual design and navigation.
+    - **Revenue Calendar Page**: Provides an iCal/Google Calendar-style interface with four view modes (Month, Week, Day, Year). Each view offers varying levels of detail, from monthly totals to a detailed daily breakdown showing strategy and symbol-level revenue, with enhanced visual design and navigation.
 
 ### System Design Choices
 - **Frontend-focused**: The platform is designed to be purely frontend, communicating with a user-provided REST API without requiring backend development for Treason itself.
-- **Terminology**: Uses "Traitors" for trading algorithms.
+- **Terminology**: Uses "Strategies" for trading algorithms.
 - **Data Storage**: Currently uses in-memory storage (`MemStorage`) but is designed for integration with external REST APIs.
 
 ## External Dependencies

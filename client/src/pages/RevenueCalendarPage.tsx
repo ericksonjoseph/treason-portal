@@ -4,10 +4,10 @@ import ReportsFilters from '@/components/ReportsFilters';
 import RevenueCalendar from '@/components/RevenueCalendar';
 import { DateRange } from 'react-day-picker';
 import { generateRevenueData, generateCalendarData } from '@/utils/mockRevenueData';
-import { MOCK_TRAITORS, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
+import { MOCK_STRATEGIES, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
 
 export default function RevenueCalendarPage() {
-  const [selectedTraitors, setSelectedTraitors] = useState<string[]>([]);
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>([]);
   const [selectedTickers, setSelectedTickers] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -16,7 +16,7 @@ export default function RevenueCalendarPage() {
   const mockCalendarData = useMemo(() => generateCalendarData(mockRevenueData), [mockRevenueData]);
 
   const handleReset = () => {
-    setSelectedTraitors([]);
+    setSelectedStrategies([]);
     setSelectedModes([]);
     setSelectedTickers([]);
     setDateRange(undefined);
@@ -24,9 +24,9 @@ export default function RevenueCalendarPage() {
 
   const filters = (
     <ReportsFilters
-      traitors={MOCK_TRAITORS}
-      selectedTraitors={selectedTraitors}
-      onTraitorsChange={setSelectedTraitors}
+      strategies={MOCK_STRATEGIES}
+      selectedStrategies={selectedStrategies}
+      onStrategiesChange={setSelectedStrategies}
       tickers={MOCK_TICKERS}
       selectedTickers={selectedTickers}
       onTickersChange={setSelectedTickers}

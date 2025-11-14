@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 
 interface StatusIndicatorProps {
-  type: 'connection' | 'market' | 'traitor';
+  type: 'connection' | 'market' | 'strategy';
   status: 'active' | 'inactive' | 'connecting';
   label?: string;
 }

@@ -1,6 +1,6 @@
 export type SettingType = 'enum' | 'numeric';
 
-export interface TraitorSetting {
+export interface StrategySetting {
   field: string;
   type: SettingType;
   value: string | number;

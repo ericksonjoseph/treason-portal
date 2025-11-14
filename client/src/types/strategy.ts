@@ -1,4 +1,4 @@
-export interface Traitor {
+export interface Strategy {
   id: string;
   name: string;
   description?: string;
@@ -9,6 +9,6 @@ export interface RunInstance {
   runNumber: number;
   timestamp: string;
   status?: 'completed' | 'running' | 'failed';
-  traitorId: string;
+  strategyId: string;
   date: string;
 }

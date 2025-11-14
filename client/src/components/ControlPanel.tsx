@@ -8,9 +8,9 @@ import DatePicker from './DatePicker';
 import RunInstanceSelector from './RunInstanceSelector';
 import MetricsCard from './MetricsCard';
 import TradeTimeline from './TradeTimeline';
-import TraitorSettings from './TraitorSettings';
-import type { Traitor, RunInstance } from '@/types/traitor';
-import type { TraitorSetting } from '@/types/settings';
+import StrategySettings from './StrategySettings';
+import type { Strategy, RunInstance } from '@/types/strategy';
+import type { StrategySetting } from '@/types/settings';
 
 interface Metric {
   label: string;
@@ -30,9 +30,9 @@ interface Trade {
 }
 
 interface ControlPanelProps {
-  traitors: Traitor[];
-  selectedTraitor?: string;
-  onTraitorChange?: (id: string) => void;
+  strategies: Strategy[];
+  selectedStrategy?: string;
+  onStrategyChange?: (id: string) => void;
   runInstances?: RunInstance[];
   selectedRunInstance?: string;
   onRunInstanceChange?: (id: string) => void;
@@ -46,7 +46,7 @@ interface ControlPanelProps {
   onRunClick?: () => void;
   onStopClick?: () => void;
   onSettingsClick?: () => void;
-  settings?: TraitorSetting[];
+  settings?: StrategySetting[];
   onSettingChange?: (field: string, value: string | number) => void;
   metrics: Metric[];
   trades: Trade[];
@@ -54,9 +54,9 @@ interface ControlPanelProps {
 }
 
 export default function ControlPanel({
-  traitors,
-  selectedTraitor,
-  onTraitorChange,
+  strategies,
+  selectedStrategy,
+  onStrategyChange,
   runInstances = [],
   selectedRunInstance,
   onRunInstanceChange,
@@ -100,7 +100,7 @@ export default function ControlPanel({
 
   if (showSettings) {
     return (
-      <TraitorSettings
+      <StrategySettings
         settings={settings}
         onSettingChange={onSettingChange}
         onBack={handleBackClick}
@@ -112,7 +112,7 @@ export default function ControlPanel({
     <div className="space-y-4 h-full overflow-y-auto p-4">
       <Card data-testid="card-controls">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Traitor Control</CardTitle>
+          <CardTitle className="text-base font-semibold">Strategy Control</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -130,11 +130,11 @@ export default function ControlPanel({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Traitor</label>
+            <label className="text-sm font-medium">Strategy</label>
             <AlgorithmSelector
-              algorithms={traitors}
-              value={selectedTraitor}
-              onValueChange={onTraitorChange}
+              algorithms={strategies}
+              value={selectedStrategy}
+              onValueChange={onStrategyChange}
             />
           </div>
           {runInstances.length > 0 && (

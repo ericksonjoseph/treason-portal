@@ -7,7 +7,7 @@ interface TradingHeaderProps {
   onModeChange?: (mode: 'backtest' | 'live') => void;
   connectionStatus: 'active' | 'inactive' | 'connecting';
   marketStatus: 'active' | 'inactive';
-  traitorStatus: 'active' | 'inactive';
+  strategyStatus: 'active' | 'inactive';
 }
 
 export default function TradingHeader({
@@ -15,7 +15,7 @@ export default function TradingHeader({
   onModeChange,
   connectionStatus,
   marketStatus,
-  traitorStatus,
+  strategyStatus,
 }: TradingHeaderProps) {
   return (
     <header className="border-b bg-card px-6 py-3">
@@ -41,7 +41,7 @@ export default function TradingHeader({
         <div className="flex items-center gap-3">
           <StatusIndicator type="connection" status={connectionStatus} />
           <StatusIndicator type="market" status={marketStatus} />
-          <StatusIndicator type="traitor" status={traitorStatus} />
+          <StatusIndicator type="strategy" status={strategyStatus} />
         </div>
       </div>
     </header>

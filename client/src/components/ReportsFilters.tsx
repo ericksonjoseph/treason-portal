@@ -4,12 +4,12 @@ import { RotateCcw } from 'lucide-react';
 import MultiSelect from './MultiSelect';
 import DateRangePicker from './DateRangePicker';
 import { DateRange } from 'react-day-picker';
-import type { Traitor } from '@/types/traitor';
+import type { Strategy } from '@/types/strategy';
 
 interface ReportsFiltersProps {
-  traitors: Traitor[];
-  selectedTraitors: string[];
-  onTraitorsChange: (selected: string[]) => void;
+  strategies: Strategy[];
+  selectedStrategies: string[];
+  onStrategiesChange: (selected: string[]) => void;
   tickers: string[];
   selectedTickers: string[];
   onTickersChange: (selected: string[]) => void;
@@ -25,9 +25,9 @@ interface ReportsFiltersProps {
 }
 
 export default function ReportsFilters({
-  traitors,
-  selectedTraitors,
-  onTraitorsChange,
+  strategies,
+  selectedStrategies,
+  onStrategiesChange,
   tickers,
   selectedTickers,
   onTickersChange,
@@ -41,7 +41,7 @@ export default function ReportsFilters({
   onDateRangeChange,
   onReset,
 }: ReportsFiltersProps) {
-  const traitorOptions = traitors.map((t) => ({ value: t.id, label: t.name }));
+  const strategyOptions = strategies.map((t) => ({ value: t.id, label: t.name }));
   const tickerOptions = tickers.map((t) => ({ value: t, label: t }));
   const hasStatusFilter = statuses && onStatusesChange;
 
@@ -61,14 +61,14 @@ export default function ReportsFilters({
       </CardHeader>
       <CardContent className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${hasStatusFilter ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
         <div className="space-y-2">
-          <label className="text-sm font-medium">Traitor</label>
+          <label className="text-sm font-medium">Strategy</label>
           <MultiSelect
-            options={traitorOptions}
-            selected={selectedTraitors}
-            onChange={onTraitorsChange}
-            placeholder="Select traitors"
-            allLabel="All Traitors"
-            testId="filter-traitors"
+            options={strategyOptions}
+            selected={selectedStrategies}
+            onChange={onStrategiesChange}
+            placeholder="Select strategies"
+            allLabel="All Strategies"
+            testId="filter-strategies"
           />
         </div>
 

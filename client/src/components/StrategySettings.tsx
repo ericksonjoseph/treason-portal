@@ -10,19 +10,19 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import type { TraitorSetting } from '@/types/settings';
+import type { StrategySetting } from '@/types/settings';
 
-interface TraitorSettingsProps {
-  settings: TraitorSetting[];
+interface StrategySettingsProps {
+  settings: StrategySetting[];
   onSettingChange?: (field: string, value: string | number) => void;
   onBack?: () => void;
 }
 
-export default function TraitorSettings({
+export default function StrategySettings({
   settings,
   onSettingChange,
   onBack,
-}: TraitorSettingsProps) {
+}: StrategySettingsProps) {
   const handleEnumChange = (field: string, value: string) => {
     onSettingChange?.(field, value);
   };
@@ -35,7 +35,7 @@ export default function TraitorSettings({
     <div className="space-y-4 h-full overflow-y-auto p-4">
       <Card data-testid="card-settings">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Traitor Settings</CardTitle>
+          <CardTitle className="text-base font-semibold">Strategy Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {settings.map((setting) => (
