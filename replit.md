@@ -33,7 +33,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 ### Feature Specifications
 - **Run History Page**: Displays a table of all strategy execution runs with details (date, strategy, stock, mode, status, settings, results like P&L, Win Rate). Includes global filters (strategies, modes, tickers, status, date ranges), selection for bulk deletion, and color-coded results.
 - **Charts Page (Dashboard)**:
-    - **Stock Ticker Selector**: Input for selecting stock symbols (e.g., AAPL, TSLA).
+    - **Stock Ticker Selector**: Input for selecting stock symbols (e.g., AAPL, TSLA). API requests only fire on blur (when input loses focus) or Enter key press to prevent excessive API calls during typing.
     - **Date Picker**: For selecting historical backtesting dates or past live trading dates.
     - **Run Button Behavior**: In Live Trading mode, the Run button is only enabled when viewing the current date. When viewing any historical date in Live Trading mode, the button is disabled with an explanatory message. In Backtest mode, the Run button is always enabled regardless of the selected date.
     - **Run Instance Selector**: A dropdown to choose between multiple runs of a strategy on the same day, with options to delete individual instances.
