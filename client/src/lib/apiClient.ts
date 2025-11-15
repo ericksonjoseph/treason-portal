@@ -14,7 +14,7 @@ const getStoredToken = (): string | null => {
 };
 
 export const configureApiClient = () => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://treason.nephue.com';
   const token = getStoredToken();
   
   client.setConfig({

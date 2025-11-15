@@ -47,7 +47,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **Frontend-focused**: The platform is designed to be purely frontend, communicating with a user-provided REST API without requiring backend development for Treason itself.
 - **Terminology**: Uses "Strategies" for trading algorithms.
 - **Data Storage**: Currently uses in-memory storage (`MemStorage`) but is designed for integration with external REST APIs.
-- **API Integration**: The platform uses a type-safe generated API client (located in `src/api/generated`) based on the backend Swagger/OpenAPI spec. The client is configured with base URL (via `VITE_API_BASE_URL` or defaults to `http://localhost:8080`) and Bearer token authentication.
+- **API Integration**: The platform uses a type-safe generated API client (located in `src/api/generated`) based on the backend Swagger/OpenAPI spec. The client is configured with base URL (via `VITE_API_BASE_URL` or defaults to `https://treason.nephue.com`) and Bearer token authentication.
   - **Bars/Candlesticks**: Fetched from `/v1/alpaca/bars/search` endpoint. Response (`V1Bar[]`) is transformed to OHLC format with Unix timestamps for the TradingView-style chart.
   - **Trading Decisions**: Fetched from `/v1/alpaca/decisions/search` endpoint when strategy is running. Response (`V1Decision[]`) with `SIGNAL_TYPE_BUY`/`SIGNAL_TYPE_SELL` is transformed to buy/sell markers displayed on the chart.
   - **Fallback**: When API is unavailable or returns errors, the system gracefully falls back to mock data to ensure the UI remains functional during development.

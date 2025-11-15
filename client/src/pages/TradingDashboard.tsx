@@ -72,6 +72,9 @@ export default function TradingDashboard() {
           },
         });
         console.log('Bars API Response:', response);
+        if (response.error) {
+          console.error('Bars API Error:', response.error);
+        }
         return response.data || { results: [] };
       } catch (error) {
         console.error('Error fetching bars:', error);
