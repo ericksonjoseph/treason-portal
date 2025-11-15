@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
@@ -15,6 +16,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { tradeServiceSearchDecisions } from '@/../../src/api/generated';
+import type { V1Decision } from '@/../../src/api/generated';
+import { configureApiClient } from '@/lib/apiClient';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
@@ -26,6 +30,32 @@ export default function TradingDashboard() {
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    configureApiClient();
+  }, []);
+
+  const { data: decisionsData, isLoading: isLoadingDecisions } = useQuery({
+    queryKey: ['decisions', ticker, selectedDate?.toISOString()],
+    queryFn: async () => {
+      configureApiClient();
+      const response = await tradeServiceSearchDecisions({
+        body: {
+          search: {
+            where: {
+              symbol: {
+                type: 'FILTER_TYPE_EQUAL',
+                values: [ticker],
+              },
+            },
+          },
+          pageSize: '100',
+        },
+      });
+      return response.data;
+    },
+    enabled: isRunning,
+  });
 
   const [strategySettings, setStrategySettings] = useState<StrategySetting[]>([
     {
@@ -178,12 +208,28 @@ export default function TradingDashboard() {
     };
   });
 
-  const mockChartTrades = [
-    { time: mockChartData[20].time, type: 'buy' as const, price: mockChartData[20].close },
-    { time: mockChartData[35].time, type: 'sell' as const, price: mockChartData[35].close },
-    { time: mockChartData[60].time, type: 'buy' as const, price: mockChartData[60].close },
-    { time: mockChartData[85].time, type: 'sell' as const, price: mockChartData[85].close },
-  ];
+  const chartTrades = useMemo(() => {
+    if (!decisionsData?.results || !isRunning) {
+      return [];
+    }
+
+    return decisionsData.results
+      .filter((decision: V1Decision) => {
+        const signal = decision.signal;
+        return signal === 'SIGNAL_TYPE_BUY' || signal === 'SIGNAL_TYPE_SELL';
+      })
+      .map((decision: V1Decision) => {
+        const timestamp = decision.createdAt ? new Date(decision.createdAt).getTime() / 1000 : 0;
+        const price = decision.limitPrice?.value ? parseFloat(decision.limitPrice.value) : 0;
+        
+        return {
+          time: timestamp,
+          type: decision.signal === 'SIGNAL_TYPE_BUY' ? ('buy' as const) : ('sell' as const),
+          price,
+        };
+      })
+      .filter((trade) => trade.time > 0 && trade.price > 0);
+  }, [decisionsData, isRunning]);
 
   return (
     <div className="flex flex-col h-full">
@@ -202,7 +248,7 @@ export default function TradingDashboard() {
               <h2 className="text-lg font-semibold font-mono">{ticker}</h2>
             </div>
             <div className="h-[calc(100%-2.5rem)]">
-              <TradingChart data={mockChartData} trades={isRunning ? mockChartTrades : []} />
+              <TradingChart data={mockChartData} trades={chartTrades} />
             </div>
           </div>
         </div>

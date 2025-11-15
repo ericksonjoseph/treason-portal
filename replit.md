@@ -47,6 +47,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **Frontend-focused**: The platform is designed to be purely frontend, communicating with a user-provided REST API without requiring backend development for Treason itself.
 - **Terminology**: Uses "Strategies" for trading algorithms.
 - **Data Storage**: Currently uses in-memory storage (`MemStorage`) but is designed for integration with external REST APIs.
+- **API Integration**: The platform uses a type-safe generated API client (located in `src/api/generated`) based on the backend Swagger/OpenAPI spec. The client is configured with base URL and Bearer token authentication. Trading decisions are fetched from `/v1/alpaca/decisions/search` endpoint and transformed to display buy/sell markers on charts.
 
 ## External Dependencies
 - **Charting Libraries**: `lightweight-charts v5.0.9`, `Recharts`
