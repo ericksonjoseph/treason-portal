@@ -16,8 +16,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions } from '@/../../src/api/generated';
-import type { V1Decision } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars } from '@/../../src/api/generated';
+import type { V1Decision, V1Bar } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 
 export default function TradingDashboard() {
@@ -34,6 +34,37 @@ export default function TradingDashboard() {
   useEffect(() => {
     configureApiClient();
   }, []);
+
+  const { data: barsData, isLoading: isLoadingBars, error: barsError } = useQuery({
+    queryKey: ['bars', ticker, selectedDate?.toISOString()],
+    queryFn: async () => {
+      try {
+        configureApiClient();
+        const response = await tradeServiceSearchBars({
+          body: {
+            search: {
+              where: {
+                symbol: {
+                  type: 'FILTER_TYPE_EQUAL',
+                  values: [ticker],
+                },
+              },
+              sort: [{
+                field: 'BAR_FIELD_TIMESTAMP',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
+            },
+            pageSize: '1000',
+          },
+        });
+        console.log('Bars API Response:', response);
+        return response.data || { results: [] };
+      } catch (error) {
+        console.error('Error fetching bars:', error);
+        return { results: [] };
+      }
+    },
+  });
 
   const { data: decisionsData, isLoading: isLoadingDecisions } = useQuery({
     queryKey: ['decisions', ticker, selectedDate?.toISOString()],
@@ -52,7 +83,7 @@ export default function TradingDashboard() {
           pageSize: '100',
         },
       });
-      return response.data;
+      return response.data || { results: [] };
     },
     enabled: isRunning,
   });
@@ -196,17 +227,38 @@ export default function TradingDashboard() {
     { id: '5', timestamp: '2024-11-11 15:30:00', action: 'buy' as const, price: 151.90, quantity: 200 },
   ];
 
-  const mockChartData = Array.from({ length: 100 }, (_, i) => {
-    const time = Math.floor(Date.now() / 1000) - (100 - i) * 86400;
-    const base = 150 + Math.sin(i / 10) * 20;
-    return {
-      time,
-      open: base + Math.random() * 5,
-      high: base + Math.random() * 10,
-      low: base - Math.random() * 5,
-      close: base + Math.random() * 5 - 2.5,
-    };
-  });
+  const chartData = useMemo(() => {
+    if (!barsData?.results || barsData.results.length === 0) {
+      return Array.from({ length: 100 }, (_, i) => {
+        const time = Math.floor(Date.now() / 1000) - (100 - i) * 86400;
+        const base = 150 + Math.sin(i / 10) * 20;
+        return {
+          time,
+          open: base + Math.random() * 5,
+          high: base + Math.random() * 10,
+          low: base - Math.random() * 5,
+          close: base + Math.random() * 5 - 2.5,
+        };
+      });
+    }
+
+    return barsData.results
+      .filter((bar: V1Bar) => {
+        return bar.timestamp && bar.open?.value && bar.high?.value && bar.low?.value && bar.close?.value;
+      })
+      .map((bar: V1Bar) => {
+        const timestamp = bar.timestamp ? new Date(bar.timestamp).getTime() / 1000 : 0;
+        
+        return {
+          time: timestamp,
+          open: parseFloat(bar.open!.value!),
+          high: parseFloat(bar.high!.value!),
+          low: parseFloat(bar.low!.value!),
+          close: parseFloat(bar.close!.value!),
+        };
+      })
+      .sort((a, b) => a.time - b.time);
+  }, [barsData]);
 
   const chartTrades = useMemo(() => {
     if (!decisionsData?.results || !isRunning) {
@@ -248,7 +300,7 @@ export default function TradingDashboard() {
               <h2 className="text-lg font-semibold font-mono">{ticker}</h2>
             </div>
             <div className="h-[calc(100%-2.5rem)]">
-              <TradingChart data={mockChartData} trades={chartTrades} />
+              <TradingChart data={chartData} trades={chartTrades} />
             </div>
           </div>
         </div>
