@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/table';
 import ReportsFilters from '@/components/ReportsFilters';
 import { DateRange } from 'react-day-picker';
+import { MOCK_STRATEGIES, MOCK_TICKERS, TRADING_MODES } from '@/utils/reportConstants';
+import { generateMockRuns } from '@/utils/mockRunData';
 import { Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
@@ -26,9 +28,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { backendClient } from '@/lib/backendClient';
-import type { Strategy } from '@/types/strategy';
-import type { Run } from '@/types/run';
 
 export default function RunHistoryPage() {
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
@@ -37,45 +36,16 @@ export default function RunHistoryPage() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedRuns, setSelectedRuns] = useState<Set<string>>(new Set());
+  const [runs, setRuns] = useState(() => generateMockRuns(50));
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Data from backend
-  const [runs, setRuns] = useState<Run[]>([]);
-  const [strategies, setStrategies] = useState<Strategy[]>([]);
-  const [tickers, setTickers] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  const statuses = backendClient.getStatusOptions();
-  const modes = backendClient.getTradingModes();
-
-  // Fetch data on mount
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setIsLoading(true);
-        const [runsData, strategiesData, tickersData] = await Promise.all([
-          backendClient.getRunHistory(),
-          backendClient.getStrategies(),
-          backendClient.getTickers(),
-        ]);
-        setRuns(runsData);
-        setStrategies(strategiesData);
-        setTickers(tickersData);
-      } catch (error) {
-        console.error('Failed to load run history data:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load run history',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, [toast]);
+  const statuses = [
+    { value: 'completed', label: 'Completed' },
+    { value: 'running', label: 'Running' },
+    { value: 'failed', label: 'Failed' },
+  ];
 
   const handleReset = () => {
     setSelectedStrategies([]);
@@ -137,34 +107,22 @@ export default function RunHistoryPage() {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = async () => {
-    try {
-      if (runToDelete === 'bulk') {
-        const runIds = Array.from(selectedRuns);
-        await backendClient.deleteRuns(runIds);
-        setRuns(runs.filter(r => !selectedRuns.has(r.id)));
-        toast({
-          title: 'Runs deleted',
-          description: `Successfully deleted ${selectedRuns.size} run${selectedRuns.size > 1 ? 's' : ''}`,
-        });
-        setSelectedRuns(new Set());
-      } else if (runToDelete) {
-        await backendClient.deleteRun(runToDelete);
-        setRuns(runs.filter(r => r.id !== runToDelete));
-        const newSelected = new Set(selectedRuns);
-        newSelected.delete(runToDelete);
-        setSelectedRuns(newSelected);
-        toast({
-          title: 'Run deleted',
-          description: 'Successfully deleted the run',
-        });
-      }
-    } catch (error) {
-      console.error('Failed to delete run(s):', error);
+  const confirmDelete = () => {
+    if (runToDelete === 'bulk') {
+      setRuns(runs.filter(r => !selectedRuns.has(r.id)));
       toast({
-        title: 'Error',
-        description: 'Failed to delete run(s)',
-        variant: 'destructive',
+        title: 'Runs deleted',
+        description: `Successfully deleted ${selectedRuns.size} run${selectedRuns.size > 1 ? 's' : ''}`,
+      });
+      setSelectedRuns(new Set());
+    } else if (runToDelete) {
+      setRuns(runs.filter(r => r.id !== runToDelete));
+      const newSelected = new Set(selectedRuns);
+      newSelected.delete(runToDelete);
+      setSelectedRuns(newSelected);
+      toast({
+        title: 'Run deleted',
+        description: 'Successfully deleted the run',
       });
     }
     setDeleteDialogOpen(false);
@@ -194,13 +152,13 @@ export default function RunHistoryPage() {
       </div>
 
       <ReportsFilters
-        strategies={strategies}
+        strategies={MOCK_STRATEGIES}
         selectedStrategies={selectedStrategies}
         onStrategiesChange={setSelectedStrategies}
-        tickers={tickers}
+        tickers={MOCK_TICKERS}
         selectedTickers={selectedTickers}
         onTickersChange={setSelectedTickers}
-        modes={modes}
+        modes={TRADING_MODES}
         selectedModes={selectedModes}
         onModesChange={setSelectedModes}
         statuses={statuses}

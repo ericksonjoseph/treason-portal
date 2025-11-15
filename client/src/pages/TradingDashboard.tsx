@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
-import type { RunInstance, Strategy } from '@/types/strategy';
+import type { RunInstance } from '@/types/strategy';
 import type { StrategySetting } from '@/types/settings';
 import {
   AlertDialog,
@@ -15,7 +15,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { backendClient } from '@/lib/backendClient';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
@@ -27,15 +26,6 @@ export default function TradingDashboard() {
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
-
-  // Data from backend
-  const [strategies, setStrategies] = useState<Strategy[]>([]);
-  const [allRunInstances, setAllRunInstances] = useState<RunInstance[]>([]);
-  const [chartData, setChartData] = useState<Array<{time: number; open: number; high: number; low: number; close: number}>>([]);
-  const [chartTrades, setChartTrades] = useState<Array<{time: number; type: 'buy' | 'sell'; price: number}>>([]);
-  const [metrics, setMetrics] = useState<Array<{label: string; value: string; prefix?: string; suffix?: string; change?: number}>>([]);
-  const [trades, setTrades] = useState<Array<{id: string; timestamp: string; action: 'buy' | 'sell'; price: number; quantity: number; pnl?: number}>>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const [strategySettings, setStrategySettings] = useState<StrategySetting[]>([
     {
@@ -75,80 +65,47 @@ export default function TradingDashboard() {
     },
   ]);
 
-  // Fetch initial data on mount
-  useEffect(() => {
-    async function loadInitialData() {
-      try {
-        setIsLoadingData(true);
-        const [strategiesData, metricsData, tradesData] = await Promise.all([
-          backendClient.getStrategies(),
-          backendClient.getMetrics(''),
-          backendClient.getTradeTimeline(),
-        ]);
-        setStrategies(strategiesData);
-        setMetrics(metricsData);
-        setTrades(tradesData);
-      } catch (error) {
-        console.error('Failed to load initial data:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load data from backend',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsLoadingData(false);
-      }
-    }
-    loadInitialData();
-  }, [toast]);
+  const mockStrategies = [
+    { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
+    { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
+    { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
+    { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
+  ];
 
-  // Fetch run instances when strategy or date changes
-  useEffect(() => {
-    if (!selectedDate) return;
-    
-    async function loadRunInstances() {
-      try {
-        const instances = await backendClient.getRunInstances(selectedStrategy, selectedDate!);
-        setAllRunInstances(instances);
-      } catch (error) {
-        console.error('Failed to load run instances:', error);
-      }
-    }
-    loadRunInstances();
-  }, [selectedStrategy, selectedDate]);
-
-  // Fetch chart data when ticker or date changes
-  useEffect(() => {
-    if (!selectedDate) return;
-    
-    async function loadChartData() {
-      try {
-        const data = await backendClient.getChartData(ticker, selectedDate!);
-        setChartData(data);
-      } catch (error) {
-        console.error('Failed to load chart data:', error);
-      }
-    }
-    loadChartData();
-  }, [ticker, selectedDate]);
-
-  // Fetch trades for selected run instance when running
-  useEffect(() => {
-    if (!isRunning || !selectedRunInstance) {
-      setChartTrades([]);
-      return;
-    }
-    
-    async function loadTrades() {
-      try {
-        const tradesData = await backendClient.getTrades(selectedRunInstance);
-        setChartTrades(tradesData);
-      } catch (error) {
-        console.error('Failed to load trades:', error);
-      }
-    }
-    loadTrades();
-  }, [isRunning, selectedRunInstance]);
+  const [allRunInstances, setAllRunInstances] = useState<RunInstance[]>([
+    { 
+      id: 'run-1', 
+      runNumber: 1, 
+      timestamp: '09:30 AM', 
+      status: 'completed',
+      strategyId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-2', 
+      runNumber: 2, 
+      timestamp: '11:45 AM', 
+      status: 'completed',
+      strategyId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-3', 
+      runNumber: 3, 
+      timestamp: '02:15 PM', 
+      status: 'running',
+      strategyId: 'rsi-macd',
+      date: new Date().toDateString(),
+    },
+    { 
+      id: 'run-4', 
+      runNumber: 1, 
+      timestamp: '10:00 AM', 
+      status: 'completed',
+      strategyId: 'ema-crossover',
+      date: new Date().toDateString(),
+    },
+  ]);
 
   const filteredRunInstances = useMemo(() => 
     allRunInstances.filter(
@@ -174,23 +131,13 @@ export default function TradingDashboard() {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (runToDelete) {
-      try {
-        await backendClient.deleteRun(runToDelete);
-        setAllRunInstances(allRunInstances.filter(r => r.id !== runToDelete));
-        toast({
-          title: 'Run deleted',
-          description: 'Successfully deleted the run instance',
-        });
-      } catch (error) {
-        console.error('Failed to delete run:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to delete run instance',
-          variant: 'destructive',
-        });
-      }
+      setAllRunInstances(allRunInstances.filter(r => r.id !== runToDelete));
+      toast({
+        title: 'Run deleted',
+        description: 'Successfully deleted the run instance',
+      });
     }
     setDeleteDialogOpen(false);
     setRunToDelete(null);
@@ -203,6 +150,40 @@ export default function TradingDashboard() {
       )
     );
   };
+
+  const mockMetrics = [
+    { label: 'Total P/L', value: '12,450.80', prefix: '$', change: 8.5 },
+    { label: 'Win Rate', value: '68.4', suffix: '%' },
+    { label: 'Total Trades', value: '156' },
+    { label: 'Sharpe Ratio', value: '1.85' },
+  ];
+
+  const mockTrades = [
+    { id: '1', timestamp: '2024-11-11 09:30:15', action: 'buy' as const, price: 152.45, quantity: 100 },
+    { id: '2', timestamp: '2024-11-11 11:22:48', action: 'sell' as const, price: 155.80, quantity: 100, pnl: 335.0 },
+    { id: '3', timestamp: '2024-11-11 13:15:30', action: 'buy' as const, price: 154.20, quantity: 150 },
+    { id: '4', timestamp: '2024-11-11 14:45:12', action: 'sell' as const, price: 153.10, quantity: 150, pnl: -165.0 },
+    { id: '5', timestamp: '2024-11-11 15:30:00', action: 'buy' as const, price: 151.90, quantity: 200 },
+  ];
+
+  const mockChartData = Array.from({ length: 100 }, (_, i) => {
+    const time = Math.floor(Date.now() / 1000) - (100 - i) * 86400;
+    const base = 150 + Math.sin(i / 10) * 20;
+    return {
+      time,
+      open: base + Math.random() * 5,
+      high: base + Math.random() * 10,
+      low: base - Math.random() * 5,
+      close: base + Math.random() * 5 - 2.5,
+    };
+  });
+
+  const mockChartTrades = [
+    { time: mockChartData[20].time, type: 'buy' as const, price: mockChartData[20].close },
+    { time: mockChartData[35].time, type: 'sell' as const, price: mockChartData[35].close },
+    { time: mockChartData[60].time, type: 'buy' as const, price: mockChartData[60].close },
+    { time: mockChartData[85].time, type: 'sell' as const, price: mockChartData[85].close },
+  ];
 
   return (
     <div className="flex flex-col h-full">
@@ -221,14 +202,14 @@ export default function TradingDashboard() {
               <h2 className="text-lg font-semibold font-mono">{ticker}</h2>
             </div>
             <div className="h-[calc(100%-2.5rem)]">
-              <TradingChart data={chartData} trades={isRunning ? chartTrades : []} />
+              <TradingChart data={mockChartData} trades={isRunning ? mockChartTrades : []} />
             </div>
           </div>
         </div>
         
         <div className="w-96 border-l bg-background overflow-y-auto">
           <ControlPanel
-            strategies={strategies}
+            strategies={mockStrategies}
             selectedStrategy={selectedStrategy}
             onStrategyChange={setSelectedStrategy}
             runInstances={filteredRunInstances}
@@ -241,33 +222,15 @@ export default function TradingDashboard() {
             onDateChange={setSelectedDate}
             mode={mode}
             isRunning={isRunning}
-            onRunClick={async () => {
+            onRunClick={() => {
               setIsRunning(true);
-              try {
-                await backendClient.createRun({
-                  strategyId: selectedStrategy,
-                  ticker,
-                  date: selectedDate || new Date(),
-                  mode,
-                  settings: strategySettings,
-                });
-                // Reload run instances after creating a new run
-                if (selectedDate) {
-                  const instances = await backendClient.getRunInstances(selectedStrategy, selectedDate);
-                  setAllRunInstances(instances);
-                }
-                toast({
-                  title: 'Strategy started',
-                  description: `Running ${selectedStrategy} on ${ticker}`,
-                });
-              } catch (error) {
-                console.error('Failed to start strategy:', error);
-                toast({
-                  title: 'Error',
-                  description: 'Failed to start strategy',
-                  variant: 'destructive',
-                });
-              }
+              console.log('Strategy started', {
+                mode,
+                ticker,
+                date: selectedDate?.toLocaleDateString(),
+                strategy: selectedStrategy,
+                runInstance: selectedRunInstance,
+              });
             }}
             onStopClick={() => {
               setIsRunning(false);
@@ -276,8 +239,8 @@ export default function TradingDashboard() {
             onSettingsClick={() => console.log('Settings clicked')}
             settings={strategySettings}
             onSettingChange={handleSettingChange}
-            metrics={metrics}
-            trades={trades}
+            metrics={mockMetrics}
+            trades={mockTrades}
             onTradeClick={(trade) => console.log('Trade clicked:', trade)}
           />
         </div>
