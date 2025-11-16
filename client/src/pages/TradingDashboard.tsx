@@ -40,6 +40,13 @@ export default function TradingDashboard() {
     queryFn: async () => {
       try {
         configureApiClient();
+        
+        const startOfDay = selectedDate ? new Date(selectedDate) : new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const startOfNextDay = new Date(startOfDay);
+        startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+        
         const response = await tradeServiceSearchBars({
           body: {
             search: {
@@ -57,6 +64,15 @@ export default function TradingDashboard() {
                       timeframe: {
                         type: 'FILTER_TYPE_EQUAL',
                         values: ['1Min'],
+                      },
+                    },
+                    {
+                      timestamp: {
+                        type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
+                        values: [
+                          startOfDay.toISOString(),
+                          startOfNextDay.toISOString(),
+                        ],
                       },
                     }
                   ]
