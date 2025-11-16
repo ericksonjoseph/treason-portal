@@ -44,9 +44,23 @@ export default function TradingDashboard() {
           body: {
             search: {
               where: {
-                symbol: {
-                  type: 'FILTER_TYPE_EQUAL',
-                  values: [ticker],
+                group: {
+                  op: "OP_TYPE_AND",
+                  filters: [
+                    {
+                      symbol: {
+                        type: 'FILTER_TYPE_EQUAL',
+                        values: [ticker],
+                      },
+                    },
+                    {
+                      timeframe: {
+                        type: 'FILTER_TYPE_EQUAL',
+                        values: ['1Min'],
+                      },
+                    }
+                  ]
+
                 },
               },
               sort: [{
