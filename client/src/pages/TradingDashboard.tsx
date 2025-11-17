@@ -398,46 +398,25 @@ export default function TradingDashboard() {
 
         configureApiClient();
 
-        const [executionsResponse, decisionsResponse] = await Promise.all([
-          tradeServiceSearchExecutions({
-            body: {
-              search: {
-                where: {
-                  runId: {
-                    type: 'FILTER_TYPE_EQUAL',
-                    values: [selectedRunInstance],
-                  },
-                },
-                sort: [{
-                  field: 'EXECUTION_FIELD_FILL_TIME',
-                  direction: 'SORT_DIRECTION_ASC',
-                }],
-              },
-              pageSize: '1000',
-            },
-          }),
-          tradeServiceSearchDecisions({
-            body: {
-              search: {
-                where: {
-                  runId: {
-                    type: 'FILTER_TYPE_EQUAL',
-                    values: [selectedRunInstance],
-                  },
+        const executionsResponse = await tradeServiceSearchExecutions({
+          body: {
+            search: {
+              where: {
+                runId: {
+                  type: 'FILTER_TYPE_EQUAL',
+                  values: [selectedRunInstance],
                 },
               },
-              pageSize: '1000',
+              sort: [{
+                field: 'EXECUTION_FIELD_FILL_TIME',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
             },
-          }),
-        ]);
+            pageSize: '1000',
+          },
+        });
 
-        const decisions = decisionsResponse.data?.results || [];
-        const executionsWithDecisions = executionsResponse.data?.results?.map((execution: any) => {
-          const decision = decisions.find((d: V1Decision) => d.id === execution.decision_id);
-          return { ...execution, decision };
-        }) || [];
-
-        return { results: executionsWithDecisions };
+        return { results: executionsResponse.data?.results || [] };
       } catch (error) {
         console.error('Error fetching executions:', error);
         return { results: [] };
@@ -464,14 +443,15 @@ export default function TradingDashboard() {
           hour12: false,
         }) : '';
 
-        const action = exec.decision?.signal === 'SIGNAL_TYPE_BUY' ? 'buy' as const : 'sell' as const;
+        const quantity = parseFloat(exec.fill_quantity!.value!);
+        const action = quantity > 0 ? 'buy' as const : 'sell' as const;
 
         return {
           id: exec.id || '',
           timestamp: fillTime,
           action,
           price: parseFloat(exec.fill_price!.value!),
-          quantity: Math.abs(parseFloat(exec.fill_quantity!.value!)),
+          quantity: Math.abs(quantity),
         };
       });
   }, [executionsData]);
