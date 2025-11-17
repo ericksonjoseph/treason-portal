@@ -248,7 +248,7 @@ export default function TradingDashboard() {
                       },
                     },
                     {
-                      startedAt: {
+                      startTime: {
                         type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
                         values: [
                           startOfDay.toISOString(),
