@@ -365,14 +365,12 @@ export default function TradingDashboard() {
       return [
         { label: 'Total P/L', value: '-', prefix: '$' },
         { label: 'Win Rate', value: '-', suffix: '%' },
-        { label: 'Number of Symbols', value: '-' },
         { label: 'Sharpe Ratio', value: '-' },
       ];
     }
 
     const profit = selectedRun.profit?.value ? parseFloat(selectedRun.profit.value) : 0;
     const winRate = selectedRun.winRate?.value ? parseFloat(selectedRun.winRate.value) : 0;
-    const totalTrades = selectedRun.totalTrades || '0';
     const sharpeRatio = selectedRun.sharpeRatio?.value ? parseFloat(selectedRun.sharpeRatio.value) : 0;
 
     return [
@@ -380,10 +378,8 @@ export default function TradingDashboard() {
         label: 'Total P/L', 
         value: profit.toFixed(2), 
         prefix: '$',
-        change: profit > 0 ? Math.abs((profit / 10000) * 100) : undefined
       },
       { label: 'Win Rate', value: (winRate * 100).toFixed(1), suffix: '%' },
-      { label: 'Number of Symbols', value: totalTrades },
       { label: 'Sharpe Ratio', value: sharpeRatio.toFixed(2) },
     ];
   }, [selectedRun]);
