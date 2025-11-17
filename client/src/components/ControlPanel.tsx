@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Square, Settings } from 'lucide-react';
+import { Play, Square, Settings, RefreshCw } from 'lucide-react';
 import AlgorithmSelector from './AlgorithmSelector';
 import TickerSelector from './TickerSelector';
 import DatePicker from './DatePicker';
@@ -46,6 +46,7 @@ interface ControlPanelProps {
   onRunClick?: () => void;
   onStopClick?: () => void;
   onSettingsClick?: () => void;
+  onRefresh?: () => void;
   settings?: StrategySetting[];
   onSettingChange?: (field: string, value: string | number) => void;
   metrics: Metric[];
@@ -70,6 +71,7 @@ export default function ControlPanel({
   onRunClick,
   onStopClick,
   onSettingsClick,
+  onRefresh,
   settings = [],
   onSettingChange,
   metrics,
@@ -111,8 +113,17 @@ export default function ControlPanel({
   return (
     <div className="space-y-4 h-full overflow-y-auto p-4">
       <Card data-testid="card-controls">
-        <CardHeader className="pb-3">
+        <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-3">
           <CardTitle className="text-base font-semibold">Strategy Control</CardTitle>
+          <Button 
+            onClick={onRefresh} 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            data-testid="button-refresh"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">

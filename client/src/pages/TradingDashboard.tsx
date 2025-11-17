@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions } from '@/../../src/api/generated';
 import type { V1Decision, V1Bar, V1Strategy, V1Run, V1Execution } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
+import { queryClient } from '@/lib/queryClient';
 import type { Strategy } from '@/types/strategy';
 
 export default function TradingDashboard() {
@@ -345,6 +346,15 @@ export default function TradingDashboard() {
     );
   };
 
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['runs'] });
+    queryClient.invalidateQueries({ queryKey: ['executions'] });
+    toast({
+      title: 'Data refreshed',
+      description: 'Successfully fetched latest data from server',
+    });
+  };
+
   const selectedRun = useMemo(() => {
     if (!runsData?.results || !selectedRunInstance) return null;
     return runsData.results.find((run: V1Run) => run.id === selectedRunInstance);
@@ -579,6 +589,7 @@ export default function TradingDashboard() {
               console.log('Strategy stopped');
             }}
             onSettingsClick={() => console.log('Settings clicked')}
+            onRefresh={handleRefresh}
             settings={strategySettings}
             onSettingChange={handleSettingChange}
             metrics={performanceMetrics}
