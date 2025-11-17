@@ -368,13 +368,16 @@ export default function TradingDashboard() {
       return [
         { label: 'Total P/L', value: '-', prefix: '$' },
         { label: 'Win Rate', value: '-', suffix: '%' },
+        { label: 'Total Trades', value: '-' },
         { label: 'Sharpe Ratio', value: '-' },
       ];
     }
 
-    const profit = selectedRun.profit?.value ? parseFloat(selectedRun.profit.value) : 0;
-    const winRate = selectedRun.winRate?.value ? parseFloat(selectedRun.winRate.value) : 0;
-    const sharpeRatio = selectedRun.sharpeRatio?.value ? parseFloat(selectedRun.sharpeRatio.value) : 0;
+    const runData = selectedRun as any;
+    const profit = runData.profit?.value ? parseFloat(runData.profit.value) : 0;
+    const winRate = runData.win_rate?.value ? parseFloat(runData.win_rate.value) : 0;
+    const totalTrades = runData.total_trades || '0';
+    const sharpeRatio = runData.sharpe_ratio?.value ? parseFloat(runData.sharpe_ratio.value) : 0;
 
     return [
       { 
@@ -382,8 +385,9 @@ export default function TradingDashboard() {
         value: profit.toFixed(2), 
         prefix: '$',
       },
-      { label: 'Win Rate', value: (winRate * 100).toFixed(1), suffix: '%' },
-      { label: 'Sharpe Ratio', value: sharpeRatio.toFixed(2) },
+      { label: 'Win Rate', value: winRate.toFixed(1), suffix: '%' },
+      { label: 'Total Trades', value: totalTrades },
+      { label: 'Sharpe Ratio', value: sharpeRatio.toFixed(3) },
     ];
   }, [selectedRun]);
 
