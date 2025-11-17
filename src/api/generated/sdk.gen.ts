@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { TradeServiceCreateBarsData, TradeServiceCreateBarsErrors, TradeServiceCreateBarsResponses, TradeServiceCreateDecisionsData, TradeServiceCreateDecisionsErrors, TradeServiceCreateDecisionsResponses, TradeServiceDeleteBarsData, TradeServiceDeleteBarsErrors, TradeServiceDeleteBarsResponses, TradeServiceDeleteDecisionsData, TradeServiceDeleteDecisionsErrors, TradeServiceDeleteDecisionsResponses, TradeServiceHealthCheckData, TradeServiceHealthCheckErrors, TradeServiceHealthCheckResponses, TradeServiceSearchBarsData, TradeServiceSearchBarsErrors, TradeServiceSearchBarsResponses, TradeServiceSearchDecisionsData, TradeServiceSearchDecisionsErrors, TradeServiceSearchDecisionsResponses, TradeServiceUpdateBarsData, TradeServiceUpdateBarsErrors, TradeServiceUpdateBarsResponses, TradeServiceUpdateDecisionsData, TradeServiceUpdateDecisionsErrors, TradeServiceUpdateDecisionsResponses } from './types.gen';
+import type { TradeServiceCreateBarsData, TradeServiceCreateBarsErrors, TradeServiceCreateBarsResponses, TradeServiceCreateDecisionsData, TradeServiceCreateDecisionsErrors, TradeServiceCreateDecisionsResponses, TradeServiceCreateExecutionsData, TradeServiceCreateExecutionsErrors, TradeServiceCreateExecutionsResponses, TradeServiceCreateRunsData, TradeServiceCreateRunsErrors, TradeServiceCreateRunsResponses, TradeServiceCreateStrategysData, TradeServiceCreateStrategysErrors, TradeServiceCreateStrategysResponses, TradeServiceCreateUsersData, TradeServiceCreateUsersErrors, TradeServiceCreateUsersResponses, TradeServiceDeleteBarsData, TradeServiceDeleteBarsErrors, TradeServiceDeleteBarsResponses, TradeServiceDeleteDecisionsData, TradeServiceDeleteDecisionsErrors, TradeServiceDeleteDecisionsResponses, TradeServiceDeleteExecutionsData, TradeServiceDeleteExecutionsErrors, TradeServiceDeleteExecutionsResponses, TradeServiceDeleteRunsData, TradeServiceDeleteRunsErrors, TradeServiceDeleteRunsResponses, TradeServiceDeleteStrategysData, TradeServiceDeleteStrategysErrors, TradeServiceDeleteStrategysResponses, TradeServiceDeleteUsersData, TradeServiceDeleteUsersErrors, TradeServiceDeleteUsersResponses, TradeServiceHealthCheckData, TradeServiceHealthCheckErrors, TradeServiceHealthCheckResponses, TradeServiceSearchBarsData, TradeServiceSearchBarsErrors, TradeServiceSearchBarsResponses, TradeServiceSearchDecisionsData, TradeServiceSearchDecisionsErrors, TradeServiceSearchDecisionsResponses, TradeServiceSearchExecutionsData, TradeServiceSearchExecutionsErrors, TradeServiceSearchExecutionsResponses, TradeServiceSearchRunsData, TradeServiceSearchRunsErrors, TradeServiceSearchRunsResponses, TradeServiceSearchStrategysData, TradeServiceSearchStrategysErrors, TradeServiceSearchStrategysResponses, TradeServiceSearchUsersData, TradeServiceSearchUsersErrors, TradeServiceSearchUsersResponses, TradeServiceUpdateBarsData, TradeServiceUpdateBarsErrors, TradeServiceUpdateBarsResponses, TradeServiceUpdateDecisionsData, TradeServiceUpdateDecisionsErrors, TradeServiceUpdateDecisionsResponses, TradeServiceUpdateExecutionsData, TradeServiceUpdateExecutionsErrors, TradeServiceUpdateExecutionsResponses, TradeServiceUpdateRunsData, TradeServiceUpdateRunsErrors, TradeServiceUpdateRunsResponses, TradeServiceUpdateStrategysData, TradeServiceUpdateStrategysErrors, TradeServiceUpdateStrategysResponses, TradeServiceUpdateUsersData, TradeServiceUpdateUsersErrors, TradeServiceUpdateUsersResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -98,6 +98,182 @@ export const tradeServiceDeleteDecisions = <ThrowOnError extends boolean = false
 export const tradeServiceSearchDecisions = <ThrowOnError extends boolean = false>(options: Options<TradeServiceSearchDecisionsData, ThrowOnError>) => {
     return (options.client ?? client).post<TradeServiceSearchDecisionsResponses, TradeServiceSearchDecisionsErrors, ThrowOnError>({
         url: '/v1/alpaca/decisions/search',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceUpdateExecutions = <ThrowOnError extends boolean = false>(options: Options<TradeServiceUpdateExecutionsData, ThrowOnError>) => {
+    return (options.client ?? client).patch<TradeServiceUpdateExecutionsResponses, TradeServiceUpdateExecutionsErrors, ThrowOnError>({
+        url: '/v1/alpaca/executions',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceCreateExecutions = <ThrowOnError extends boolean = false>(options: Options<TradeServiceCreateExecutionsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceCreateExecutionsResponses, TradeServiceCreateExecutionsErrors, ThrowOnError>({
+        url: '/v1/alpaca/executions',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceDeleteExecutions = <ThrowOnError extends boolean = false>(options: Options<TradeServiceDeleteExecutionsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceDeleteExecutionsResponses, TradeServiceDeleteExecutionsErrors, ThrowOnError>({
+        url: '/v1/alpaca/executions/delete',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceSearchExecutions = <ThrowOnError extends boolean = false>(options: Options<TradeServiceSearchExecutionsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceSearchExecutionsResponses, TradeServiceSearchExecutionsErrors, ThrowOnError>({
+        url: '/v1/alpaca/executions/search',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceUpdateRuns = <ThrowOnError extends boolean = false>(options: Options<TradeServiceUpdateRunsData, ThrowOnError>) => {
+    return (options.client ?? client).patch<TradeServiceUpdateRunsResponses, TradeServiceUpdateRunsErrors, ThrowOnError>({
+        url: '/v1/alpaca/runs',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceCreateRuns = <ThrowOnError extends boolean = false>(options: Options<TradeServiceCreateRunsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceCreateRunsResponses, TradeServiceCreateRunsErrors, ThrowOnError>({
+        url: '/v1/alpaca/runs',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceDeleteRuns = <ThrowOnError extends boolean = false>(options: Options<TradeServiceDeleteRunsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceDeleteRunsResponses, TradeServiceDeleteRunsErrors, ThrowOnError>({
+        url: '/v1/alpaca/runs/delete',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceSearchRuns = <ThrowOnError extends boolean = false>(options: Options<TradeServiceSearchRunsData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceSearchRunsResponses, TradeServiceSearchRunsErrors, ThrowOnError>({
+        url: '/v1/alpaca/runs/search',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceUpdateStrategys = <ThrowOnError extends boolean = false>(options: Options<TradeServiceUpdateStrategysData, ThrowOnError>) => {
+    return (options.client ?? client).patch<TradeServiceUpdateStrategysResponses, TradeServiceUpdateStrategysErrors, ThrowOnError>({
+        url: '/v1/alpaca/strategys',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceCreateStrategys = <ThrowOnError extends boolean = false>(options: Options<TradeServiceCreateStrategysData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceCreateStrategysResponses, TradeServiceCreateStrategysErrors, ThrowOnError>({
+        url: '/v1/alpaca/strategys',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceDeleteStrategys = <ThrowOnError extends boolean = false>(options: Options<TradeServiceDeleteStrategysData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceDeleteStrategysResponses, TradeServiceDeleteStrategysErrors, ThrowOnError>({
+        url: '/v1/alpaca/strategys/delete',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceSearchStrategys = <ThrowOnError extends boolean = false>(options: Options<TradeServiceSearchStrategysData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceSearchStrategysResponses, TradeServiceSearchStrategysErrors, ThrowOnError>({
+        url: '/v1/alpaca/strategys/search',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceUpdateUsers = <ThrowOnError extends boolean = false>(options: Options<TradeServiceUpdateUsersData, ThrowOnError>) => {
+    return (options.client ?? client).patch<TradeServiceUpdateUsersResponses, TradeServiceUpdateUsersErrors, ThrowOnError>({
+        url: '/v1/alpaca/users',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceCreateUsers = <ThrowOnError extends boolean = false>(options: Options<TradeServiceCreateUsersData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceCreateUsersResponses, TradeServiceCreateUsersErrors, ThrowOnError>({
+        url: '/v1/alpaca/users',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceDeleteUsers = <ThrowOnError extends boolean = false>(options: Options<TradeServiceDeleteUsersData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceDeleteUsersResponses, TradeServiceDeleteUsersErrors, ThrowOnError>({
+        url: '/v1/alpaca/users/delete',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const tradeServiceSearchUsers = <ThrowOnError extends boolean = false>(options: Options<TradeServiceSearchUsersData, ThrowOnError>) => {
+    return (options.client ?? client).post<TradeServiceSearchUsersResponses, TradeServiceSearchUsersErrors, ThrowOnError>({
+        url: '/v1/alpaca/users/search',
         ...options,
         headers: {
             'Content-Type': 'application/json',

@@ -27,9 +27,13 @@ export type V1Bar = {
     volume?: string;
     tradeCount?: string;
     vwap?: V1DecimalValue;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
 };
 
-export type V1BarField = 'BAR_FIELD_UNSPECIFIED' | 'BAR_FIELD_SYMBOL' | 'BAR_FIELD_TIMEFRAME' | 'BAR_FIELD_FEED' | 'BAR_FIELD_TIMESTAMP' | 'BAR_FIELD_OPEN' | 'BAR_FIELD_HIGH' | 'BAR_FIELD_LOW' | 'BAR_FIELD_CLOSE' | 'BAR_FIELD_VOLUME' | 'BAR_FIELD_TRADE_COUNT' | 'BAR_FIELD_VWAP';
+export type V1BarField = 'BAR_FIELD_UNSPECIFIED' | 'BAR_FIELD_SYMBOL' | 'BAR_FIELD_TIMEFRAME' | 'BAR_FIELD_FEED' | 'BAR_FIELD_TIMESTAMP' | 'BAR_FIELD_OPEN' | 'BAR_FIELD_HIGH' | 'BAR_FIELD_LOW' | 'BAR_FIELD_CLOSE' | 'BAR_FIELD_VOLUME' | 'BAR_FIELD_TRADE_COUNT' | 'BAR_FIELD_VWAP' | 'BAR_FIELD_CREATED_AT' | 'BAR_FIELD_CREATED_BY' | 'BAR_FIELD_DELETED_AT' | 'BAR_FIELD_DELETED_BY';
 
 export type V1BarGroupNode = {
     op?: V1OpType;
@@ -54,6 +58,10 @@ export type V1BarSearchNode = {
     volume?: V1Int64Search;
     tradeCount?: V1Uint64Search;
     vwap?: V1StringSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
 };
 
 export type V1BarSortOption = {
@@ -74,6 +82,15 @@ export type V1BarUpdate = {
     volume?: V1NullableInt64Value;
     tradeCount?: V1NullableUint64Value;
     vwap?: V1NullableDecimalValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
+};
+
+export type V1BoolSearch = {
+    type?: V1FilterType;
+    values?: Array<boolean>;
 };
 
 export type V1CreateBarsRequest = {
@@ -92,6 +109,38 @@ export type V1CreateDecisionsResponse = {
     createdCount?: string;
 };
 
+export type V1CreateExecutionsRequest = {
+    items?: Array<V1Execution>;
+};
+
+export type V1CreateExecutionsResponse = {
+    createdCount?: string;
+};
+
+export type V1CreateRunsRequest = {
+    items?: Array<V1Run>;
+};
+
+export type V1CreateRunsResponse = {
+    createdCount?: string;
+};
+
+export type V1CreateStrategysRequest = {
+    items?: Array<V1Strategy>;
+};
+
+export type V1CreateStrategysResponse = {
+    createdCount?: string;
+};
+
+export type V1CreateUsersRequest = {
+    items?: Array<V1User>;
+};
+
+export type V1CreateUsersResponse = {
+    createdCount?: string;
+};
+
 /**
  * --- Not Nullable Wrapper Messages ---
  * Makes it easier for our apps to convert
@@ -107,16 +156,20 @@ export type V1DecimalValue = {
 
 export type V1Decision = {
     id?: string;
-    createdAt?: string;
+    runId?: string;
     symbol?: string;
     signal?: V1SignalType;
     quantity?: number;
     orderType?: V1OrderType;
-    limitPrice?: V1NullableDecimalValue;
+    price?: V1DecimalValue;
     reason?: string;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
 };
 
-export type V1DecisionField = 'DECISION_FIELD_UNSPECIFIED' | 'DECISION_FIELD_ID' | 'DECISION_FIELD_CREATED_AT' | 'DECISION_FIELD_SYMBOL' | 'DECISION_FIELD_SIGNAL' | 'DECISION_FIELD_QUANTITY' | 'DECISION_FIELD_ORDER_TYPE' | 'DECISION_FIELD_LIMIT_PRICE' | 'DECISION_FIELD_REASON';
+export type V1DecisionField = 'DECISION_FIELD_UNSPECIFIED' | 'DECISION_FIELD_ID' | 'DECISION_FIELD_RUN_ID' | 'DECISION_FIELD_SYMBOL' | 'DECISION_FIELD_SIGNAL' | 'DECISION_FIELD_QUANTITY' | 'DECISION_FIELD_ORDER_TYPE' | 'DECISION_FIELD_PRICE' | 'DECISION_FIELD_REASON' | 'DECISION_FIELD_CREATED_AT' | 'DECISION_FIELD_CREATED_BY' | 'DECISION_FIELD_DELETED_AT' | 'DECISION_FIELD_DELETED_BY';
 
 export type V1DecisionGroupNode = {
     op?: V1OpType;
@@ -131,13 +184,17 @@ export type V1DecisionSearch = {
 export type V1DecisionSearchNode = {
     group?: V1DecisionGroupNode;
     id?: V1StringSearch;
-    createdAt?: V1TimestampSearch;
+    runId?: V1StringSearch;
     symbol?: V1StringSearch;
     signal?: V1StringSearch;
     quantity?: V1Int32Search;
     orderType?: V1StringSearch;
-    limitPrice?: V1StringSearch;
+    price?: V1StringSearch;
     reason?: V1StringSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
 };
 
 export type V1DecisionSortOption = {
@@ -148,13 +205,17 @@ export type V1DecisionSortOption = {
 
 export type V1DecisionUpdate = {
     id?: V1NullableStringValue;
-    createdAt?: V1NullableTimestampValue;
+    runId?: V1NullableStringValue;
     symbol?: V1NullableStringValue;
     signal?: V1NullableStringValue;
     quantity?: V1NullableInt32Value;
     orderType?: V1NullableStringValue;
-    limitPrice?: V1NullableDecimalValue;
+    price?: V1NullableDecimalValue;
     reason?: V1NullableStringValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
 };
 
 export type V1DeleteBarsRequest = {
@@ -175,6 +236,102 @@ export type V1DeleteDecisionsResponse = {
     deletedCount?: string;
 };
 
+export type V1DeleteExecutionsRequest = {
+    search?: V1ExecutionSearch;
+    limit?: string;
+};
+
+export type V1DeleteExecutionsResponse = {
+    deletedCount?: string;
+};
+
+export type V1DeleteRunsRequest = {
+    search?: V1RunSearch;
+    limit?: string;
+};
+
+export type V1DeleteRunsResponse = {
+    deletedCount?: string;
+};
+
+export type V1DeleteStrategysRequest = {
+    search?: V1StrategySearch;
+    limit?: string;
+};
+
+export type V1DeleteStrategysResponse = {
+    deletedCount?: string;
+};
+
+export type V1DeleteUsersRequest = {
+    search?: V1UserSearch;
+    limit?: string;
+};
+
+export type V1DeleteUsersResponse = {
+    deletedCount?: string;
+};
+
+export type V1Execution = {
+    id?: string;
+    decisionId?: string;
+    status?: V1ExecutionStatus;
+    fillTime?: string;
+    fillPrice?: V1DecimalValue;
+    fillQuantity?: V1DecimalValue;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
+};
+
+export type V1ExecutionField = 'EXECUTION_FIELD_UNSPECIFIED' | 'EXECUTION_FIELD_ID' | 'EXECUTION_FIELD_DECISION_ID' | 'EXECUTION_FIELD_STATUS' | 'EXECUTION_FIELD_FILL_TIME' | 'EXECUTION_FIELD_FILL_PRICE' | 'EXECUTION_FIELD_FILL_QUANTITY' | 'EXECUTION_FIELD_CREATED_AT' | 'EXECUTION_FIELD_CREATED_BY' | 'EXECUTION_FIELD_DELETED_AT' | 'EXECUTION_FIELD_DELETED_BY';
+
+export type V1ExecutionGroupNode = {
+    op?: V1OpType;
+    filters?: Array<V1ExecutionSearchNode>;
+};
+
+export type V1ExecutionSearch = {
+    where?: V1ExecutionSearchNode;
+    sort?: Array<V1ExecutionSortOption>;
+};
+
+export type V1ExecutionSearchNode = {
+    group?: V1ExecutionGroupNode;
+    id?: V1StringSearch;
+    decisionId?: V1StringSearch;
+    status?: V1StringSearch;
+    fillTime?: V1TimestampSearch;
+    fillPrice?: V1StringSearch;
+    fillQuantity?: V1StringSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
+};
+
+export type V1ExecutionSortOption = {
+    field?: V1ExecutionField;
+    direction?: V1SortDirection;
+    index?: string;
+};
+
+export type V1ExecutionStatus = 'EXECUTION_STATUS_UNSPECIFIED' | 'EXECUTION_STATUS_REQUESTED' | 'EXECUTION_STATUS_FILLED' | 'EXECUTION_STATUS_REJECTED' | 'EXECUTION_STATUS_CANCELED';
+
+export type V1ExecutionUpdate = {
+    id?: V1NullableStringValue;
+    decisionId?: V1NullableStringValue;
+    status?: V1NullableStringValue;
+    fillTime?: V1NullableTimestampValue;
+    fillPrice?: V1NullableDecimalValue;
+    fillQuantity?: V1NullableDecimalValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
+};
+
 export type V1FilterType = 'FILTER_TYPE_UNSPECIFIED' | 'FILTER_TYPE_EQUAL' | 'FILTER_TYPE_IN' | 'FILTER_TYPE_NOT_IN' | 'FILTER_TYPE_IS_NULL' | 'FILTER_TYPE_IS_NOT_NULL' | 'FILTER_TYPE_RANGE_INCLUSIVE' | 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX' | 'FILTER_TYPE_IN_OR_IS_NULL';
 
 export type V1HealthCheckResponse = {
@@ -189,6 +346,10 @@ export type V1Int32Search = {
 export type V1Int64Search = {
     type?: V1FilterType;
     values?: Array<string>;
+};
+
+export type V1NullableBoolValue = {
+    value?: boolean;
 };
 
 export type V1NullableDecimalValue = {
@@ -238,6 +399,78 @@ export type V1OpType = 'OP_TYPE_UNSPECIFIED' | 'OP_TYPE_AND' | 'OP_TYPE_OR';
 
 export type V1OrderType = 'ORDER_TYPE_UNSPECIFIED' | 'ORDER_TYPE_MARKET' | 'ORDER_TYPE_LIMIT';
 
+export type V1Run = {
+    id?: string;
+    strategyId?: string;
+    type?: V1RunType;
+    parameters?: string;
+    startedAt?: string;
+    completedAt?: string;
+    profit?: V1NullableDecimalValue;
+    winRate?: V1NullableDecimalValue;
+    totalTrades?: string;
+    sharpeRatio?: V1NullableDecimalValue;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
+};
+
+export type V1RunField = 'RUN_FIELD_UNSPECIFIED' | 'RUN_FIELD_ID' | 'RUN_FIELD_STRATEGY_ID' | 'RUN_FIELD_TYPE' | 'RUN_FIELD_PARAMETERS' | 'RUN_FIELD_STARTED_AT' | 'RUN_FIELD_COMPLETED_AT' | 'RUN_FIELD_PROFIT' | 'RUN_FIELD_WIN_RATE' | 'RUN_FIELD_TOTAL_TRADES' | 'RUN_FIELD_SHARPE_RATIO' | 'RUN_FIELD_CREATED_AT' | 'RUN_FIELD_CREATED_BY' | 'RUN_FIELD_DELETED_AT' | 'RUN_FIELD_DELETED_BY';
+
+export type V1RunGroupNode = {
+    op?: V1OpType;
+    filters?: Array<V1RunSearchNode>;
+};
+
+export type V1RunSearch = {
+    where?: V1RunSearchNode;
+    sort?: Array<V1RunSortOption>;
+};
+
+export type V1RunSearchNode = {
+    group?: V1RunGroupNode;
+    id?: V1StringSearch;
+    strategyId?: V1StringSearch;
+    type?: V1StringSearch;
+    parameters?: V1StringSearch;
+    startedAt?: V1TimestampSearch;
+    completedAt?: V1TimestampSearch;
+    profit?: V1StringSearch;
+    winRate?: V1StringSearch;
+    totalTrades?: V1Uint64Search;
+    sharpeRatio?: V1StringSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
+};
+
+export type V1RunSortOption = {
+    field?: V1RunField;
+    direction?: V1SortDirection;
+    index?: string;
+};
+
+export type V1RunType = 'RUN_TYPE_UNSPECIFIED' | 'RUN_TYPE_LIVE' | 'RUN_TYPE_BACKTEST';
+
+export type V1RunUpdate = {
+    id?: V1NullableStringValue;
+    strategyId?: V1NullableStringValue;
+    type?: V1NullableStringValue;
+    parameters?: V1NullableStringValue;
+    startedAt?: V1NullableTimestampValue;
+    completedAt?: V1NullableTimestampValue;
+    profit?: V1NullableDecimalValue;
+    winRate?: V1NullableDecimalValue;
+    totalTrades?: V1NullableUint64Value;
+    sharpeRatio?: V1NullableDecimalValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
+};
+
 export type V1SearchBarsRequest = {
     search?: V1BarSearch;
     pageSize?: string;
@@ -260,9 +493,105 @@ export type V1SearchDecisionsResponse = {
     nextPageToken?: string;
 };
 
+export type V1SearchExecutionsRequest = {
+    search?: V1ExecutionSearch;
+    pageSize?: string;
+    pageToken?: string;
+};
+
+export type V1SearchExecutionsResponse = {
+    results?: Array<V1Execution>;
+    nextPageToken?: string;
+};
+
+export type V1SearchRunsRequest = {
+    search?: V1RunSearch;
+    pageSize?: string;
+    pageToken?: string;
+};
+
+export type V1SearchRunsResponse = {
+    results?: Array<V1Run>;
+    nextPageToken?: string;
+};
+
+export type V1SearchStrategysRequest = {
+    search?: V1StrategySearch;
+    pageSize?: string;
+    pageToken?: string;
+};
+
+export type V1SearchStrategysResponse = {
+    results?: Array<V1Strategy>;
+    nextPageToken?: string;
+};
+
+export type V1SearchUsersRequest = {
+    search?: V1UserSearch;
+    pageSize?: string;
+    pageToken?: string;
+};
+
+export type V1SearchUsersResponse = {
+    results?: Array<V1User>;
+    nextPageToken?: string;
+};
+
 export type V1SignalType = 'SIGNAL_TYPE_UNSPECIFIED' | 'SIGNAL_TYPE_HOLD' | 'SIGNAL_TYPE_BUY' | 'SIGNAL_TYPE_SELL' | 'SIGNAL_TYPE_LIQUIDATE';
 
 export type V1SortDirection = 'SORT_DIRECTION_UNSPECIFIED' | 'SORT_DIRECTION_ASC' | 'SORT_DIRECTION_DESC';
+
+export type V1Strategy = {
+    id?: string;
+    name?: string;
+    description?: string;
+    isActive?: boolean;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
+};
+
+export type V1StrategyField = 'STRATEGY_FIELD_UNSPECIFIED' | 'STRATEGY_FIELD_ID' | 'STRATEGY_FIELD_NAME' | 'STRATEGY_FIELD_DESCRIPTION' | 'STRATEGY_FIELD_IS_ACTIVE' | 'STRATEGY_FIELD_CREATED_AT' | 'STRATEGY_FIELD_CREATED_BY' | 'STRATEGY_FIELD_DELETED_AT' | 'STRATEGY_FIELD_DELETED_BY';
+
+export type V1StrategyGroupNode = {
+    op?: V1OpType;
+    filters?: Array<V1StrategySearchNode>;
+};
+
+export type V1StrategySearch = {
+    where?: V1StrategySearchNode;
+    sort?: Array<V1StrategySortOption>;
+};
+
+export type V1StrategySearchNode = {
+    group?: V1StrategyGroupNode;
+    id?: V1StringSearch;
+    name?: V1StringSearch;
+    description?: V1StringSearch;
+    isActive?: V1BoolSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
+};
+
+export type V1StrategySortOption = {
+    field?: V1StrategyField;
+    direction?: V1SortDirection;
+    index?: string;
+};
+
+export type V1StrategyUpdate = {
+    id?: V1NullableStringValue;
+    name?: V1NullableStringValue;
+    description?: V1NullableStringValue;
+    isActive?: V1NullableBoolValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
+};
 
 /**
  * --- Search Wrapper Messages ---
@@ -300,6 +629,95 @@ export type V1UpdateDecisionsRequest = {
 
 export type V1UpdateDecisionsResponse = {
     updatedCount?: string;
+};
+
+export type V1UpdateExecutionsRequest = {
+    search?: V1ExecutionSearch;
+    data?: V1ExecutionUpdate;
+    limit?: string;
+};
+
+export type V1UpdateExecutionsResponse = {
+    updatedCount?: string;
+};
+
+export type V1UpdateRunsRequest = {
+    search?: V1RunSearch;
+    data?: V1RunUpdate;
+    limit?: string;
+};
+
+export type V1UpdateRunsResponse = {
+    updatedCount?: string;
+};
+
+export type V1UpdateStrategysRequest = {
+    search?: V1StrategySearch;
+    data?: V1StrategyUpdate;
+    limit?: string;
+};
+
+export type V1UpdateStrategysResponse = {
+    updatedCount?: string;
+};
+
+export type V1UpdateUsersRequest = {
+    search?: V1UserSearch;
+    data?: V1UserUpdate;
+    limit?: string;
+};
+
+export type V1UpdateUsersResponse = {
+    updatedCount?: string;
+};
+
+export type V1User = {
+    id?: string;
+    email?: string;
+    name?: string;
+    createdAt?: string;
+    createdBy?: string;
+    deletedAt?: string;
+    deletedBy?: string;
+};
+
+export type V1UserField = 'USER_FIELD_UNSPECIFIED' | 'USER_FIELD_ID' | 'USER_FIELD_EMAIL' | 'USER_FIELD_NAME' | 'USER_FIELD_CREATED_AT' | 'USER_FIELD_CREATED_BY' | 'USER_FIELD_DELETED_AT' | 'USER_FIELD_DELETED_BY';
+
+export type V1UserGroupNode = {
+    op?: V1OpType;
+    filters?: Array<V1UserSearchNode>;
+};
+
+export type V1UserSearch = {
+    where?: V1UserSearchNode;
+    sort?: Array<V1UserSortOption>;
+};
+
+export type V1UserSearchNode = {
+    group?: V1UserGroupNode;
+    id?: V1StringSearch;
+    email?: V1StringSearch;
+    name?: V1StringSearch;
+    createdAt?: V1TimestampSearch;
+    createdBy?: V1StringSearch;
+    deletedAt?: V1TimestampSearch;
+    deletedBy?: V1StringSearch;
+};
+
+export type V1UserSortOption = {
+    field?: V1UserField;
+    direction?: V1SortDirection;
+    index?: string;
+};
+
+export type V1UserUpdate = {
+    id?: V1NullableStringValue;
+    email?: V1NullableStringValue;
+    name?: V1NullableStringValue;
+    createdAt?: V1NullableTimestampValue;
+    createdBy?: V1NullableStringValue;
+    deletedAt?: V1NullableTimestampValue;
+    deletedBy?: V1NullableStringValue;
 };
 
 export type TradeServiceUpdateBarsData = {
@@ -501,6 +919,406 @@ export type TradeServiceSearchDecisionsResponses = {
 };
 
 export type TradeServiceSearchDecisionsResponse = TradeServiceSearchDecisionsResponses[keyof TradeServiceSearchDecisionsResponses];
+
+export type TradeServiceUpdateExecutionsData = {
+    body: V1UpdateExecutionsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/executions';
+};
+
+export type TradeServiceUpdateExecutionsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceUpdateExecutionsError = TradeServiceUpdateExecutionsErrors[keyof TradeServiceUpdateExecutionsErrors];
+
+export type TradeServiceUpdateExecutionsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1UpdateExecutionsResponse;
+};
+
+export type TradeServiceUpdateExecutionsResponse = TradeServiceUpdateExecutionsResponses[keyof TradeServiceUpdateExecutionsResponses];
+
+export type TradeServiceCreateExecutionsData = {
+    body: V1CreateExecutionsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/executions';
+};
+
+export type TradeServiceCreateExecutionsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceCreateExecutionsError = TradeServiceCreateExecutionsErrors[keyof TradeServiceCreateExecutionsErrors];
+
+export type TradeServiceCreateExecutionsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1CreateExecutionsResponse;
+};
+
+export type TradeServiceCreateExecutionsResponse = TradeServiceCreateExecutionsResponses[keyof TradeServiceCreateExecutionsResponses];
+
+export type TradeServiceDeleteExecutionsData = {
+    body: V1DeleteExecutionsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/executions/delete';
+};
+
+export type TradeServiceDeleteExecutionsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceDeleteExecutionsError = TradeServiceDeleteExecutionsErrors[keyof TradeServiceDeleteExecutionsErrors];
+
+export type TradeServiceDeleteExecutionsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1DeleteExecutionsResponse;
+};
+
+export type TradeServiceDeleteExecutionsResponse = TradeServiceDeleteExecutionsResponses[keyof TradeServiceDeleteExecutionsResponses];
+
+export type TradeServiceSearchExecutionsData = {
+    body: V1SearchExecutionsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/executions/search';
+};
+
+export type TradeServiceSearchExecutionsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceSearchExecutionsError = TradeServiceSearchExecutionsErrors[keyof TradeServiceSearchExecutionsErrors];
+
+export type TradeServiceSearchExecutionsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1SearchExecutionsResponse;
+};
+
+export type TradeServiceSearchExecutionsResponse = TradeServiceSearchExecutionsResponses[keyof TradeServiceSearchExecutionsResponses];
+
+export type TradeServiceUpdateRunsData = {
+    body: V1UpdateRunsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/runs';
+};
+
+export type TradeServiceUpdateRunsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceUpdateRunsError = TradeServiceUpdateRunsErrors[keyof TradeServiceUpdateRunsErrors];
+
+export type TradeServiceUpdateRunsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1UpdateRunsResponse;
+};
+
+export type TradeServiceUpdateRunsResponse = TradeServiceUpdateRunsResponses[keyof TradeServiceUpdateRunsResponses];
+
+export type TradeServiceCreateRunsData = {
+    body: V1CreateRunsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/runs';
+};
+
+export type TradeServiceCreateRunsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceCreateRunsError = TradeServiceCreateRunsErrors[keyof TradeServiceCreateRunsErrors];
+
+export type TradeServiceCreateRunsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1CreateRunsResponse;
+};
+
+export type TradeServiceCreateRunsResponse = TradeServiceCreateRunsResponses[keyof TradeServiceCreateRunsResponses];
+
+export type TradeServiceDeleteRunsData = {
+    body: V1DeleteRunsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/runs/delete';
+};
+
+export type TradeServiceDeleteRunsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceDeleteRunsError = TradeServiceDeleteRunsErrors[keyof TradeServiceDeleteRunsErrors];
+
+export type TradeServiceDeleteRunsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1DeleteRunsResponse;
+};
+
+export type TradeServiceDeleteRunsResponse = TradeServiceDeleteRunsResponses[keyof TradeServiceDeleteRunsResponses];
+
+export type TradeServiceSearchRunsData = {
+    body: V1SearchRunsRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/runs/search';
+};
+
+export type TradeServiceSearchRunsErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceSearchRunsError = TradeServiceSearchRunsErrors[keyof TradeServiceSearchRunsErrors];
+
+export type TradeServiceSearchRunsResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1SearchRunsResponse;
+};
+
+export type TradeServiceSearchRunsResponse = TradeServiceSearchRunsResponses[keyof TradeServiceSearchRunsResponses];
+
+export type TradeServiceUpdateStrategysData = {
+    body: V1UpdateStrategysRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/strategys';
+};
+
+export type TradeServiceUpdateStrategysErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceUpdateStrategysError = TradeServiceUpdateStrategysErrors[keyof TradeServiceUpdateStrategysErrors];
+
+export type TradeServiceUpdateStrategysResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1UpdateStrategysResponse;
+};
+
+export type TradeServiceUpdateStrategysResponse = TradeServiceUpdateStrategysResponses[keyof TradeServiceUpdateStrategysResponses];
+
+export type TradeServiceCreateStrategysData = {
+    body: V1CreateStrategysRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/strategys';
+};
+
+export type TradeServiceCreateStrategysErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceCreateStrategysError = TradeServiceCreateStrategysErrors[keyof TradeServiceCreateStrategysErrors];
+
+export type TradeServiceCreateStrategysResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1CreateStrategysResponse;
+};
+
+export type TradeServiceCreateStrategysResponse = TradeServiceCreateStrategysResponses[keyof TradeServiceCreateStrategysResponses];
+
+export type TradeServiceDeleteStrategysData = {
+    body: V1DeleteStrategysRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/strategys/delete';
+};
+
+export type TradeServiceDeleteStrategysErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceDeleteStrategysError = TradeServiceDeleteStrategysErrors[keyof TradeServiceDeleteStrategysErrors];
+
+export type TradeServiceDeleteStrategysResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1DeleteStrategysResponse;
+};
+
+export type TradeServiceDeleteStrategysResponse = TradeServiceDeleteStrategysResponses[keyof TradeServiceDeleteStrategysResponses];
+
+export type TradeServiceSearchStrategysData = {
+    body: V1SearchStrategysRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/strategys/search';
+};
+
+export type TradeServiceSearchStrategysErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceSearchStrategysError = TradeServiceSearchStrategysErrors[keyof TradeServiceSearchStrategysErrors];
+
+export type TradeServiceSearchStrategysResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1SearchStrategysResponse;
+};
+
+export type TradeServiceSearchStrategysResponse = TradeServiceSearchStrategysResponses[keyof TradeServiceSearchStrategysResponses];
+
+export type TradeServiceUpdateUsersData = {
+    body: V1UpdateUsersRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/users';
+};
+
+export type TradeServiceUpdateUsersErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceUpdateUsersError = TradeServiceUpdateUsersErrors[keyof TradeServiceUpdateUsersErrors];
+
+export type TradeServiceUpdateUsersResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1UpdateUsersResponse;
+};
+
+export type TradeServiceUpdateUsersResponse = TradeServiceUpdateUsersResponses[keyof TradeServiceUpdateUsersResponses];
+
+export type TradeServiceCreateUsersData = {
+    body: V1CreateUsersRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/users';
+};
+
+export type TradeServiceCreateUsersErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceCreateUsersError = TradeServiceCreateUsersErrors[keyof TradeServiceCreateUsersErrors];
+
+export type TradeServiceCreateUsersResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1CreateUsersResponse;
+};
+
+export type TradeServiceCreateUsersResponse = TradeServiceCreateUsersResponses[keyof TradeServiceCreateUsersResponses];
+
+export type TradeServiceDeleteUsersData = {
+    body: V1DeleteUsersRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/users/delete';
+};
+
+export type TradeServiceDeleteUsersErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceDeleteUsersError = TradeServiceDeleteUsersErrors[keyof TradeServiceDeleteUsersErrors];
+
+export type TradeServiceDeleteUsersResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1DeleteUsersResponse;
+};
+
+export type TradeServiceDeleteUsersResponse = TradeServiceDeleteUsersResponses[keyof TradeServiceDeleteUsersResponses];
+
+export type TradeServiceSearchUsersData = {
+    body: V1SearchUsersRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/users/search';
+};
+
+export type TradeServiceSearchUsersErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceSearchUsersError = TradeServiceSearchUsersErrors[keyof TradeServiceSearchUsersErrors];
+
+export type TradeServiceSearchUsersResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1SearchUsersResponse;
+};
+
+export type TradeServiceSearchUsersResponse = TradeServiceSearchUsersResponses[keyof TradeServiceSearchUsersResponses];
 
 export type TradeServiceHealthCheckData = {
     body?: never;
