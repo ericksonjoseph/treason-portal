@@ -397,24 +397,17 @@ export default function TradingDashboard() {
                   values: [selectedRunInstance],
                 },
               },
-              sort: [{
-                field: 'DECISION_FIELD_CREATED_AT',
-                direction: 'SORT_DIRECTION_ASC',
-              }],
             },
             pageSize: '1000',
           },
         });
 
-        if (!decisionsResponse.data?.results || decisionsResponse.data.results.length === 0) {
+        const decisions = decisionsResponse.data?.results || [];
+        if (decisions.length === 0) {
           return { results: [] };
         }
 
-        const decisionIds = decisionsResponse.data.results.map((d: V1Decision) => d.id).filter(Boolean) as string[];
-
-        if (decisionIds.length === 0) {
-          return { results: [] };
-        }
+        const decisionIds = decisions.map((d: V1Decision) => d.id).filter(Boolean) as string[];
 
         const executionsResponse = await tradeServiceSearchExecutions({
           body: {
@@ -435,7 +428,7 @@ export default function TradingDashboard() {
         });
 
         const executionsWithDecisions = executionsResponse.data?.results?.map((execution: V1Execution) => {
-          const decision = decisionsResponse.data!.results!.find((d: V1Decision) => d.id === execution.decisionId);
+          const decision = decisions.find((d: V1Decision) => d.id === execution.decisionId);
           return { ...execution, decision };
         }) || [];
 
