@@ -24,7 +24,7 @@ import type { Strategy } from '@/types/strategy';
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
   const [selectedStrategy, setSelectedStrategy] = useState('');
-  const [ticker, setTicker] = useState('AAPL');
+  const [ticker, setTicker] = useState('TSLA');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
   const [isRunning, setIsRunning] = useState(false);
