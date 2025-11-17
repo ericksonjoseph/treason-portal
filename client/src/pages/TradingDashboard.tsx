@@ -211,20 +211,14 @@ export default function TradingDashboard() {
   }, [strategies, selectedStrategy]);
 
   const { data: runsData, isLoading: isLoadingRuns } = useQuery({
-    queryKey: ['runs', selectedStrategy, selectedDate?.toISOString(), mode],
+    queryKey: ['runs', selectedStrategy, mode],
     queryFn: async () => {
       try {
-        if (!selectedStrategy || !selectedDate) {
+        if (!selectedStrategy) {
           return { results: [] };
         }
         
         configureApiClient();
-        
-        const startOfDay = new Date(selectedDate);
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const startOfNextDay = new Date(startOfDay);
-        startOfNextDay.setDate(startOfNextDay.getDate() + 1);
         
         const runType = mode === 'backtest' ? 'BACKTEST' : 'LIVE';
         
@@ -245,15 +239,6 @@ export default function TradingDashboard() {
                       type: {
                         type: 'FILTER_TYPE_EQUAL',
                         values: [runType],
-                      },
-                    },
-                    {
-                      startedAt: {
-                        type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
-                        values: [
-                          startOfDay.toISOString(),
-                          startOfNextDay.toISOString(),
-                        ],
                       },
                     }
                   ]
@@ -277,7 +262,7 @@ export default function TradingDashboard() {
         return { results: [] };
       }
     },
-    enabled: !!selectedStrategy && !!selectedDate,
+    enabled: !!selectedStrategy,
   });
 
   const filteredRunInstances: RunInstance[] = useMemo(() => {
