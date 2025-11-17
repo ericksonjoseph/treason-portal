@@ -16,14 +16,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys } from '@/../../src/api/generated';
-import type { V1Decision, V1Bar, V1Strategy } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns } from '@/../../src/api/generated';
+import type { V1Decision, V1Bar, V1Strategy, V1Run } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 import type { Strategy } from '@/types/strategy';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
-  const [selectedStrategy, setSelectedStrategy] = useState('rsi-macd');
+  const [selectedStrategy, setSelectedStrategy] = useState('');
   const [ticker, setTicker] = useState('AAPL');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedRunInstance, setSelectedRunInstance] = useState<string>('');
@@ -210,49 +210,106 @@ export default function TradingDashboard() {
     }
   }, [strategies, selectedStrategy]);
 
-  const [allRunInstances, setAllRunInstances] = useState<RunInstance[]>([
-    { 
-      id: 'run-1', 
-      runNumber: 1, 
-      timestamp: '09:30 AM', 
-      status: 'completed',
-      strategyId: 'rsi-macd',
-      date: new Date().toDateString(),
+  const { data: runsData, isLoading: isLoadingRuns } = useQuery({
+    queryKey: ['runs', selectedStrategy, selectedDate?.toISOString(), mode],
+    queryFn: async () => {
+      try {
+        if (!selectedStrategy || !selectedDate) {
+          return { results: [] };
+        }
+        
+        configureApiClient();
+        
+        const startOfDay = new Date(selectedDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const startOfNextDay = new Date(startOfDay);
+        startOfNextDay.setDate(startOfNextDay.getDate() + 1);
+        
+        const runType = mode === 'backtest' ? 'BACKTEST' : 'LIVE';
+        
+        const response = await tradeServiceSearchRuns({
+          body: {
+            search: {
+              where: {
+                group: {
+                  op: "OP_TYPE_AND",
+                  filters: [
+                    {
+                      strategyId: {
+                        type: 'FILTER_TYPE_EQUAL',
+                        values: [selectedStrategy],
+                      },
+                    },
+                    {
+                      type: {
+                        type: 'FILTER_TYPE_EQUAL',
+                        values: [runType],
+                      },
+                    },
+                    {
+                      startedAt: {
+                        type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
+                        values: [
+                          startOfDay.toISOString(),
+                          startOfNextDay.toISOString(),
+                        ],
+                      },
+                    }
+                  ]
+                },
+              },
+              sort: [{
+                field: 'RUN_FIELD_STARTED_AT',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
+            },
+            pageSize: '100',
+          },
+        });
+        console.log('Runs API Response:', response);
+        if (response.error) {
+          console.error('Runs API Error:', response.error);
+        }
+        return response.data || { results: [] };
+      } catch (error) {
+        console.error('Error fetching runs:', error);
+        return { results: [] };
+      }
     },
-    { 
-      id: 'run-2', 
-      runNumber: 2, 
-      timestamp: '11:45 AM', 
-      status: 'completed',
-      strategyId: 'rsi-macd',
-      date: new Date().toDateString(),
-    },
-    { 
-      id: 'run-3', 
-      runNumber: 3, 
-      timestamp: '02:15 PM', 
-      status: 'running',
-      strategyId: 'rsi-macd',
-      date: new Date().toDateString(),
-    },
-    { 
-      id: 'run-4', 
-      runNumber: 1, 
-      timestamp: '10:00 AM', 
-      status: 'completed',
-      strategyId: 'ema-crossover',
-      date: new Date().toDateString(),
-    },
-  ]);
+    enabled: !!selectedStrategy && !!selectedDate,
+  });
 
-  const filteredRunInstances = useMemo(() => 
-    allRunInstances.filter(
-      (instance) =>
-        instance.strategyId === selectedStrategy &&
-        instance.date === selectedDate?.toDateString()
-    ),
-    [selectedStrategy, selectedDate, allRunInstances]
-  );
+  const filteredRunInstances: RunInstance[] = useMemo(() => {
+    if (!runsData?.results) return [];
+    
+    return runsData.results.map((run: V1Run, index: number) => {
+      const startedAt = run.startedAt ? new Date(run.startedAt) : new Date();
+      const timestamp = startedAt.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      });
+      
+      let status: 'completed' | 'running' | 'failed' = 'completed';
+      if (run.completedAt) {
+        status = 'completed';
+      } else if (run.startedAt) {
+        status = 'running';
+      }
+      
+      return {
+        id: run.id || '',
+        runNumber: index + 1,
+        timestamp,
+        status,
+        strategyId: run.strategyId || '',
+        startedAt: run.startedAt,
+        completedAt: run.completedAt,
+        type: run.type,
+      };
+    });
+  }, [runsData]);
 
   useEffect(() => {
     if (filteredRunInstances.length > 0 && !selectedRunInstance) {
@@ -271,7 +328,6 @@ export default function TradingDashboard() {
 
   const confirmDelete = () => {
     if (runToDelete) {
-      setAllRunInstances(allRunInstances.filter(r => r.id !== runToDelete));
       toast({
         title: 'Run deleted',
         description: 'Successfully deleted the run instance',

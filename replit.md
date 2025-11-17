@@ -50,8 +50,9 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **API Integration**: The platform uses a type-safe generated API client (located in `src/api/generated`) based on the backend Swagger/OpenAPI spec. The client is configured with base URL (via `VITE_API_BASE_URL` or defaults to `https://treason.nephue.com`) and Bearer token authentication.
   - **Bars/Candlesticks**: Fetched from `/v1/alpaca/bars/search` endpoint with filters for symbol, timeframe (1Min), and timestamp range. The timestamp range is calculated from the selected date: start of day (00:00:00) to start of next day (00:00:00, exclusive) using `FILTER_TYPE_RANGE_EXCLUSIVE_MAX`. Response (`V1Bar[]`) is transformed to OHLC format with Unix timestamps for the TradingView-style chart.
   - **Trading Decisions**: Fetched from `/v1/alpaca/decisions/search` endpoint when strategy is running. Response (`V1Decision[]`) with `SIGNAL_TYPE_BUY`/`SIGNAL_TYPE_SELL` is transformed to buy/sell markers displayed on the chart using the `price` field.
-  - **Strategies**: Fetched from `/v1/alpaca/strategys/search` endpoint, filtered for active strategies only (`isActive = true`), sorted alphabetically by name. Response (`V1Strategy[]`) populates the strategy dropdown selector.
-  - **Fallback**: When strategies API is unavailable or returns errors, an empty array is returned and the dropdown will be empty until the backend implements the endpoint.
+  - **Strategies**: Fetched from `/v1/alpaca/strategys/search` endpoint, filtered for active strategies only (`isActive = true`), sorted alphabetically by name. Response (`V1Strategy[]`) populates the strategy dropdown selector. The first strategy is auto-selected when the data loads.
+  - **Runs**: Fetched from `/v1/alpaca/runs/search` endpoint with filters for selected strategy, date range (start of day to next day, exclusive), and mode type ('BACKTEST' or 'LIVE'). Response (`V1Run[]`) populates the run instance dropdown. Each run includes startedAt, completedAt, and status derived from these timestamps.
+  - **Fallback**: When API endpoints are unavailable or return errors, empty arrays are returned. The UI remains functional but dropdowns will be empty until the backend provides data.
 
 ## External Dependencies
 - **Charting Libraries**: `lightweight-charts v5.0.9`, `Recharts`

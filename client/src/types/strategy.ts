@@ -11,5 +11,7 @@ export interface RunInstance {
   timestamp: string;
   status?: 'completed' | 'running' | 'failed';
   strategyId: string;
-  date: string;
+  startedAt?: string;
+  completedAt?: string;
+  type?: string;
 }
