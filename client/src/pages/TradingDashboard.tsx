@@ -16,9 +16,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars } from '@/../../src/api/generated';
-import type { V1Decision, V1Bar } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys } from '@/../../src/api/generated';
+import type { V1Decision, V1Bar, V1Strategy } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
+import type { Strategy } from '@/types/strategy';
 
 export default function TradingDashboard() {
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
@@ -121,6 +122,40 @@ export default function TradingDashboard() {
     enabled: isRunning,
   });
 
+  const { data: strategiesData, isLoading: isLoadingStrategies } = useQuery({
+    queryKey: ['strategies'],
+    queryFn: async () => {
+      try {
+        configureApiClient();
+        const response = await tradeServiceSearchStrategys({
+          body: {
+            search: {
+              where: {
+                isActive: {
+                  type: 'FILTER_TYPE_EQUAL',
+                  values: [true],
+                },
+              },
+              sort: [{
+                field: 'STRATEGY_FIELD_NAME',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
+            },
+            pageSize: '100',
+          },
+        });
+        console.log('Strategies API Response:', response);
+        if (response.error) {
+          console.error('Strategies API Error:', response.error);
+        }
+        return response.data || { results: [] };
+      } catch (error) {
+        console.error('Error fetching strategies:', error);
+        return { results: [] };
+      }
+    },
+  });
+
   const [strategySettings, setStrategySettings] = useState<StrategySetting[]>([
     {
       field: 'risk tolerance',
@@ -159,12 +194,20 @@ export default function TradingDashboard() {
     },
   ]);
 
-  const mockStrategies = [
-    { id: 'rsi-macd', name: 'RSI + MACD Strategy', description: 'Mean reversion with momentum' },
-    { id: 'ema-crossover', name: 'EMA Crossover', description: 'Fast/slow moving average' },
-    { id: 'bollinger', name: 'Bollinger Bands', description: 'Volatility breakout' },
-    { id: 'ml-predictor', name: 'ML Price Predictor', description: 'Neural network model' },
-  ];
+  const strategies: Strategy[] = useMemo(() => {
+    if (!strategiesData?.results) return [];
+    return strategiesData.results.map((s: V1Strategy) => ({
+      id: s.id || '',
+      name: s.name || '',
+      description: s.description,
+    }));
+  }, [strategiesData]);
+
+  useEffect(() => {
+    if (strategies.length > 0 && !selectedStrategy) {
+      setSelectedStrategy(strategies[0].id);
+    }
+  }, [strategies, selectedStrategy]);
 
   const [allRunInstances, setAllRunInstances] = useState<RunInstance[]>([
     { 
@@ -305,7 +348,7 @@ export default function TradingDashboard() {
       })
       .map((decision: V1Decision) => {
         const timestamp = decision.createdAt ? new Date(decision.createdAt).getTime() / 1000 : 0;
-        const price = decision.limitPrice?.value ? parseFloat(decision.limitPrice.value) : 0;
+        const price = decision.price?.value ? parseFloat(decision.price.value) : 0;
         
         return {
           time: timestamp,
@@ -340,7 +383,7 @@ export default function TradingDashboard() {
         
         <div className="w-96 border-l bg-background overflow-y-auto">
           <ControlPanel
-            strategies={mockStrategies}
+            strategies={strategies}
             selectedStrategy={selectedStrategy}
             onStrategyChange={setSelectedStrategy}
             runInstances={filteredRunInstances}
