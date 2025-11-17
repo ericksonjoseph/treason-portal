@@ -1,7 +1,8 @@
 export interface Strategy {
   id: string;
   name: string;
-  description?: string;
+  createdAt?: string;
+  createdBy?: string;
 }
 
 export interface RunInstance {

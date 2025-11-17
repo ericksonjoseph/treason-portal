@@ -28,8 +28,8 @@ export default function AlgorithmSelector({
           <SelectItem key={strategy.id} value={strategy.id} data-testid={`option-strategy-${strategy.id}`}>
             <div>
               <div className="font-medium">{strategy.name}</div>
-              {strategy.description && (
-                <div className="text-xs text-muted-foreground">{strategy.description}</div>
+              {strategy.createdBy && (
+                <div className="text-xs text-muted-foreground">Created by: {strategy.createdBy}</div>
               )}
             </div>
           </SelectItem>

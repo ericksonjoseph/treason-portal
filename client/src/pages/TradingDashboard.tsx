@@ -199,7 +199,8 @@ export default function TradingDashboard() {
     return strategiesData.results.map((s: V1Strategy) => ({
       id: s.id || '',
       name: s.name || '',
-      description: s.description,
+      createdAt: s.createdAt,
+      createdBy: s.createdBy,
     }));
   }, [strategiesData]);
 
