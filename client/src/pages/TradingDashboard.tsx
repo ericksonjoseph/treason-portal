@@ -432,8 +432,8 @@ export default function TradingDashboard() {
         ]);
 
         const decisions = decisionsResponse.data?.results || [];
-        const executionsWithDecisions = executionsResponse.data?.results?.map((execution: V1Execution) => {
-          const decision = decisions.find((d: V1Decision) => d.id === execution.decisionId);
+        const executionsWithDecisions = executionsResponse.data?.results?.map((execution: any) => {
+          const decision = decisions.find((d: V1Decision) => d.id === execution.decision_id);
           return { ...execution, decision };
         }) || [];
 
@@ -449,12 +449,12 @@ export default function TradingDashboard() {
   const tradeHistory = useMemo(() => {
     if (!executionsData?.results) return [];
 
-    return executionsData.results
-      .filter((exec: V1Execution & { decision?: V1Decision }) => {
-        return exec.status === 'EXECUTION_STATUS_FILLED' && exec.fillTime && exec.fillPrice?.value && exec.fillQuantity?.value;
-      })
-      .map((exec: V1Execution & { decision?: V1Decision }) => {
-        const fillTime = exec.fillTime ? new Date(exec.fillTime).toLocaleString('en-US', {
+    const filled = executionsData.results.filter((exec: any) => {
+      return exec.fill_time && exec.fill_price?.value && exec.fill_quantity?.value;
+    });
+
+    return filled.map((exec: any) => {
+        const fillTime = exec.fill_time ? new Date(exec.fill_time).toLocaleString('en-US', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -470,8 +470,8 @@ export default function TradingDashboard() {
           id: exec.id || '',
           timestamp: fillTime,
           action,
-          price: parseFloat(exec.fillPrice!.value!),
-          quantity: parseFloat(exec.fillQuantity!.value!),
+          price: parseFloat(exec.fill_price!.value!),
+          quantity: Math.abs(parseFloat(exec.fill_quantity!.value!)),
         };
       });
   }, [executionsData]);
