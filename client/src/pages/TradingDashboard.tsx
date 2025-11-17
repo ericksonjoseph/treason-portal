@@ -346,9 +346,12 @@ export default function TradingDashboard() {
     );
   };
 
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ['runs'] });
-    queryClient.invalidateQueries({ queryKey: ['executions'] });
+  const handleRefresh = async () => {
+    await Promise.all([
+      queryClient.refetchQueries({ queryKey: ['runs'] }),
+      queryClient.refetchQueries({ queryKey: ['executions'] }),
+      queryClient.refetchQueries({ queryKey: ['bars'] }),
+    ]);
     toast({
       title: 'Data refreshed',
       description: 'Successfully fetched latest data from server',
