@@ -283,9 +283,10 @@ export type V1Execution = {
     createdBy?: string;
     deletedAt?: string;
     deletedBy?: string;
+    runId?: string;
 };
 
-export type V1ExecutionField = 'EXECUTION_FIELD_UNSPECIFIED' | 'EXECUTION_FIELD_ID' | 'EXECUTION_FIELD_DECISION_ID' | 'EXECUTION_FIELD_STATUS' | 'EXECUTION_FIELD_FILL_TIME' | 'EXECUTION_FIELD_FILL_PRICE' | 'EXECUTION_FIELD_FILL_QUANTITY' | 'EXECUTION_FIELD_CREATED_AT' | 'EXECUTION_FIELD_CREATED_BY' | 'EXECUTION_FIELD_DELETED_AT' | 'EXECUTION_FIELD_DELETED_BY';
+export type V1ExecutionField = 'EXECUTION_FIELD_UNSPECIFIED' | 'EXECUTION_FIELD_ID' | 'EXECUTION_FIELD_DECISION_ID' | 'EXECUTION_FIELD_STATUS' | 'EXECUTION_FIELD_FILL_TIME' | 'EXECUTION_FIELD_FILL_PRICE' | 'EXECUTION_FIELD_FILL_QUANTITY' | 'EXECUTION_FIELD_CREATED_AT' | 'EXECUTION_FIELD_CREATED_BY' | 'EXECUTION_FIELD_DELETED_AT' | 'EXECUTION_FIELD_DELETED_BY' | 'EXECUTION_FIELD_RUN_ID';
 
 export type V1ExecutionGroupNode = {
     op?: V1OpType;
@@ -309,6 +310,7 @@ export type V1ExecutionSearchNode = {
     createdBy?: V1StringSearch;
     deletedAt?: V1TimestampSearch;
     deletedBy?: V1StringSearch;
+    runId?: V1StringSearch;
 };
 
 export type V1ExecutionSortOption = {
@@ -330,6 +332,7 @@ export type V1ExecutionUpdate = {
     createdBy?: V1NullableStringValue;
     deletedAt?: V1NullableTimestampValue;
     deletedBy?: V1NullableStringValue;
+    runId?: V1NullableStringValue;
 };
 
 export type V1FilterType = 'FILTER_TYPE_UNSPECIFIED' | 'FILTER_TYPE_EQUAL' | 'FILTER_TYPE_IN' | 'FILTER_TYPE_NOT_IN' | 'FILTER_TYPE_IS_NULL' | 'FILTER_TYPE_IS_NOT_NULL' | 'FILTER_TYPE_RANGE_INCLUSIVE' | 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX' | 'FILTER_TYPE_IN_OR_IS_NULL';
@@ -414,9 +417,13 @@ export type V1Run = {
     createdBy?: string;
     deletedAt?: string;
     deletedBy?: string;
+    timeframe?: string;
+    symbol?: string;
+    startTime?: string;
+    endTime?: string;
 };
 
-export type V1RunField = 'RUN_FIELD_UNSPECIFIED' | 'RUN_FIELD_ID' | 'RUN_FIELD_STRATEGY_ID' | 'RUN_FIELD_TYPE' | 'RUN_FIELD_PARAMETERS' | 'RUN_FIELD_STARTED_AT' | 'RUN_FIELD_COMPLETED_AT' | 'RUN_FIELD_PROFIT' | 'RUN_FIELD_WIN_RATE' | 'RUN_FIELD_TOTAL_TRADES' | 'RUN_FIELD_SHARPE_RATIO' | 'RUN_FIELD_CREATED_AT' | 'RUN_FIELD_CREATED_BY' | 'RUN_FIELD_DELETED_AT' | 'RUN_FIELD_DELETED_BY';
+export type V1RunField = 'RUN_FIELD_UNSPECIFIED' | 'RUN_FIELD_ID' | 'RUN_FIELD_STRATEGY_ID' | 'RUN_FIELD_TYPE' | 'RUN_FIELD_PARAMETERS' | 'RUN_FIELD_STARTED_AT' | 'RUN_FIELD_COMPLETED_AT' | 'RUN_FIELD_PROFIT' | 'RUN_FIELD_WIN_RATE' | 'RUN_FIELD_TOTAL_TRADES' | 'RUN_FIELD_SHARPE_RATIO' | 'RUN_FIELD_CREATED_AT' | 'RUN_FIELD_CREATED_BY' | 'RUN_FIELD_DELETED_AT' | 'RUN_FIELD_DELETED_BY' | 'RUN_FIELD_TIMEFRAME' | 'RUN_FIELD_SYMBOL' | 'RUN_FIELD_START_TIME' | 'RUN_FIELD_END_TIME';
 
 export type V1RunGroupNode = {
     op?: V1OpType;
@@ -444,6 +451,10 @@ export type V1RunSearchNode = {
     createdBy?: V1StringSearch;
     deletedAt?: V1TimestampSearch;
     deletedBy?: V1StringSearch;
+    timeframe?: V1StringSearch;
+    symbol?: V1StringSearch;
+    startTime?: V1TimestampSearch;
+    endTime?: V1TimestampSearch;
 };
 
 export type V1RunSortOption = {
@@ -469,6 +480,10 @@ export type V1RunUpdate = {
     createdBy?: V1NullableStringValue;
     deletedAt?: V1NullableTimestampValue;
     deletedBy?: V1NullableStringValue;
+    timeframe?: V1NullableStringValue;
+    symbol?: V1NullableStringValue;
+    startTime?: V1NullableTimestampValue;
+    endTime?: V1NullableTimestampValue;
 };
 
 export type V1SearchBarsRequest = {
