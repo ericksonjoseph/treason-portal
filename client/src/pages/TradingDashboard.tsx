@@ -16,8 +16,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns } from '@/../../src/api/generated';
-import type { V1Decision, V1Bar, V1Strategy, V1Run } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions } from '@/../../src/api/generated';
+import type { V1Decision, V1Bar, V1Strategy, V1Run, V1Execution } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 import type { Strategy } from '@/types/strategy';
 
@@ -248,7 +248,7 @@ export default function TradingDashboard() {
                       },
                     },
                     {
-                      startTime: {
+                      startedAt: {
                         type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
                         values: [
                           startOfDay.toISOString(),
@@ -345,20 +345,138 @@ export default function TradingDashboard() {
     );
   };
 
-  const mockMetrics = [
-    { label: 'Total P/L', value: '12,450.80', prefix: '$', change: 8.5 },
-    { label: 'Win Rate', value: '68.4', suffix: '%' },
-    { label: 'Total Trades', value: '156' },
-    { label: 'Sharpe Ratio', value: '1.85' },
-  ];
+  const selectedRun = useMemo(() => {
+    if (!runsData?.results || !selectedRunInstance) return null;
+    return runsData.results.find((run: V1Run) => run.id === selectedRunInstance);
+  }, [runsData, selectedRunInstance]);
 
-  const mockTrades = [
-    { id: '1', timestamp: '2024-11-11 09:30:15', action: 'buy' as const, price: 152.45, quantity: 100 },
-    { id: '2', timestamp: '2024-11-11 11:22:48', action: 'sell' as const, price: 155.80, quantity: 100, pnl: 335.0 },
-    { id: '3', timestamp: '2024-11-11 13:15:30', action: 'buy' as const, price: 154.20, quantity: 150 },
-    { id: '4', timestamp: '2024-11-11 14:45:12', action: 'sell' as const, price: 153.10, quantity: 150, pnl: -165.0 },
-    { id: '5', timestamp: '2024-11-11 15:30:00', action: 'buy' as const, price: 151.90, quantity: 200 },
-  ];
+  const performanceMetrics = useMemo(() => {
+    if (!selectedRun) {
+      return [
+        { label: 'Total P/L', value: '-', prefix: '$' },
+        { label: 'Win Rate', value: '-', suffix: '%' },
+        { label: 'Number of Symbols', value: '-' },
+        { label: 'Sharpe Ratio', value: '-' },
+      ];
+    }
+
+    const profit = selectedRun.profit?.value ? parseFloat(selectedRun.profit.value) : 0;
+    const winRate = selectedRun.winRate?.value ? parseFloat(selectedRun.winRate.value) : 0;
+    const totalTrades = selectedRun.totalTrades || '0';
+    const sharpeRatio = selectedRun.sharpeRatio?.value ? parseFloat(selectedRun.sharpeRatio.value) : 0;
+
+    return [
+      { 
+        label: 'Total P/L', 
+        value: profit.toFixed(2), 
+        prefix: '$',
+        change: profit > 0 ? Math.abs((profit / 10000) * 100) : undefined
+      },
+      { label: 'Win Rate', value: (winRate * 100).toFixed(1), suffix: '%' },
+      { label: 'Number of Symbols', value: totalTrades },
+      { label: 'Sharpe Ratio', value: sharpeRatio.toFixed(2) },
+    ];
+  }, [selectedRun]);
+
+  const { data: executionsData, isLoading: isLoadingExecutions } = useQuery({
+    queryKey: ['executions', selectedRunInstance],
+    queryFn: async () => {
+      try {
+        if (!selectedRunInstance) {
+          return { results: [] };
+        }
+
+        configureApiClient();
+
+        const decisionsResponse = await tradeServiceSearchDecisions({
+          body: {
+            search: {
+              where: {
+                runId: {
+                  type: 'FILTER_TYPE_EQUAL',
+                  values: [selectedRunInstance],
+                },
+              },
+              sort: [{
+                field: 'DECISION_FIELD_CREATED_AT',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
+            },
+            pageSize: '1000',
+          },
+        });
+
+        if (!decisionsResponse.data?.results || decisionsResponse.data.results.length === 0) {
+          return { results: [] };
+        }
+
+        const decisionIds = decisionsResponse.data.results.map((d: V1Decision) => d.id).filter(Boolean) as string[];
+
+        if (decisionIds.length === 0) {
+          return { results: [] };
+        }
+
+        const executionsResponse = await tradeServiceSearchExecutions({
+          body: {
+            search: {
+              where: {
+                decisionId: {
+                  type: 'FILTER_TYPE_IN',
+                  values: decisionIds,
+                },
+              },
+              sort: [{
+                field: 'EXECUTION_FIELD_FILL_TIME',
+                direction: 'SORT_DIRECTION_ASC',
+              }],
+            },
+            pageSize: '1000',
+          },
+        });
+
+        const executionsWithDecisions = executionsResponse.data?.results?.map((execution: V1Execution) => {
+          const decision = decisionsResponse.data!.results!.find((d: V1Decision) => d.id === execution.decisionId);
+          return { ...execution, decision };
+        }) || [];
+
+        return { results: executionsWithDecisions };
+      } catch (error) {
+        console.error('Error fetching executions:', error);
+        return { results: [] };
+      }
+    },
+    enabled: !!selectedRunInstance,
+  });
+
+  const tradeHistory = useMemo(() => {
+    if (!executionsData?.results) return [];
+
+    return executionsData.results
+      .filter((exec: V1Execution & { decision?: V1Decision }) => {
+        return exec.status === 'EXECUTION_STATUS_FILLED' && exec.fillTime && exec.fillPrice?.value && exec.fillQuantity?.value;
+      })
+      .map((exec: V1Execution & { decision?: V1Decision }) => {
+        const fillTime = exec.fillTime ? new Date(exec.fillTime).toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        }) : '';
+
+        const action = exec.decision?.signal === 'SIGNAL_TYPE_BUY' ? 'buy' as const : 'sell' as const;
+
+        return {
+          id: exec.id || '',
+          timestamp: fillTime,
+          action,
+          price: parseFloat(exec.fillPrice!.value!),
+          quantity: parseFloat(exec.fillQuantity!.value!),
+        };
+      });
+  }, [executionsData]);
 
   const chartData = useMemo(() => {
     if (!barsData?.results || barsData.results.length === 0) {
@@ -470,8 +588,8 @@ export default function TradingDashboard() {
             onSettingsClick={() => console.log('Settings clicked')}
             settings={strategySettings}
             onSettingChange={handleSettingChange}
-            metrics={mockMetrics}
-            trades={mockTrades}
+            metrics={performanceMetrics}
+            trades={tradeHistory}
             onTradeClick={(trade) => console.log('Trade clicked:', trade)}
           />
         </div>
