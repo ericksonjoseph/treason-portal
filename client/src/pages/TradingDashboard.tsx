@@ -490,27 +490,30 @@ export default function TradingDashboard() {
   }, [barsData]);
 
   const chartTrades = useMemo(() => {
-    if (!decisionsData?.results || !isRunning) {
+    if (!executionsData?.results) {
       return [];
     }
 
-    return decisionsData.results
-      .filter((decision: V1Decision) => {
-        const signal = decision.signal;
-        return signal === 'SIGNAL_TYPE_BUY' || signal === 'SIGNAL_TYPE_SELL';
+    return executionsData.results
+      .filter((exec: any) => {
+        return exec.fill_time && exec.fill_price?.value && exec.fill_quantity?.value;
       })
-      .map((decision: V1Decision) => {
-        const timestamp = decision.createdAt ? new Date(decision.createdAt).getTime() / 1000 : 0;
-        const price = decision.price?.value ? parseFloat(decision.price.value) : 0;
+      .map((exec: any) => {
+        const timestamp = exec.fill_time ? new Date(exec.fill_time).getTime() / 1000 : 0;
+        const price = parseFloat(exec.fill_price!.value!);
+        const quantity = parseFloat(exec.fill_quantity!.value!);
+        const type = quantity > 0 ? 'buy' as const : 'sell' as const;
         
         return {
           time: timestamp,
-          type: decision.signal === 'SIGNAL_TYPE_BUY' ? ('buy' as const) : ('sell' as const),
+          type,
           price,
+          id: exec.id,
+          quantity: Math.abs(quantity),
         };
       })
       .filter((trade) => trade.time > 0 && trade.price > 0);
-  }, [decisionsData, isRunning]);
+  }, [executionsData]);
 
   return (
     <div className="flex flex-col h-full">
