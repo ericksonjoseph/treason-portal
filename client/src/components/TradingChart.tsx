@@ -64,7 +64,7 @@ export default function TradingChart({ data, trades = [] }: TradingChartProps) {
       const markers = trades.map(trade => ({
         time: trade.time as any,
         position: trade.type === 'buy' ? ('belowBar' as const) : ('aboveBar' as const),
-        color: trade.type === 'buy' ? '#10b981' : '#93b4d4',
+        color: trade.type === 'buy' ? '#f97316' : '#a855f7',
         shape: trade.type === 'buy' ? ('arrowUp' as const) : ('arrowDown' as const),
         text: trade.type === 'buy' ? 'B' : 'S',
       }));
@@ -129,8 +129,8 @@ export default function TradingChart({ data, trades = [] }: TradingChartProps) {
         >
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
-              <span className="font-semibold">
-                {tooltipData.trade.type === 'buy' ? '🟢 BUY' : '🔵 SELL'}
+              <span className="font-semibold" style={{ color: tooltipData.trade.type === 'buy' ? '#f97316' : '#a855f7' }}>
+                {tooltipData.trade.type === 'buy' ? '▲ BUY' : '▼ SELL'}
               </span>
               <button
                 onClick={() => setTooltipData(null)}
