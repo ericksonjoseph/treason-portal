@@ -398,45 +398,40 @@ export default function TradingDashboard() {
 
         configureApiClient();
 
-        const decisionsResponse = await tradeServiceSearchDecisions({
-          body: {
-            search: {
-              where: {
-                runId: {
-                  type: 'FILTER_TYPE_EQUAL',
-                  values: [selectedRunInstance],
+        const [executionsResponse, decisionsResponse] = await Promise.all([
+          tradeServiceSearchExecutions({
+            body: {
+              search: {
+                where: {
+                  runId: {
+                    type: 'FILTER_TYPE_EQUAL',
+                    values: [selectedRunInstance],
+                  },
+                },
+                sort: [{
+                  field: 'EXECUTION_FIELD_FILL_TIME',
+                  direction: 'SORT_DIRECTION_ASC',
+                }],
+              },
+              pageSize: '1000',
+            },
+          }),
+          tradeServiceSearchDecisions({
+            body: {
+              search: {
+                where: {
+                  runId: {
+                    type: 'FILTER_TYPE_EQUAL',
+                    values: [selectedRunInstance],
+                  },
                 },
               },
+              pageSize: '1000',
             },
-            pageSize: '1000',
-          },
-        });
+          }),
+        ]);
 
         const decisions = decisionsResponse.data?.results || [];
-        if (decisions.length === 0) {
-          return { results: [] };
-        }
-
-        const decisionIds = decisions.map((d: V1Decision) => d.id).filter(Boolean) as string[];
-
-        const executionsResponse = await tradeServiceSearchExecutions({
-          body: {
-            search: {
-              where: {
-                decisionId: {
-                  type: 'FILTER_TYPE_IN',
-                  values: decisionIds,
-                },
-              },
-              sort: [{
-                field: 'EXECUTION_FIELD_FILL_TIME',
-                direction: 'SORT_DIRECTION_ASC',
-              }],
-            },
-            pageSize: '1000',
-          },
-        });
-
         const executionsWithDecisions = executionsResponse.data?.results?.map((execution: V1Execution) => {
           const decision = decisions.find((d: V1Decision) => d.id === execution.decisionId);
           return { ...execution, decision };
