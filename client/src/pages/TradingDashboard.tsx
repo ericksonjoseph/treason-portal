@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions, tradeServiceCreateRuns } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions, tradeServiceRunBacktest } from '@/../../src/api/generated';
 import type { V1Decision, V1Bar, V1Strategy, V1Run, V1Execution } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
@@ -398,41 +398,33 @@ export default function TradingDashboard() {
       const endOfDay = new Date(selectedDate);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const runType = mode === 'backtest' ? 'RUN_TYPE_BACKTEST' : 'RUN_TYPE_LIVE';
-
-      const response = await tradeServiceCreateRuns({
+      const response = await tradeServiceRunBacktest({
         body: {
-          items: [
-            {
-              strategyId: selectedStrategy,
-              type: runType,
-              symbol: ticker,
-              timeframe: '1Min',
-              startTime: startOfDay.toISOString(),
-              endTime: endOfDay.toISOString(),
-              parameters: '{}',
-            },
-          ],
+          strategyId: selectedStrategy,
+          symbol: ticker,
+          timeframe: '1Min',
+          startTime: startOfDay.toISOString(),
+          endTime: endOfDay.toISOString(),
         },
       });
 
       if (response.error) {
-        throw new Error(response.error.message || 'Failed to create run');
+        throw new Error(response.error.message || 'Failed to run backtest');
       }
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
-        title: 'Run started',
-        description: `${mode === 'backtest' ? 'Backtest' : 'Live trading'} run initiated successfully`,
+        title: 'Backtest started',
+        description: data?.runId ? `Run ID: ${data.runId}` : 'Backtest initiated successfully',
       });
       queryClient.invalidateQueries({ queryKey: ['runs'] });
       setIsRunning(false);
     },
     onError: (error: Error) => {
       toast({
-        title: 'Failed to start run',
+        title: 'Failed to start backtest',
         description: error.message,
         variant: 'destructive',
       });
