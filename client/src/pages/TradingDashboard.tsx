@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions, tradeServiceCreateRuns } from '@/../../src/api/generated';
 import type { V1Decision, V1Bar, V1Strategy, V1Run, V1Execution } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
@@ -384,6 +384,62 @@ export default function TradingDashboard() {
     });
   };
 
+  const createRunMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedStrategy || !selectedDate || !ticker) {
+        throw new Error('Missing required fields');
+      }
+
+      configureApiClient();
+
+      const startOfDay = new Date(selectedDate);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(selectedDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const runType = mode === 'backtest' ? 'RUN_TYPE_BACKTEST' : 'RUN_TYPE_LIVE';
+
+      const response = await tradeServiceCreateRuns({
+        body: {
+          items: [
+            {
+              strategyId: selectedStrategy,
+              type: runType,
+              symbol: ticker,
+              timeframe: '1Min',
+              startTime: startOfDay.toISOString(),
+              endTime: endOfDay.toISOString(),
+              parameters: '{}',
+            },
+          ],
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to create run');
+      }
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Run started',
+        description: `${mode === 'backtest' ? 'Backtest' : 'Live trading'} run initiated successfully`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['runs'] });
+      setIsRunning(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Failed to start run',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setIsRunning(false);
+    },
+  });
+
   const selectedRun = useMemo(() => {
     if (!runsData?.results || !selectedRunInstance) return null;
     return runsData.results.find((run: V1Run) => run.id === selectedRunInstance);
@@ -573,13 +629,7 @@ export default function TradingDashboard() {
             isRunning={isRunning}
             onRunClick={() => {
               setIsRunning(true);
-              console.log('Strategy started', {
-                mode,
-                ticker,
-                date: selectedDate?.toLocaleDateString(),
-                strategy: selectedStrategy,
-                runInstance: selectedRunInstance,
-              });
+              createRunMutation.mutate();
             }}
             onStopClick={() => {
               setIsRunning(false);
