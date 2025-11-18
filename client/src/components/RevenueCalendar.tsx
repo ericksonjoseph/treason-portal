@@ -73,6 +73,16 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
     }
   };
 
+  const handleDayClick = (date: Date) => {
+    setCurrentDate(date);
+    setView('day');
+  };
+
+  const handleMonthClick = (date: Date) => {
+    setCurrentDate(date);
+    setView('month');
+  };
+
   const renderMonthView = () => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(monthStart);
@@ -121,7 +131,8 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-28 ${borderClass} p-3 ${bgClass} ${textClass} transition-colors`}
+            onClick={() => isCurrentMonth && handleDayClick(cloneDay)}
+            className={`min-h-28 ${borderClass} p-3 ${bgClass} ${textClass} transition-colors ${isCurrentMonth ? 'cursor-pointer hover-elevate active-elevate-2' : ''}`}
             data-testid={`calendar-day-${format(cloneDay, 'yyyy-MM-dd')}`}
           >
             <div className="font-semibold text-sm mb-2">
@@ -199,7 +210,8 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       days.push(
         <div
           key={day.toString()}
-          className={`flex-1 ${borderClass} p-4 min-h-64 ${bgClass} transition-colors`}
+          onClick={() => handleDayClick(day)}
+          className={`flex-1 ${borderClass} p-4 min-h-64 ${bgClass} transition-colors cursor-pointer hover-elevate active-elevate-2`}
           data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
         >
           <div className="font-bold text-base mb-3">
@@ -374,7 +386,8 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       months.push(
         <div
           key={monthDate.toString()}
-          className={`border p-5 rounded-md hover-elevate transition-colors ${
+          onClick={() => handleMonthClick(monthDate)}
+          className={`border p-5 rounded-md hover-elevate active-elevate-2 transition-colors cursor-pointer ${
             isProfit 
               ? 'bg-emerald-500/10 border-emerald-500/30 dark:bg-emerald-500/20' 
               : isLoss 
