@@ -113,6 +113,17 @@ export default function TradingChart({ data, trades = [] }: TradingChartProps) {
     };
   }, [data, trades]);
 
+  if (data.length === 0) {
+    return (
+      <div className="relative w-full h-full flex items-center justify-center" data-testid="chart-empty-state">
+        <div className="text-center space-y-2">
+          <p className="text-lg font-medium text-muted-foreground">Nothing to show here</p>
+          <p className="text-sm text-muted-foreground">No market data available for the selected date and ticker</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-full">
       <div ref={chartContainerRef} className="w-full h-full" data-testid="chart-trading" />

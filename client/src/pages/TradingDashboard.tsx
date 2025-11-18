@@ -461,17 +461,7 @@ export default function TradingDashboard() {
 
   const chartData = useMemo(() => {
     if (!barsData?.results || barsData.results.length === 0) {
-      return Array.from({ length: 100 }, (_, i) => {
-        const time = Math.floor(Date.now() / 1000) - (100 - i) * 86400;
-        const base = 150 + Math.sin(i / 10) * 20;
-        return {
-          time,
-          open: base + Math.random() * 5,
-          high: base + Math.random() * 10,
-          low: base - Math.random() * 5,
-          close: base + Math.random() * 5 - 2.5,
-        };
-      });
+      return [];
     }
 
     return barsData.results
