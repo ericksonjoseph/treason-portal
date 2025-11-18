@@ -419,6 +419,11 @@ export default function TradingDashboard() {
         title: 'Backtest started',
         description: data?.runId ? `Run ID: ${data.runId}` : 'Backtest initiated successfully',
       });
+      
+      if (data?.runId) {
+        setSelectedRunInstance(data.runId);
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['runs'] });
       queryClient.invalidateQueries({ queryKey: ['bars'] });
       queryClient.invalidateQueries({ queryKey: ['executions'] });
