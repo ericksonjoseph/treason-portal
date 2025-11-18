@@ -69,13 +69,20 @@ export default function TradingDashboard() {
       return;
     }
 
+    console.log('Starting polling for run:', pollingRunId);
     let isCancelled = false;
     const pollInterval = 1000;
 
     const pollRunStatus = async () => {
+      if (isCancelled) {
+        console.log('Polling cancelled for run:', pollingRunId);
+        return;
+      }
+
       try {
         configureApiClient();
 
+        console.log('Polling run status for:', pollingRunId);
         const response = await tradeServiceSearchRuns({
           body: {
             search: {
@@ -93,6 +100,7 @@ export default function TradingDashboard() {
         if (isCancelled) return;
 
         const run = response.data?.results?.[0];
+        console.log('Poll response for run:', pollingRunId, 'completed_at:', run ? (run as any).completed_at : 'no run');
         
         if (run) {
           queryClient.invalidateQueries({ queryKey: ['runs'] });
@@ -102,6 +110,7 @@ export default function TradingDashboard() {
 
           const runData = run as any;
           if (runData.completed_at) {
+            console.log('Backtest completed for run:', pollingRunId);
             setPollingRunId(null);
             setIsRunning(false);
             toast({
@@ -126,9 +135,10 @@ export default function TradingDashboard() {
     pollRunStatus();
 
     return () => {
+      console.log('Cleaning up polling for run:', pollingRunId);
       isCancelled = true;
     };
-  }, [pollingRunId, ticker, toast]);
+  }, [pollingRunId]);
 
   const { data: barsData, isLoading: isLoadingBars, error: barsError } = useQuery({
     queryKey: ['bars', ticker, selectedDate?.toISOString()],
