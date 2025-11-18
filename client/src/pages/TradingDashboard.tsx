@@ -33,6 +33,7 @@ export default function TradingDashboard() {
   const [isRunning, setIsRunning] = useState(false);
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [pollingRunId, setPollingRunId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,6 +63,72 @@ export default function TradingDashboard() {
       setMode(modeParam);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (!pollingRunId) {
+      return;
+    }
+
+    let isCancelled = false;
+    const pollInterval = 1000;
+
+    const pollRunStatus = async () => {
+      try {
+        configureApiClient();
+
+        const response = await tradeServiceSearchRuns({
+          body: {
+            search: {
+              where: {
+                id: {
+                  type: 'FILTER_TYPE_EQUAL',
+                  values: [pollingRunId],
+                },
+              },
+            },
+            pageSize: '1',
+          },
+        });
+
+        if (isCancelled) return;
+
+        const run = response.data?.results?.[0];
+        
+        if (run) {
+          queryClient.invalidateQueries({ queryKey: ['runs'] });
+          queryClient.invalidateQueries({ queryKey: ['bars'] });
+          queryClient.invalidateQueries({ queryKey: ['executions'] });
+          queryClient.invalidateQueries({ queryKey: ['decisions'] });
+
+          const runData = run as any;
+          if (runData.completed_at) {
+            setPollingRunId(null);
+            setIsRunning(false);
+            toast({
+              title: 'Backtest completed',
+              description: `Successfully completed backtest for ${ticker}`,
+            });
+            return;
+          }
+        }
+
+        if (!isCancelled) {
+          setTimeout(pollRunStatus, pollInterval);
+        }
+      } catch (error) {
+        console.error('Error polling run status:', error);
+        if (!isCancelled) {
+          setTimeout(pollRunStatus, pollInterval);
+        }
+      }
+    };
+
+    pollRunStatus();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [pollingRunId, ticker, toast]);
 
   const { data: barsData, isLoading: isLoadingBars, error: barsError } = useQuery({
     queryKey: ['bars', ticker, selectedDate?.toISOString()],
@@ -434,13 +501,13 @@ export default function TradingDashboard() {
       
       if (data?.runId) {
         setSelectedRunInstance(data.runId);
+        setPollingRunId(data.runId);
       }
       
       queryClient.invalidateQueries({ queryKey: ['runs'] });
       queryClient.invalidateQueries({ queryKey: ['bars'] });
       queryClient.invalidateQueries({ queryKey: ['executions'] });
       queryClient.invalidateQueries({ queryKey: ['decisions'] });
-      setIsRunning(false);
     },
     onError: (error: Error) => {
       toast({
