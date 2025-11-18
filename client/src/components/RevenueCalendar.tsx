@@ -91,20 +91,47 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         const dayData = getDataForDate(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isToday = isSameDay(day, new Date());
+        
+        const isProfit = dayData && dayData.revenue > 0;
+        const isLoss = dayData && dayData.revenue < 0;
+
+        let bgClass = 'bg-card';
+        let textClass = '';
+        let borderClass = 'border';
+        
+        if (!isCurrentMonth) {
+          bgClass = 'bg-muted/30';
+          textClass = 'text-muted-foreground';
+        } else if (dayData) {
+          if (isProfit) {
+            bgClass = 'bg-emerald-500/10 dark:bg-emerald-500/20';
+            borderClass = 'border-emerald-500/30';
+            textClass = 'text-emerald-700 dark:text-emerald-400';
+          } else if (isLoss) {
+            bgClass = 'bg-red-500/10 dark:bg-red-500/20';
+            borderClass = 'border-red-500/30';
+            textClass = 'text-red-700 dark:text-red-400';
+          }
+        }
+        
+        if (isToday) {
+          borderClass = 'border-primary border-2';
+        }
 
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-24 border p-3 ${
-              !isCurrentMonth ? 'bg-muted/30 text-muted-foreground' : 'bg-card'
-            } ${isToday ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/20' : ''}`}
+            className={`min-h-28 ${borderClass} p-3 ${bgClass} ${textClass} transition-colors`}
             data-testid={`calendar-day-${format(cloneDay, 'yyyy-MM-dd')}`}
           >
-            <div className="font-semibold text-sm mb-2">{formattedDate}</div>
+            <div className="font-semibold text-sm mb-2">
+              {formattedDate}
+              {isToday && <div className="text-xs font-normal text-primary">Today</div>}
+            </div>
             {dayData && isCurrentMonth && (
               <div className="space-y-1">
-                <div className="text-sm font-bold text-primary">
-                  ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className={`text-base font-bold ${isProfit ? 'text-emerald-700 dark:text-emerald-400' : isLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                  {dayData.revenue >= 0 ? '+' : ''}${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
@@ -116,7 +143,7 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} className="grid grid-cols-7">
+        <div key={day.toString()} className="grid grid-cols-7 gap-1">
           {days}
         </div>
       );
@@ -125,17 +152,17 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
 
     return (
       <div className="space-y-2">
-        <div className="grid grid-cols-7 gap-px bg-border">
+        <div className="grid grid-cols-7 gap-1">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dayName) => (
             <div
               key={dayName}
-              className="bg-muted p-2 text-center text-sm font-semibold"
+              className="bg-muted p-2 text-center text-sm font-semibold rounded-sm"
             >
               {dayName}
             </div>
           ))}
         </div>
-        <div className="space-y-px bg-border">{rows}</div>
+        <div className="space-y-1">{rows}</div>
       </div>
     );
   };
@@ -148,39 +175,68 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       const day = addDays(weekStart, i);
       const dayData = getDataForDate(day);
       const isToday = isSameDay(day, new Date());
+      
+      const isProfit = dayData && dayData.revenue > 0;
+      const isLoss = dayData && dayData.revenue < 0;
+      
+      let bgClass = 'bg-card';
+      let borderClass = 'border';
+      
+      if (dayData) {
+        if (isProfit) {
+          bgClass = 'bg-emerald-500/10 dark:bg-emerald-500/20';
+          borderClass = 'border-emerald-500/30';
+        } else if (isLoss) {
+          bgClass = 'bg-red-500/10 dark:bg-red-500/20';
+          borderClass = 'border-red-500/30';
+        }
+      }
+      
+      if (isToday) {
+        borderClass = 'border-primary border-2';
+      }
 
       days.push(
         <div
           key={day.toString()}
-          className={`flex-1 border p-4 min-h-64 bg-card ${
-            isToday ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/20' : ''
-          }`}
+          className={`flex-1 ${borderClass} p-4 min-h-64 ${bgClass} transition-colors`}
           data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
         >
           <div className="font-bold text-base mb-3">
             {format(day, 'EEE d')}
+            {isToday && <div className="text-xs font-normal text-primary">Today</div>}
           </div>
           {dayData && (
             <div className="space-y-3">
-              <div className="text-2xl font-bold text-primary">
-                ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <div className={`text-2xl font-bold ${isProfit ? 'text-emerald-700 dark:text-emerald-400' : isLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                {dayData.revenue >= 0 ? '+' : ''}${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="text-sm text-muted-foreground">
                 {dayData.symbols} {dayData.symbols === 1 ? 'symbol' : 'symbols'}
               </div>
               {dayData.strategies.length > 0 && (
                 <div className="space-y-2">
-                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => (
-                    <div
-                      key={strategy.name}
-                      className="text-sm bg-primary/10 text-primary px-3 py-2 rounded-md border border-primary/20"
-                    >
-                      <div className="font-medium mb-1">{strategy.name}</div>
-                      <div className="font-bold">
-                        ${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => {
+                    const stratIsProfit = strategy.revenue > 0;
+                    const stratIsLoss = strategy.revenue < 0;
+                    return (
+                      <div
+                        key={strategy.name}
+                        className={`text-sm px-3 py-2 rounded-md border ${
+                          stratIsProfit 
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400' 
+                            : stratIsLoss 
+                            ? 'bg-red-500/10 border-red-500/30 text-red-700 dark:text-red-400'
+                            : 'bg-muted/50 border-border text-foreground'
+                        }`}
+                      >
+                        <div className="font-medium mb-1">{strategy.name}</div>
+                        <div className="font-bold">
+                          {strategy.revenue >= 0 ? '+' : ''}${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -189,11 +245,13 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       );
     }
 
-    return <div className="flex gap-px bg-border">{days}</div>;
+    return <div className="flex gap-1">{days}</div>;
   };
 
   const renderDayView = () => {
     const dayData = getDataForDate(currentDate);
+    const isProfit = dayData && dayData.revenue > 0;
+    const isLoss = dayData && dayData.revenue < 0;
 
     return (
       <div className="p-8 space-y-6">
@@ -203,11 +261,11 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
         {dayData ? (
           <div className="space-y-8">
             <div className="text-center">
-              <div className="text-5xl font-bold text-primary mb-2">
-                ${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <div className={`text-5xl font-bold mb-2 ${isProfit ? 'text-emerald-600 dark:text-emerald-400' : isLoss ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
+                {dayData.revenue >= 0 ? '+' : ''}${dayData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="text-xl text-muted-foreground">
-                Total Revenue
+                {isProfit ? 'Profit' : isLoss ? 'Loss' : 'Total Revenue'}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -230,34 +288,50 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
               <div>
                 <h4 className="font-semibold text-lg mb-4">Strategy Performance</h4>
                 <div className="grid gap-4">
-                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => (
-                    <div 
-                      key={strategy.name} 
-                      className="bg-primary/10 border border-primary/20 px-4 py-4 rounded-md"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="font-medium text-primary text-base">{strategy.name}</span>
-                        <span className="font-bold text-primary text-lg">
-                          ${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                      {strategy.symbols && strategy.symbols.length > 0 && (
-                        <div className="space-y-2 pl-4 border-l-2 border-primary/30">
-                          {strategy.symbols.map((symbolData) => (
-                            <div 
-                              key={symbolData.symbol}
-                              className="flex items-center justify-between text-sm"
-                            >
-                              <span className="font-medium text-muted-foreground">{symbolData.symbol}</span>
-                              <span className="font-semibold text-primary">
-                                ${symbolData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </span>
-                            </div>
-                          ))}
+                  {dayData.strategies.filter(t => t && t.revenue !== undefined).map((strategy) => {
+                    const stratIsProfit = strategy.revenue > 0;
+                    const stratIsLoss = strategy.revenue < 0;
+                    return (
+                      <div 
+                        key={strategy.name} 
+                        className={`px-4 py-4 rounded-md border ${
+                          stratIsProfit 
+                            ? 'bg-emerald-500/10 border-emerald-500/30' 
+                            : stratIsLoss 
+                            ? 'bg-red-500/10 border-red-500/30'
+                            : 'bg-muted/50 border-border'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`font-medium text-base ${stratIsProfit ? 'text-emerald-700 dark:text-emerald-400' : stratIsLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                            {strategy.name}
+                          </span>
+                          <span className={`font-bold text-lg ${stratIsProfit ? 'text-emerald-700 dark:text-emerald-400' : stratIsLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                            {strategy.revenue >= 0 ? '+' : ''}${strategy.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {strategy.symbols && strategy.symbols.length > 0 && (
+                          <div className="space-y-2 pl-4 border-l-2 border-border/30">
+                            {strategy.symbols.map((symbolData) => {
+                              const symIsProfit = symbolData.revenue > 0;
+                              const symIsLoss = symbolData.revenue < 0;
+                              return (
+                                <div 
+                                  key={symbolData.symbol}
+                                  className="flex items-center justify-between text-sm"
+                                >
+                                  <span className="font-medium text-muted-foreground">{symbolData.symbol}</span>
+                                  <span className={`font-semibold ${symIsProfit ? 'text-emerald-700 dark:text-emerald-400' : symIsLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                                    {symbolData.revenue >= 0 ? '+' : ''}${symbolData.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -294,18 +368,26 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       }
 
       const monthSymbols = monthSymbolsSet.size;
+      const isProfit = monthRevenue > 0;
+      const isLoss = monthRevenue < 0;
 
       months.push(
         <div
           key={monthDate.toString()}
-          className="border p-5 rounded-md hover-elevate bg-card"
+          className={`border p-5 rounded-md hover-elevate transition-colors ${
+            isProfit 
+              ? 'bg-emerald-500/10 border-emerald-500/30 dark:bg-emerald-500/20' 
+              : isLoss 
+              ? 'bg-red-500/10 border-red-500/30 dark:bg-red-500/20'
+              : 'bg-card border-border'
+          }`}
           data-testid={`calendar-month-${format(monthDate, 'yyyy-MM')}`}
         >
           <div className="font-bold text-base mb-3">{format(monthDate, 'MMMM')}</div>
-          {monthRevenue > 0 ? (
+          {monthRevenue !== 0 ? (
             <div className="space-y-2">
-              <div className="text-xl font-bold text-primary">
-                ${monthRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <div className={`text-xl font-bold ${isProfit ? 'text-emerald-700 dark:text-emerald-400' : isLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
+                {monthRevenue >= 0 ? '+' : ''}${monthRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="text-sm text-muted-foreground">
                 {monthSymbols} active {monthSymbols === 1 ? 'day' : 'days'}
