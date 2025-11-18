@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions, tradeServiceRunBacktest } from '@/../../src/api/generated';
+import { tradeServiceSearchDecisions, tradeServiceSearchBars, tradeServiceSearchStrategys, tradeServiceSearchRuns, tradeServiceSearchExecutions, tradeServiceRunBacktest, tradeServiceCancelRun } from '@/../../src/api/generated';
 import type { V1Decision, V1Bar, V1Strategy, V1Run, V1Execution } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
 import { queryClient } from '@/lib/queryClient';
@@ -539,6 +539,42 @@ export default function TradingDashboard() {
     },
   });
 
+  const cancelRunMutation = useMutation({
+    mutationFn: async (runId: string) => {
+      configureApiClient();
+
+      const response = await tradeServiceCancelRun({
+        path: { runId },
+        body: {},
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to cancel run');
+      }
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Run cancelled',
+        description: 'The backtest run has been stopped successfully',
+      });
+      setIsRunning(false);
+      setPollingRunId(null);
+      queryClient.invalidateQueries({ queryKey: ['runs'] });
+      queryClient.invalidateQueries({ queryKey: ['bars'] });
+      queryClient.invalidateQueries({ queryKey: ['executions'] });
+      queryClient.invalidateQueries({ queryKey: ['decisions'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Failed to cancel run',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
   const selectedRun = useMemo(() => {
     if (!runsData?.results || !selectedRunInstance) return null;
     return runsData.results.find((run: V1Run) => run.id === selectedRunInstance);
@@ -731,8 +767,16 @@ export default function TradingDashboard() {
               createRunMutation.mutate();
             }}
             onStopClick={() => {
-              setIsRunning(false);
-              console.log('Strategy stopped');
+              if (pollingRunId) {
+                cancelRunMutation.mutate(pollingRunId);
+              } else {
+                setIsRunning(false);
+                toast({
+                  title: 'No active run',
+                  description: 'There is no running backtest to cancel',
+                  variant: 'destructive',
+                });
+              }
             }}
             onSettingsClick={() => console.log('Settings clicked')}
             onRefresh={handleRefresh}
