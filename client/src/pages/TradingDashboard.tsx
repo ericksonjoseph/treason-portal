@@ -65,7 +65,10 @@ export default function TradingDashboard() {
   }, [location]);
 
   useEffect(() => {
+    console.log('useEffect triggered, pollingRunId:', pollingRunId);
+    
     if (!pollingRunId) {
+      console.log('No pollingRunId, exiting useEffect');
       return;
     }
 
@@ -504,14 +507,18 @@ export default function TradingDashboard() {
       return response.data;
     },
     onSuccess: (data) => {
+      console.log('Backtest onSuccess, data:', data);
       toast({
         title: 'Backtest started',
         description: data?.runId ? `Run ID: ${data.runId}` : 'Backtest initiated successfully',
       });
       
       if (data?.runId) {
+        console.log('Setting pollingRunId to:', data.runId);
         setSelectedRunInstance(data.runId);
         setPollingRunId(data.runId);
+      } else {
+        console.log('No runId in response data');
       }
       
       queryClient.invalidateQueries({ queryKey: ['runs'] });
