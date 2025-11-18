@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -43,6 +44,7 @@ type CalendarView = 'day' | 'week' | 'month' | 'year';
 export default function RevenueCalendar({ data }: RevenueCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>('month');
+  const [, setLocation] = useLocation();
 
   const getDataForDate = (date: Date): CalendarDataPoint | undefined => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -81,6 +83,17 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
   const handleMonthClick = (date: Date) => {
     setCurrentDate(date);
     setView('month');
+  };
+
+  const handleSymbolClick = (symbol: string, strategyName: string, date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const params = new URLSearchParams({
+      ticker: symbol,
+      date: dateStr,
+      strategy: strategyName,
+      mode: 'backtest'
+    });
+    setLocation(`/?${params.toString()}`);
   };
 
   const renderMonthView = () => {
@@ -330,7 +343,9 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
                               return (
                                 <div 
                                   key={symbolData.symbol}
-                                  className="flex items-center justify-between text-sm"
+                                  onClick={() => handleSymbolClick(symbolData.symbol, strategy.name, currentDate)}
+                                  className="flex items-center justify-between text-sm cursor-pointer hover-elevate active-elevate-2 rounded px-2 py-1 -mx-2"
+                                  data-testid={`symbol-${symbolData.symbol}`}
                                 >
                                   <span className="font-medium text-muted-foreground">{symbolData.symbol}</span>
                                   <span className={`font-semibold ${symIsProfit ? 'text-emerald-700 dark:text-emerald-400' : symIsLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>

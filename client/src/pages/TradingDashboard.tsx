@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import TradingHeader from '@/components/TradingHeader';
 import TradingChart from '@/components/TradingChart';
 import ControlPanel from '@/components/ControlPanel';
@@ -23,6 +24,7 @@ import { queryClient } from '@/lib/queryClient';
 import type { Strategy } from '@/types/strategy';
 
 export default function TradingDashboard() {
+  const [location] = useLocation();
   const [mode, setMode] = useState<'backtest' | 'live'>('backtest');
   const [selectedStrategy, setSelectedStrategy] = useState('');
   const [ticker, setTicker] = useState('TSLA');
@@ -36,6 +38,30 @@ export default function TradingDashboard() {
   useEffect(() => {
     configureApiClient();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.split('?')[1]);
+    const tickerParam = params.get('ticker');
+    const dateParam = params.get('date');
+    const modeParam = params.get('mode');
+    
+    if (tickerParam) {
+      setTicker(tickerParam);
+    }
+    if (dateParam) {
+      try {
+        const date = new Date(dateParam);
+        if (!isNaN(date.getTime())) {
+          setSelectedDate(date);
+        }
+      } catch (e) {
+        console.error('Invalid date parameter:', e);
+      }
+    }
+    if (modeParam === 'backtest' || modeParam === 'live') {
+      setMode(modeParam);
+    }
+  }, [location]);
 
   const { data: barsData, isLoading: isLoadingBars, error: barsError } = useQuery({
     queryKey: ['bars', ticker, selectedDate?.toISOString()],
