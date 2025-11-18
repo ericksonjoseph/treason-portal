@@ -4,6 +4,10 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
+export type TradeServiceCancelRunBody = {
+    [key: string]: unknown;
+};
+
 export type ProtobufAny = {
     '@type'?: string;
     [key: string]: unknown | string | undefined;
@@ -95,6 +99,10 @@ export type V1BarUpdate = {
 export type V1BoolSearch = {
     type?: V1FilterType;
     values?: Array<boolean>;
+};
+
+export type V1CancelRunResponse = {
+    success?: boolean;
 };
 
 export type V1CreateBarsRequest = {
@@ -1175,6 +1183,33 @@ export type TradeServiceSearchRunsResponses = {
 };
 
 export type TradeServiceSearchRunsResponse = TradeServiceSearchRunsResponses[keyof TradeServiceSearchRunsResponses];
+
+export type TradeServiceCancelRunData = {
+    body: TradeServiceCancelRunBody;
+    path: {
+        runId: string;
+    };
+    query?: never;
+    url: '/v1/alpaca/runs/{runId}/cancel';
+};
+
+export type TradeServiceCancelRunErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceCancelRunError = TradeServiceCancelRunErrors[keyof TradeServiceCancelRunErrors];
+
+export type TradeServiceCancelRunResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1CancelRunResponse;
+};
+
+export type TradeServiceCancelRunResponse = TradeServiceCancelRunResponses[keyof TradeServiceCancelRunResponses];
 
 export type TradeServiceUpdateStrategysData = {
     body: V1UpdateStrategysRequest;
