@@ -223,7 +223,7 @@ export default function TradingDashboard() {
       field: 'playback speed',
       type: 'numeric',
       value: 0,
-      options: [0, 60],
+      options: [0, 1000],
       default: 0,
     },
   ]);
@@ -406,7 +406,7 @@ export default function TradingDashboard() {
       endOfDay.setHours(23, 59, 59, 999);
 
       const playbackSpeedSetting = strategySettings.find(s => s.field === 'playback speed');
-      const playbackSpeed = playbackSpeedSetting ? String(playbackSpeedSetting.value) : '0';
+      const playbackSpeed = playbackSpeedSetting ? `${playbackSpeedSetting.value}ms` : '0ms';
 
       const response = await tradeServiceRunBacktest({
         body: {
