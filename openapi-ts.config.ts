@@ -2,7 +2,7 @@ import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
   // The path to your generated swagger.json file
-  input: '../trade/gen/openapiv2/trade-api/service/v1/service_dist_gen.swagger.json',
+  input: '../trade/gen/openapiv2/trade-api/service/v1/service.swagger.json',
   
   // The path to output the generated client
   output: './src/api/generated',

@@ -15,6 +15,10 @@ export type RpcStatus = {
     details?: Array<ProtobufAny>;
 };
 
+export type Tradeservicev1HealthCheckResponse = {
+    alive?: boolean;
+};
+
 export type V1Bar = {
     symbol?: string;
     timeframe?: string;
@@ -337,10 +341,6 @@ export type V1ExecutionUpdate = {
 
 export type V1FilterType = 'FILTER_TYPE_UNSPECIFIED' | 'FILTER_TYPE_EQUAL' | 'FILTER_TYPE_IN' | 'FILTER_TYPE_NOT_IN' | 'FILTER_TYPE_IS_NULL' | 'FILTER_TYPE_IS_NOT_NULL' | 'FILTER_TYPE_RANGE_INCLUSIVE' | 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX' | 'FILTER_TYPE_IN_OR_IS_NULL';
 
-export type V1HealthCheckResponse = {
-    alive?: boolean;
-};
-
 export type V1Int32Search = {
     type?: V1FilterType;
     values?: Array<number>;
@@ -421,6 +421,22 @@ export type V1Run = {
     symbol?: string;
     startTime?: string;
     endTime?: string;
+};
+
+export type V1RunBacktestRequest = {
+    startTime?: string;
+    endTime?: string;
+    timeframe?: string;
+    playbackSpeed?: string;
+    strategyId?: string;
+    symbol?: string;
+};
+
+export type V1RunBacktestResponse = {
+    /**
+     * The ID of the 'run' record that was created.
+     */
+    runId?: string;
 };
 
 export type V1RunField = 'RUN_FIELD_UNSPECIFIED' | 'RUN_FIELD_ID' | 'RUN_FIELD_STRATEGY_ID' | 'RUN_FIELD_TYPE' | 'RUN_FIELD_PARAMETERS' | 'RUN_FIELD_STARTED_AT' | 'RUN_FIELD_COMPLETED_AT' | 'RUN_FIELD_PROFIT' | 'RUN_FIELD_WIN_RATE' | 'RUN_FIELD_TOTAL_TRADES' | 'RUN_FIELD_SHARPE_RATIO' | 'RUN_FIELD_CREATED_AT' | 'RUN_FIELD_CREATED_BY' | 'RUN_FIELD_DELETED_AT' | 'RUN_FIELD_DELETED_BY' | 'RUN_FIELD_TIMEFRAME' | 'RUN_FIELD_SYMBOL' | 'RUN_FIELD_START_TIME' | 'RUN_FIELD_END_TIME';
@@ -1035,6 +1051,31 @@ export type TradeServiceSearchExecutionsResponses = {
 
 export type TradeServiceSearchExecutionsResponse = TradeServiceSearchExecutionsResponses[keyof TradeServiceSearchExecutionsResponses];
 
+export type TradeServiceRunBacktestData = {
+    body: V1RunBacktestRequest;
+    path?: never;
+    query?: never;
+    url: '/v1/alpaca/runbacktest';
+};
+
+export type TradeServiceRunBacktestErrors = {
+    /**
+     * An unexpected error response.
+     */
+    default: RpcStatus;
+};
+
+export type TradeServiceRunBacktestError = TradeServiceRunBacktestErrors[keyof TradeServiceRunBacktestErrors];
+
+export type TradeServiceRunBacktestResponses = {
+    /**
+     * A successful response.
+     */
+    200: V1RunBacktestResponse;
+};
+
+export type TradeServiceRunBacktestResponse = TradeServiceRunBacktestResponses[keyof TradeServiceRunBacktestResponses];
+
 export type TradeServiceUpdateRunsData = {
     body: V1UpdateRunsRequest;
     path?: never;
@@ -1355,7 +1396,7 @@ export type TradeServiceHealthCheckResponses = {
     /**
      * A successful response.
      */
-    200: V1HealthCheckResponse;
+    200: Tradeservicev1HealthCheckResponse;
 };
 
 export type TradeServiceHealthCheckResponse = TradeServiceHealthCheckResponses[keyof TradeServiceHealthCheckResponses];
