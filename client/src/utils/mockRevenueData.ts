@@ -30,9 +30,13 @@ export function generateRevenueData(days: number = 30): RevenueDataPoint[] {
     const date = new Date(startDate);
     date.setDate(date.getDate() + i);
     
+    const isLoss = Math.random() < 0.3;
+    const baseRevenue = Math.floor(Math.random() * 5000) + 1000;
+    const revenue = isLoss ? -baseRevenue : baseRevenue;
+    
     data.push({
       date: date.toISOString().split('T')[0],
-      revenue: Math.floor(Math.random() * 5000) + 1000,
+      revenue: revenue,
       trades: Math.floor(Math.random() * 50) + 10,
     });
   }
@@ -56,7 +60,10 @@ export function generateCalendarData(revenueData: RevenueDataPoint[]): CalendarD
     
     const selectedStrategies = strategyOptions.slice(0, numStrategies);
     const strategies = selectedStrategies.map((t) => {
-      const strategyRevenue = d.revenue * t.revenueRatio;
+      const isStrategyLoss = Math.random() < 0.25;
+      const baseStrategyRevenue = Math.abs(d.revenue) * t.revenueRatio;
+      const strategyRevenue = (d.revenue < 0 || isStrategyLoss) ? -baseStrategyRevenue : baseStrategyRevenue;
+      
       const symbolsForStrategy = selectedSymbols.slice(0, Math.floor(Math.random() * numSymbols) + 1);
       
       const weights = symbolsForStrategy.map(() => Math.random() + 0.5);
@@ -64,9 +71,11 @@ export function generateCalendarData(revenueData: RevenueDataPoint[]): CalendarD
       
       const symbols = symbolsForStrategy.map((symbol, idx) => {
         const normalizedWeight = weights[idx] / totalWeight;
+        const isSymbolLoss = Math.random() < 0.2;
+        const baseSymbolRevenue = Math.abs(strategyRevenue) * normalizedWeight;
         return {
           symbol,
-          revenue: strategyRevenue * normalizedWeight,
+          revenue: (strategyRevenue < 0 || isSymbolLoss) ? -baseSymbolRevenue : baseSymbolRevenue,
         };
       });
       
