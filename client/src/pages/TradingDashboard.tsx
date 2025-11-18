@@ -406,7 +406,8 @@ export default function TradingDashboard() {
       endOfDay.setHours(23, 59, 59, 999);
 
       const playbackSpeedSetting = strategySettings.find(s => s.field === 'playback speed');
-      const playbackSpeed = playbackSpeedSetting ? `${playbackSpeedSetting.value}ms` : '0ms';
+      const playbackSpeedValue = playbackSpeedSetting ? Number(playbackSpeedSetting.value) / 1000 : 0;
+      const playbackSpeed = `${playbackSpeedValue}s`;
 
       const response = await tradeServiceRunBacktest({
         body: {
