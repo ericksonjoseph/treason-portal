@@ -508,15 +508,18 @@ export default function TradingDashboard() {
     },
     onSuccess: (data) => {
       console.log('Backtest onSuccess, data:', data);
+      const responseData = data as any;
+      const runId = responseData?.run_id || responseData?.runId;
+      
       toast({
         title: 'Backtest started',
-        description: data?.runId ? `Run ID: ${data.runId}` : 'Backtest initiated successfully',
+        description: runId ? `Run ID: ${runId}` : 'Backtest initiated successfully',
       });
       
-      if (data?.runId) {
-        console.log('Setting pollingRunId to:', data.runId);
-        setSelectedRunInstance(data.runId);
-        setPollingRunId(data.runId);
+      if (runId) {
+        console.log('Setting pollingRunId to:', runId);
+        setSelectedRunInstance(runId);
+        setPollingRunId(runId);
       } else {
         console.log('No runId in response data');
       }
