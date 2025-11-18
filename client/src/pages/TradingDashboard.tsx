@@ -219,6 +219,13 @@ export default function TradingDashboard() {
       options: ['conservative', 'moderate', 'aggressive'],
       default: 'moderate',
     },
+    {
+      field: 'playback speed',
+      type: 'numeric',
+      value: 0,
+      options: [0, 60],
+      default: 0,
+    },
   ]);
 
   const strategies: Strategy[] = useMemo(() => {
@@ -398,6 +405,9 @@ export default function TradingDashboard() {
       const endOfDay = new Date(selectedDate);
       endOfDay.setHours(23, 59, 59, 999);
 
+      const playbackSpeedSetting = strategySettings.find(s => s.field === 'playback speed');
+      const playbackSpeed = playbackSpeedSetting ? String(playbackSpeedSetting.value) : '0';
+
       const response = await tradeServiceRunBacktest({
         body: {
           strategyId: selectedStrategy,
@@ -405,6 +415,7 @@ export default function TradingDashboard() {
           timeframe: '1Min',
           startTime: startOfDay.toISOString(),
           endTime: endOfDay.toISOString(),
+          playbackSpeed: playbackSpeed,
         },
       });
 
