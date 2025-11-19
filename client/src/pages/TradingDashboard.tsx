@@ -541,12 +541,16 @@ export default function TradingDashboard() {
 
   const cancelRunMutation = useMutation({
     mutationFn: async (runId: string) => {
+      console.log('Cancel mutation called with runId:', runId);
       configureApiClient();
 
+      console.log('Calling cancel API for runId:', runId);
       const response = await tradeServiceCancelRun({
         path: { runId },
         body: {},
       });
+
+      console.log('Cancel API response:', response);
 
       if (response.error) {
         throw new Error(response.error.message || 'Failed to cancel run');
@@ -767,9 +771,13 @@ export default function TradingDashboard() {
               createRunMutation.mutate();
             }}
             onStopClick={() => {
+              console.log('Stop button clicked, pollingRunId:', pollingRunId);
+              console.log('selectedRunInstance:', selectedRunInstance);
               if (pollingRunId) {
+                console.log('Cancelling run with pollingRunId:', pollingRunId);
                 cancelRunMutation.mutate(pollingRunId);
               } else {
+                console.log('No pollingRunId found');
                 setIsRunning(false);
                 toast({
                   title: 'No active run',
