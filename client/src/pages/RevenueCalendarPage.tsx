@@ -8,7 +8,7 @@ import { TRADING_MODES } from '@/utils/reportConstants';
 import { tradeServiceSearchRuns, tradeServiceSearchStrategys } from '@/../../src/api/generated';
 import type { V1Run, V1Strategy } from '@/../../src/api/generated';
 import { configureApiClient } from '@/lib/apiClient';
-import { format, startOfDay, endOfDay } from 'date-fns';
+import { format, startOfDay, endOfDay, subDays } from 'date-fns';
 
 interface SymbolRevenue {
   symbol: string;
@@ -97,17 +97,25 @@ export default function RevenueCalendarPage() {
         });
       }
       
-      if (dateRange?.from) {
-        const startTime = startOfDay(dateRange.from).toISOString();
-        const endTime = dateRange.to ? endOfDay(dateRange.to).toISOString() : endOfDay(dateRange.from).toISOString();
-        
-        filters.push({
-          startTime: {
-            type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
-            values: [startTime, endTime],
-          },
-        });
-      }
+      const defaultStartDate = subDays(new Date(), 90);
+      const defaultEndDate = new Date();
+      
+      const startTime = dateRange?.from 
+        ? startOfDay(dateRange.from).toISOString()
+        : startOfDay(defaultStartDate).toISOString();
+      
+      const endTime = dateRange?.to 
+        ? endOfDay(dateRange.to).toISOString() 
+        : dateRange?.from 
+          ? endOfDay(dateRange.from).toISOString()
+          : endOfDay(defaultEndDate).toISOString();
+      
+      filters.push({
+        completedAt: {
+          type: 'FILTER_TYPE_RANGE_EXCLUSIVE_MAX',
+          values: [startTime, endTime],
+        },
+      });
       
       const where = filters.length > 0 ? {
         group: {
@@ -121,7 +129,7 @@ export default function RevenueCalendarPage() {
           search: {
             where,
             sort: [{
-              field: 'RUN_FIELD_START_TIME',
+              field: 'RUN_FIELD_COMPLETED_AT',
               direction: 'SORT_DIRECTION_DESC',
             }],
           },
@@ -149,13 +157,14 @@ export default function RevenueCalendarPage() {
     
     const dateMap = new Map<string, CalendarDataPoint>();
     
-    runsQuery.data.forEach((run: any) => {
-      if (!run.start_time) return;
+    runsQuery.data.forEach((run: V1Run) => {
+      const completedDate = run.completedAt || run.startTime;
+      if (!completedDate) return;
       
-      const date = format(new Date(run.start_time), 'yyyy-MM-dd');
+      const date = format(new Date(completedDate), 'yyyy-MM-dd');
       const profit = run.profit?.value ? parseFloat(run.profit.value) : 0;
       const symbol = run.symbol || 'UNKNOWN';
-      const strategyId = run.strategy_id || '';
+      const strategyId = run.strategyId || '';
       const strategyName = strategyMap.get(strategyId) || 'Unknown Strategy';
       
       if (!dateMap.has(date)) {
@@ -211,7 +220,7 @@ export default function RevenueCalendarPage() {
   const tickers = useMemo(() => {
     if (!runsQuery.data) return [];
     const uniqueTickers = new Set<string>();
-    runsQuery.data.forEach((run: any) => {
+    runsQuery.data.forEach((run: V1Run) => {
       if (run.symbol) {
         uniqueTickers.add(run.symbol);
       }

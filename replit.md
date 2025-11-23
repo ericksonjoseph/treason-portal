@@ -43,7 +43,7 @@ Treason is a single-page trading platform designed for visualizing backtesting r
 - **Reports Pages (Analytics)**:
     - **Shared Features**: Both reports pages include comprehensive global filters (strategy, mode, ticker, date range) and a shared `ReportsLayout` for consistent structure.
     - **Revenue Graph Page**: Displays key performance metrics (Total Trades, Win Rate, Total Profit) and a line chart of revenue over time using Recharts, with interactive tooltips.
-    - **Revenue Calendar Page**: Provides an iCal/Google Calendar-style interface with four view modes (Month, Week, Day, Year). Each view offers varying levels of detail, from monthly totals to a detailed daily breakdown showing strategy and symbol-level revenue, with enhanced visual design and navigation.
+    - **Revenue Calendar Page**: Provides an iCal/Google Calendar-style interface with four view modes (Month, Week, Day, Year). Fetches real run data from `/v1/alpaca/runs/search` filtered by `completedAt` timestamp (defaults to last 90 days if no date range specified). Aggregates profit values by completion date, strategy, and symbol. Filters dynamically populate from API data (strategies from `/v1/alpaca/strategys/search`, tickers from unique symbols in runs). Each view offers varying levels of detail, from monthly totals to a detailed daily breakdown showing strategy and symbol-level revenue, with enhanced visual design and navigation.
 
 ### System Design Choices
 - **Frontend-focused**: The platform is designed to be purely frontend, communicating with a user-provided REST API without requiring backend development for Treason itself.
