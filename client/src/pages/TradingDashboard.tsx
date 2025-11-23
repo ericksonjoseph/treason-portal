@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import TradingHeader from '@/components/TradingHeader';
@@ -34,6 +34,7 @@ export default function TradingDashboard() {
   const [runToDelete, setRunToDelete] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [pollingRunId, setPollingRunId] = useState<string | null>(null);
+  const urlRunParam = useRef<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function TradingDashboard() {
       setSelectedStrategy(strategyParam);
     }
     if (runParam) {
+      urlRunParam.current = runParam;
       setSelectedRunInstance(runParam);
     }
   }, [location]);
@@ -435,10 +437,22 @@ export default function TradingDashboard() {
   }, [runsData]);
 
   useEffect(() => {
-    if (filteredRunInstances.length > 0 && !selectedRunInstance) {
-      setSelectedRunInstance(filteredRunInstances[0].id);
-    } else if (filteredRunInstances.length === 0) {
+    if (filteredRunInstances.length === 0) {
       setSelectedRunInstance('');
+      return;
+    }
+
+    if (urlRunParam.current) {
+      const urlRun = filteredRunInstances.find(i => i.id === urlRunParam.current);
+      if (urlRun) {
+        setSelectedRunInstance(urlRunParam.current);
+        urlRunParam.current = null;
+        return;
+      }
+    }
+
+    if (!selectedRunInstance) {
+      setSelectedRunInstance(filteredRunInstances[0].id);
     } else if (!filteredRunInstances.find(i => i.id === selectedRunInstance)) {
       setSelectedRunInstance(filteredRunInstances[0].id);
     }
