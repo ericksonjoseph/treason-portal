@@ -41,14 +41,12 @@ export default function TradingDashboard() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.split('?')[1]);
+    const params = new URLSearchParams(window.location.search);
     const tickerParam = params.get('ticker');
     const dateParam = params.get('date');
     const modeParam = params.get('mode');
     const strategyParam = params.get('strategy');
     const runParam = params.get('run');
-    
-    console.log('URL Params:', { tickerParam, dateParam, modeParam, strategyParam, runParam });
     
     if (tickerParam) {
       setTicker(tickerParam);
@@ -56,7 +54,6 @@ export default function TradingDashboard() {
     if (dateParam) {
       try {
         const date = new Date(dateParam);
-        console.log('Parsed date:', date, 'isValid:', !isNaN(date.getTime()));
         if (!isNaN(date.getTime())) {
           setSelectedDate(date);
         }
