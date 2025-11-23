@@ -45,6 +45,8 @@ export default function TradingDashboard() {
     const tickerParam = params.get('ticker');
     const dateParam = params.get('date');
     const modeParam = params.get('mode');
+    const strategyParam = params.get('strategy');
+    const runParam = params.get('run');
     
     if (tickerParam) {
       setTicker(tickerParam);
@@ -61,6 +63,12 @@ export default function TradingDashboard() {
     }
     if (modeParam === 'backtest' || modeParam === 'live') {
       setMode(modeParam);
+    }
+    if (strategyParam) {
+      setSelectedStrategy(strategyParam);
+    }
+    if (runParam) {
+      setSelectedRunInstance(runParam);
     }
   }, [location]);
 

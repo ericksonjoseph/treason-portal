@@ -13,6 +13,9 @@ import { format, startOfDay, endOfDay, subDays } from 'date-fns';
 interface SymbolRevenue {
   symbol: string;
   revenue: number;
+  runId: string;
+  strategyId: string;
+  mode: string;
 }
 
 interface StrategyRevenue {
@@ -166,6 +169,8 @@ export default function RevenueCalendarPage() {
       const symbol = run.symbol || 'UNKNOWN';
       const strategyId = run.strategy_id || '';
       const strategyName = strategyMap.get(strategyId) || 'Unknown Strategy';
+      const runId = run.id || '';
+      const mode = run.timeframe ? 'backtest' : 'live';
       
       if (!dateMap.has(date)) {
         dateMap.set(date, {
@@ -187,9 +192,9 @@ export default function RevenueCalendarPage() {
       
       strategy.revenue += profit;
       
-      let symbolData = strategy.symbols.find(s => s.symbol === symbol);
+      let symbolData = strategy.symbols.find(s => s.symbol === symbol && s.runId === runId);
       if (!symbolData) {
-        symbolData = { symbol, revenue: 0 };
+        symbolData = { symbol, revenue: 0, runId, strategyId, mode };
         strategy.symbols.push(symbolData);
       }
       

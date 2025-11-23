@@ -20,6 +20,9 @@ import {
 interface SymbolRevenue {
   symbol: string;
   revenue: number;
+  runId: string;
+  strategyId: string;
+  mode: string;
 }
 
 interface StrategyRevenue {
@@ -85,13 +88,14 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
     setView('month');
   };
 
-  const handleSymbolClick = (symbol: string, strategyName: string, date: Date) => {
+  const handleSymbolClick = (symbolData: SymbolRevenue, date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     const params = new URLSearchParams({
-      ticker: symbol,
+      ticker: symbolData.symbol,
       date: dateStr,
-      strategy: strategyName,
-      mode: 'backtest'
+      strategy: symbolData.strategyId,
+      mode: symbolData.mode,
+      run: symbolData.runId,
     });
     setLocation(`/?${params.toString()}`);
   };
@@ -343,7 +347,7 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
                               return (
                                 <div 
                                   key={symbolData.symbol}
-                                  onClick={() => handleSymbolClick(symbolData.symbol, strategy.name, currentDate)}
+                                  onClick={() => handleSymbolClick(symbolData, currentDate)}
                                   className="flex items-center justify-between text-sm cursor-pointer hover-elevate active-elevate-2 rounded px-2 py-1 -mx-2"
                                   data-testid={`symbol-${symbolData.symbol}`}
                                 >
