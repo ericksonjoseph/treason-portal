@@ -48,12 +48,15 @@ export default function TradingDashboard() {
     const strategyParam = params.get('strategy');
     const runParam = params.get('run');
     
+    console.log('URL Params:', { tickerParam, dateParam, modeParam, strategyParam, runParam });
+    
     if (tickerParam) {
       setTicker(tickerParam);
     }
     if (dateParam) {
       try {
         const date = new Date(dateParam);
+        console.log('Parsed date:', date, 'isValid:', !isNaN(date.getTime()));
         if (!isNaN(date.getTime())) {
           setSelectedDate(date);
         }

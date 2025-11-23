@@ -97,6 +97,14 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
       mode: symbolData.mode,
       run: symbolData.runId,
     });
+    console.log('Navigating with params:', {
+      ticker: symbolData.symbol,
+      date: dateStr,
+      dateObject: date,
+      strategy: symbolData.strategyId,
+      mode: symbolData.mode,
+      run: symbolData.runId,
+    });
     setLocation(`/?${params.toString()}`);
   };
 
