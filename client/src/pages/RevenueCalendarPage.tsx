@@ -149,7 +149,7 @@ export default function RevenueCalendarPage() {
     if (!runsQuery.data?.results || !strategiesQuery.data?.results) return [];
     
     const strategyMap = new Map<string, string>();
-    strategiesQuery.data.results.forEach((strategy: V1Strategy) => {
+    strategiesQuery.data.results.forEach((strategy: any) => {
       if (strategy.id && strategy.name) {
         strategyMap.set(strategy.id, strategy.name);
       }
@@ -157,14 +157,14 @@ export default function RevenueCalendarPage() {
     
     const dateMap = new Map<string, CalendarDataPoint>();
     
-    runsQuery.data.results.forEach((run: V1Run) => {
-      const completedDate = run.completedAt || run.startTime;
+    runsQuery.data.results.forEach((run: any) => {
+      const completedDate = run.completed_at || run.start_time;
       if (!completedDate) return;
       
       const date = format(new Date(completedDate), 'yyyy-MM-dd');
       const profit = run.profit?.value ? parseFloat(run.profit.value) : 0;
       const symbol = run.symbol || 'UNKNOWN';
-      const strategyId = run.strategyId || '';
+      const strategyId = run.strategy_id || '';
       const strategyName = strategyMap.get(strategyId) || 'Unknown Strategy';
       
       if (!dateMap.has(date)) {
@@ -220,7 +220,7 @@ export default function RevenueCalendarPage() {
   const tickers = useMemo(() => {
     if (!runsQuery.data?.results) return [];
     const uniqueTickers = new Set<string>();
-    runsQuery.data.results.forEach((run: V1Run) => {
+    runsQuery.data.results.forEach((run: any) => {
       if (run.symbol) {
         uniqueTickers.add(run.symbol);
       }
