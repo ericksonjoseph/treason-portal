@@ -158,10 +158,10 @@ export default function RevenueCalendarPage() {
     const dateMap = new Map<string, CalendarDataPoint>();
     
     runsQuery.data.results.forEach((run: any) => {
-      const completedDate = run.completed_at || run.start_time;
-      if (!completedDate) return;
+      const tradeDate = run.start_time;
+      if (!tradeDate) return;
       
-      const date = format(new Date(completedDate), 'yyyy-MM-dd');
+      const date = format(new Date(tradeDate), 'yyyy-MM-dd');
       const profit = run.profit?.value ? parseFloat(run.profit.value) : 0;
       const symbol = run.symbol || 'UNKNOWN';
       const strategyId = run.strategy_id || '';
