@@ -56,9 +56,9 @@ export default function RevenueCalendarPage() {
         },
       });
       if (response.error) {
-        return [];
+        return { results: [] };
       }
-      return (response.data?.results || []) as V1Strategy[];
+      return response.data || { results: [] };
     },
   });
 
@@ -138,18 +138,18 @@ export default function RevenueCalendarPage() {
       });
       
       if (response.error) {
-        return [];
+        return { results: [] };
       }
       
-      return (response.data?.results || []) as V1Run[];
+      return response.data || { results: [] };
     },
   });
 
   const calendarData = useMemo(() => {
-    if (!runsQuery.data || !strategiesQuery.data) return [];
+    if (!runsQuery.data?.results || !strategiesQuery.data?.results) return [];
     
     const strategyMap = new Map<string, string>();
-    strategiesQuery.data.forEach((strategy: V1Strategy) => {
+    strategiesQuery.data.results.forEach((strategy: V1Strategy) => {
       if (strategy.id && strategy.name) {
         strategyMap.set(strategy.id, strategy.name);
       }
@@ -157,7 +157,7 @@ export default function RevenueCalendarPage() {
     
     const dateMap = new Map<string, CalendarDataPoint>();
     
-    runsQuery.data.forEach((run: V1Run) => {
+    runsQuery.data.results.forEach((run: V1Run) => {
       const completedDate = run.completedAt || run.startTime;
       if (!completedDate) return;
       
@@ -210,17 +210,17 @@ export default function RevenueCalendarPage() {
   }, [runsQuery.data, strategiesQuery.data]);
 
   const strategies = useMemo(() => {
-    if (!strategiesQuery.data) return [];
-    return strategiesQuery.data.map((s: V1Strategy) => ({
+    if (!strategiesQuery.data?.results) return [];
+    return strategiesQuery.data.results.map((s: V1Strategy) => ({
       id: s.id || '',
       name: s.name || 'Unknown',
     }));
   }, [strategiesQuery.data]);
 
   const tickers = useMemo(() => {
-    if (!runsQuery.data) return [];
+    if (!runsQuery.data?.results) return [];
     const uniqueTickers = new Set<string>();
-    runsQuery.data.forEach((run: V1Run) => {
+    runsQuery.data.results.forEach((run: V1Run) => {
       if (run.symbol) {
         uniqueTickers.add(run.symbol);
       }
