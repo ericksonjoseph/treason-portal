@@ -346,10 +346,10 @@ export default function RevenueCalendar({ data }: RevenueCalendarProps) {
                               const symIsLoss = symbolData.revenue < 0;
                               return (
                                 <div 
-                                  key={symbolData.symbol}
+                                  key={`${symbolData.symbol}-${symbolData.runId}`}
                                   onClick={() => handleSymbolClick(symbolData, currentDate)}
                                   className="flex items-center justify-between text-sm cursor-pointer hover-elevate active-elevate-2 rounded px-2 py-1 -mx-2"
-                                  data-testid={`symbol-${symbolData.symbol}`}
+                                  data-testid={`symbol-${symbolData.symbol}-${symbolData.runId}`}
                                 >
                                   <span className="font-medium text-muted-foreground">{symbolData.symbol}</span>
                                   <span className={`font-semibold ${symIsProfit ? 'text-emerald-700 dark:text-emerald-400' : symIsLoss ? 'text-red-700 dark:text-red-400' : 'text-foreground'}`}>
